@@ -101,12 +101,13 @@ def p_code_block(p):
     
 def p_declaration_list(p):
     """ declaration_list    : declaration
-                            | declaration_list declaration
+                            |  declaration_list declaration
     """
     if len(p) == 2:
         p[0] = p[1]
     else:
-        DeclarationList(p[1], p[2])
+        print p[1], p[2]
+        p[0] = p[1] + p[2]
 
 def p_declaration(p):
     """ declaration  : INT ID SEMI
@@ -117,12 +118,13 @@ def p_declaration(p):
     
 def p_statement_list(p):
     ''' statement_list : statement
-                       | statement_list statement
+                       | statement_list statement 
     '''
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = StatList(p[1], p[2])
+        print p[1], p[2]
+        p[0] = p[1] + p[2]
 
 def p_statement(p):
     ''' statement : expression_statement 
@@ -204,4 +206,5 @@ def p_assignment_expr(p):
 
 
 yacc.yacc()
-print yacc.parse(data)
+ast =  yacc.parse(data)
+ast.show()
