@@ -1,0 +1,15 @@
+{
+/*This a test program.*/
+    int abc;
+    int A;
+    int i;
+    int n;
+    int b;
+    int a2;
+    read n;
+    for (i=1;i<=n; i= i+1)
+    { 
+        abc=abc+i;
+    }
+    write abc;
+}
