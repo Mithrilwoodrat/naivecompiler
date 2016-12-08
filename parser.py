@@ -164,45 +164,53 @@ def p_expression(p):
     p[0] = p[1]
     
 def p_bool_expression(p):
-    ''' bool_expression : ID GT bool_expression
-                        | ID GE bool_expression
-                        | ID LE bool_expression
-                        | ID LT bool_expression
-                        | NUM GT bool_expression
-                        | NUM GE bool_expression
-                        | NUM LE bool_expression
-                        | NUM LT bool_expression
+    ''' bool_expression : varexpr GT bool_expression
+                        | varexpr GE bool_expression
+                        | varexpr LE bool_expression
+                        | varexpr LT bool_expression
+                        | numexpr GT bool_expression
+                        | numexpr GE bool_expression
+                        | numexpr LE bool_expression
+                        | numexpr LT bool_expression
                         | LPAREN bool_expression RPAREN
-                        | ID
-                        | NUM'''
+                        | varexpr
+                        | numexpr'''
     if len(p) == 2:
         p[0] = p[1]
     else:
         if p[1] == '(':
             p[0] = p[2]
         else:
-            p[0] = BinaryOp(p[2], p[1], p[3])
+            p[0] = BinaryOp(p[1], p[2], p[3])
 
 def p_assignment_expr(p):
-    ''' assignment_expr : ID EQUALS assignment_expr
-                  | ID PLUS assignment_expr
-                  | ID MINUS assignment_expr
-                  | ID TIMES assignment_expr
-                  | ID DIVIDES assignment_expr
-                  | NUM PLUS assignment_expr
-                  | NUM MINUS assignment_expr
-                  | NUM TIMES assignment_expr
-                  | NUM DIVIDES assignment_expr
+    ''' assignment_expr : varexpr EQUALS assignment_expr
+                  | varexpr PLUS assignment_expr
+                  | varexpr MINUS assignment_expr
+                  | varexpr TIMES assignment_expr
+                  | varexpr DIVIDES assignment_expr
+                  | numexpr PLUS assignment_expr
+                  | numexpr MINUS assignment_expr
+                  | numexpr TIMES assignment_expr
+                  | numexpr DIVIDES assignment_expr
                   | LPAREN assignment_expr RPAREN
-                  | ID
-                  | NUM'''
+                  | varexpr
+                  | numexpr '''
     if len(p) == 2:
         p[0] = p[1]
     else:
         if p[1] == '(':
             p[0] = p[2]
         else:
-            p[0] = BinaryOp(p[2], p[1], p[3])
+            p[0] = BinaryOp(p[1], p[2], p[3])
+    
+def p_varexpr(p):
+    ''' varexpr : ID '''
+    p[0] = Var(p[1])
+
+def p_numexpr(p):
+    ''' numexpr : NUM '''
+    p[0] = Number(p[1])
 
 
 yacc.yacc()

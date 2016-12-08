@@ -53,7 +53,6 @@ class StatList(ASTNode):
 
     def __add__(self, rhs):
         if issubclass(rhs.__class__, Statement):
-            print 'subclass'
             self.add_stat(rhs)
         elif type(rhs) is StatList:
             self.l += rhs.l
@@ -123,8 +122,27 @@ class WriteStat(Statement):
         self.node_name = "WriteStat"
 
 class BinaryOp(ASTNode):
-    def __init__(self, lft, op , rht):
+    def __init__(self, lhs, op , rhs):
         self.node_name = "BinaryOp"
+        self.lhs = lhs
+        self.op = op
+        self.rhs = rhs
+
+    def show(self):
+        print "BinaryOp"
+        self.lhs.show()
+        print self.op
+        self.rhs.show()
+
+class Var(ASTNode):
+    def __init__(self, name):
+        self.node_name = "Var"
+        self.name = name
+
+class Number(ASTNode):
+    def __init__(self, val):
+        self.node_name = "Number"
+        self.val = val
     
 class ExprStat(object):
     pass
