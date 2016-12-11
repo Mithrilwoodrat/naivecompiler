@@ -93,10 +93,10 @@ class Statement(ASTNode):
             stat_list.add_stat(rhs)
         return stat_list
 
-class IfStat(object):
+class IfStmt(object):
     pass
 
-class ForStat(Statement):
+class ForStmt(Statement):
     def __init__(self, expr1, expr2, expr3, body):
         self.expr1 = expr1
         self.expr2 = expr2
@@ -111,15 +111,34 @@ class ForStat(Statement):
         self.expr3.show()
         self.body.show()
 
-class ReadStat(Statement):
+class ReadStmt(Statement):
     def __init__(self, ID):
         self._id = ID
         self.node_name = "ReadStat"
 
-class WriteStat(Statement):
+class WriteStmt(Statement):
     def __init__(self, ID):
         self._id = ID
         self.node_name = "WriteStat"
+
+class AssignmentStmt(Statement):
+    def __init__(self, AssignmentExpr):
+        self.node_name = "AssigmentStmt"
+        self.expr = AssignmentExpr
+
+    def show(self):
+        print "AssigmentStmt"
+        self.expr.show()
+
+class AssignmentExpr(ASTNode):
+    def __init__(self, _id, rhs):
+        self.node_name = "AssignmentExpr"
+        self._id = _id
+        self.rhs = rhs
+
+    def show(self):
+        print "AssignmentExpr", self._id
+        self.rhs.show()
 
 class BinaryOp(ASTNode):
     def __init__(self, lhs, op , rhs):
@@ -133,25 +152,33 @@ class BinaryOp(ASTNode):
         self.lhs.show()
         print self.op
         self.rhs.show()
+        
+class BoolExpr(object):
+    def __init__(self, lhs, op , rhs):
+        self.node_name = "BoolExpr"
+        self.lhs = lhs
+        self.op = op
+        self.rhs = rhs
 
-class Var(ASTNode):
+    def show(self):
+        print "BoolExpr"
+        self.lhs.show()
+        print self.op
+        self.rhs.show()
+
+
+class Symbol(ASTNode):
     def __init__(self, name):
-        self.node_name = "Var"
+        self.node_name = "Symbol"
         self.name = name
+        
+    def show(self):
+        print self.node_name, self.name
 
 class Number(ASTNode):
     def __init__(self, val):
         self.node_name = "Number"
         self.val = val
-    
-class ExprStat(object):
-    pass
 
-class Expr(object):
-    pass
-
-class BoolExpr(object):
-    pass
-
-class AssigmentExpr(object):
-    pass
+    def show(self):
+        print self.node_name, self.val

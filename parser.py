@@ -61,6 +61,7 @@ def t_ID(t):
 def t_COMMENTS(t):
     r'\/\*(.*\n)*.*\*\/'
     pass
+
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
@@ -92,7 +93,7 @@ precedence = (
 
 
 def p_error(p):
-    print("Syntax error at '%s'" % p.value)
+    print("Syntax error at '%s', '%s'" % (p.value, p.lineno))
 
 def p_code_block(p):
     '''code_block : LBRACE declaration_list statement_list RBRACE
@@ -106,7 +107,6 @@ def p_declaration_list(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        print p[1], p[2]
         p[0] = p[1] + p[2]
 
 def p_declaration(p):
@@ -123,11 +123,10 @@ def p_statement_list(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        print p[1], p[2]
         p[0] = p[1] + p[2]
 
 def p_statement(p):
-    ''' statement : expression_statement 
+    ''' statement : assignment_statement 
                   | compound_statement
                   | for_statement
                   | read_statement
@@ -140,41 +139,55 @@ def p_compound_statement(p):
     p[0] = p[2]
     
 def p_for_statement(p):
-    '''for_statement : FOR LPAREN expression SEMI expression SEMI expression RPAREN compound_statement '''
+    '''for_statement : FOR LPAREN assignment_expr SEMI expression SEMI assignment_expr RPAREN compound_statement '''
     # forstat(a,b,c,body)
-    p[0] = ForStat(p[3], p[5], p[7], p[9])
+    p[0] = ForStmt(p[3], p[5], p[7], p[9])
 
 def p_write_statement(p):
     ''' write_statement : WRITE ID SEMI '''
     # WriteStat(ID)
-    p[0] = WriteStat(p[2])
+    p[0] = WriteStmt(p[2])
 
 def p_read_statement(p):
     ''' read_statement : READ ID SEMI '''
     # WriteStat(ID)
-    p[0] = ReadStat(p[2])
+    p[0] = ReadStmt(p[2])
     
-def p_expression_statement(p):
-    ''' expression_statement : expression SEMI'''
-    p[0] = p[1]
+def p_assignment_statment(p):
+    '''assignment_statement : assignment_expr SEMI'''
+    p[0] = AssignmentStmt(p[1])
 
+def p_assignment_expr(p):
+    '''assignment_expr : ID EQUALS expression'''
+    p[0] = AssignmentExpr(p[1], p[3])
+    
 def p_expression(p):
-    ''' expression : bool_expression
-                   | assignment_expr'''
+    ''' expression : bool_expression '''
     p[0] = p[1]
     
 def p_bool_expression(p):
-    ''' bool_expression : varexpr GT bool_expression
-                        | varexpr GE bool_expression
-                        | varexpr LE bool_expression
-                        | varexpr LT bool_expression
-                        | numexpr GT bool_expression
-                        | numexpr GE bool_expression
-                        | numexpr LE bool_expression
-                        | numexpr LT bool_expression
+    ''' bool_expression : bool_expression GT bool_expression
+                        | bool_expression GE bool_expression
+                        | bool_expression LE bool_expression
+                        | bool_expression LT bool_expression
                         | LPAREN bool_expression RPAREN
-                        | varexpr
-                        | numexpr'''
+                        | binary_expr'''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        if p[1] == '(':
+            p[0] = p[2]
+        else:
+            p[0] = BoolExpr(p[1], p[2], p[3])
+
+def p_binary_expr(p):
+    ''' binary_expr : binary_expr PLUS binary_expr
+                  | binary_expr MINUS binary_expr
+                  | binary_expr TIMES binary_expr
+                  | binary_expr DIVIDES binary_expr
+                  | LPAREN binary_expr RPAREN
+                  | symbol
+                  | number '''
     if len(p) == 2:
         p[0] = p[1]
     else:
@@ -183,36 +196,18 @@ def p_bool_expression(p):
         else:
             p[0] = BinaryOp(p[1], p[2], p[3])
 
-def p_assignment_expr(p):
-    ''' assignment_expr : varexpr EQUALS assignment_expr
-                  | varexpr PLUS assignment_expr
-                  | varexpr MINUS assignment_expr
-                  | varexpr TIMES assignment_expr
-                  | varexpr DIVIDES assignment_expr
-                  | numexpr PLUS assignment_expr
-                  | numexpr MINUS assignment_expr
-                  | numexpr TIMES assignment_expr
-                  | numexpr DIVIDES assignment_expr
-                  | LPAREN assignment_expr RPAREN
-                  | varexpr
-                  | numexpr '''
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        if p[1] == '(':
-            p[0] = p[2]
-        else:
-            p[0] = BinaryOp(p[1], p[2], p[3])
     
-def p_varexpr(p):
-    ''' varexpr : ID '''
-    p[0] = Var(p[1])
+def p_symbol(p):
+    ''' symbol : ID '''
+    p[0] = Symbol(p[1])
 
-def p_numexpr(p):
-    ''' numexpr : NUM '''
+def p_number(p):
+    ''' number : NUM '''
     p[0] = Number(p[1])
 
-
+import sys
 yacc.yacc()
 ast =  yacc.parse(data)
+if not ast:
+    sys.exit(0)
 ast.show()

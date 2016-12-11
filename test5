@@ -7,9 +7,10 @@
     int b;
     int a2;
     read n;
+	i=2;
     for (i=1;i<=n; i= i+1)
     { 
-        abc=abc+i;
+        abc=abc+(i+1);
     }
     write abc;
 }
