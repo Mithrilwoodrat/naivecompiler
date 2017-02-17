@@ -6,10 +6,24 @@ class ASTNode(object):
 
     def show(self):
         print self.node_name
+        
+class StringTable(object):
+    def __init__(self):
+        self.table = []
+        self.index = 0
+        
+    def add(self, string):
+        self.table.append(string)
+        old_index = self.index
+        self.index+=1
+        return old_index
+
+class SymbolTable(object):
+    pass
 
 class AST(object):
     def __init__(self):
-        pass
+        symbol_table = []
 
 class CodeBlock(ASTNode):
     def __init__(self, declaration_list, statement_list):
@@ -22,6 +36,9 @@ class CodeBlock(ASTNode):
         print 'CodeBlock'
         self.declaration_list.show()
         self.statement_list.show()
+
+    def serialize(self):
+        pass
 
 class DeclarationList(ASTNode):
     def __init__(self):
@@ -43,9 +60,9 @@ class DeclarationList(ASTNode):
         for n in self.l:
             n.show()
 
-class StatList(ASTNode):
+class StmtList(ASTNode):
     def __init__(self):
-        self.node_name = "StatList"
+        self.node_name = "StmtList"
         self.l = []
 
     def add_stat(self, s):
@@ -54,7 +71,7 @@ class StatList(ASTNode):
     def __add__(self, rhs):
         if issubclass(rhs.__class__, Statement):
             self.add_stat(rhs)
-        elif type(rhs) is StatList:
+        elif type(rhs) is StmtList:
             self.l += rhs.l
         return self
 
@@ -84,8 +101,8 @@ class Declaration(ASTNode):
 
 class Statement(ASTNode):
     def __add__(self, rhs):
-        stat_list = StatList()
-        if type(rhs) is StatList:
+        stat_list = StmtList()
+        if type(rhs) is StmtList:
             rhs.add_stat(self)
             return rhs
         else:
