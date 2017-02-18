@@ -1,0 +1,6 @@
+{
+    int abc;
+	i=2;
+    abc=abc+(i+1);
+    write abc;
+}

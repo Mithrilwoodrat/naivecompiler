@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from ply import lex, yacc
 from ply.lex import TOKEN
-from ast import *
+from c_ast import *
 
 
 class Lexer(object):

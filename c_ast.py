@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from serialize_structure import *
 
 class ASTNode(object):
     def __init__(self):
@@ -6,18 +7,8 @@ class ASTNode(object):
 
     def show(self):
         print self.node_name
-        
-class StringTable(object):
-    def __init__(self):
-        self.table = []
-        self.index = 0
-        
-    def add(self, string):
-        self.table.append(string)
-        old_index = self.index
-        self.index+=1
-        return old_index
 
+        
 class SymbolTable(object):
     pass
 
@@ -37,8 +28,11 @@ class CodeBlock(ASTNode):
         self.declaration_list.show()
         self.statement_list.show()
 
-    def serialize(self):
-        pass
+    def serialize(self, env):
+        codeblock = S_CodeBlock()
+        codeblock['declaration_list'] = self.declaration_list.serialize(env)
+        codeblock['statement_list'] = self.statement_list.serialize(env)
+        return codeblock
 
 class DeclarationList(ASTNode):
     def __init__(self):
@@ -60,6 +54,15 @@ class DeclarationList(ASTNode):
         for n in self.l:
             n.show()
 
+    def serialize(self, env):
+        declaration_list = S_DeclarationList()
+        declaration_list['count'] = len(self.l)
+        data = ''
+        for declaration in self.l:
+            data += str(declaration.serialize(env))
+        declaration_list['data'] = data
+        return declaration_list
+
 class StmtList(ASTNode):
     def __init__(self):
         self.node_name = "StmtList"
@@ -79,6 +82,15 @@ class StmtList(ASTNode):
         print self.node_name
         for n in self.l:
             n.show()
+    
+    def serialize(self, env):
+        stmt_list = S_StatementList()
+        stmt_list['count'] = len(self.l)
+        data = ''
+        for stmt in self.l:
+            data += str(stmt.serialize(env))
+        stmt_list['data'] = data
+        return stmt_list
 
 class Declaration(ASTNode):
     '''Declaration: Type Assignment SEIM'''
@@ -98,6 +110,13 @@ class Declaration(ASTNode):
             declaration_list.add_declaration(self)
             declaration_list.add_declaration(rhs)
             return declaration_list
+
+    def serialize(self, env):
+        declaration = S_Declaration()
+        declaration['_type'] = 0
+        declaration['id'] = env.add_string(self._id)
+        return declaration
+        
 
 class Statement(ASTNode):
     def __add__(self, rhs):
@@ -128,15 +147,28 @@ class ForStmt(Statement):
         self.expr3.show()
         self.body.show()
 
+    def serialize(self, env):
+        pass
+
 class ReadStmt(Statement):
     def __init__(self, ID):
         self._id = ID
         self.node_name = "ReadStat"
 
+    def serialize(self, env):
+        readstmt = S_WriteStmt()
+        readstmt['id'] = env.add_string(self._id)
+        return readstmt
+
 class WriteStmt(Statement):
     def __init__(self, ID):
         self._id = ID
         self.node_name = "WriteStat"
+
+    def serialize(self, env):
+        writestmt = S_WriteStmt()
+        writestmt['id'] = env.add_string(self._id)
+        return writestmt
 
 class AssignmentStmt(Statement):
     def __init__(self, AssignmentExpr):
@@ -147,6 +179,9 @@ class AssignmentStmt(Statement):
         print "AssigmentStmt"
         self.expr.show()
 
+    def serialize(self, env):
+        return self.expr.serialize(env)
+
 class AssignmentExpr(ASTNode):
     def __init__(self, _id, rhs):
         self.node_name = "AssignmentExpr"
@@ -156,6 +191,12 @@ class AssignmentExpr(ASTNode):
     def show(self):
         print "AssignmentExpr", self._id
         self.rhs.show()
+
+    def serialize(self, env):
+        assigment_expr =  S_AssignmentExpr()
+        assigment_expr['id'] = env.add_string(self._id)
+        assigment_expr['exp'] = self.rhs.serialize(env)
+        return assigment_expr
 
 class BinaryOp(ASTNode):
     def __init__(self, lhs, op , rhs):
@@ -169,6 +210,13 @@ class BinaryOp(ASTNode):
         self.lhs.show()
         print self.op
         self.rhs.show()
+
+    def serialize(self, env):
+        binary_op = S_BinaryOp()
+        binary_op['op'] = self.op
+        binary_op['exp1'] = str(self.lhs.serialize(env))
+        binary_op['exp2'] = str(self.lhs.serialize(env))
+        return binary_op
         
 class BoolExpr(object):
     def __init__(self, lhs, op , rhs):
@@ -183,6 +231,9 @@ class BoolExpr(object):
         print self.op
         self.rhs.show()
 
+    def serialize(self, env):
+        raise NotImplementedError
+
 
 class Symbol(ASTNode):
     def __init__(self, name):
@@ -192,10 +243,22 @@ class Symbol(ASTNode):
     def show(self):
         print self.node_name, self.name
 
+    def serialize(self, env):
+        symbol = S_ID()
+        symbol['_id'] = env.add_string(self.name)
+        return symbol
+
 class Number(ASTNode):
     def __init__(self, val):
         self.node_name = "Number"
         self.val = val
+        self._type = 0
 
     def show(self):
         print self.node_name, self.val
+
+    def serialize(self, env):
+        number = S_Number()
+        number['val'] = int(self.val)
+        number['_type'] = self._type
+        return number
