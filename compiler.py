@@ -8,11 +8,10 @@ from c_parser import Parser
 from c_ast import *
 from serialize_structure import FileFormat
 from analysis_handler import AnalysisVisitor
+from serialize_handler import minify_ast
 
 logger = logging.getLogger(__file__)
 
-
-            
 
 class StringTable(object):
     def __init__(self):
@@ -75,8 +74,6 @@ class Compiler(object):
 
     def dump_stringtable(self):
         string_table = self.env.string_table
-        print string_table.index
-        print string_table.table
         data = ''
         for string in string_table.table:
             data += string + '\0'
@@ -84,7 +81,8 @@ class Compiler(object):
     
     def compile(self):
         obj = FileFormat()
-        body = self.ast.serialize(self.env)
+        ast = minify_ast(self.ast)
+        body = ast.serialize(self.env)
         stringtable = self.dump_stringtable()
         logger.info("StringTable: %s " % stringtable)
         obj['stringtable'] = stringtable
@@ -100,4 +98,4 @@ if __name__ == "__main__":
     compiler = Compiler(source)
     compiler.ast_gen()
     compiler.analysis()
-    #compiler.compile()
+    compiler.compile()
