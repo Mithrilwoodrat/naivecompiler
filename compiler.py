@@ -6,9 +6,13 @@ import traceback
 import hashlib
 from c_parser import Parser
 from c_ast import *
-
+from serialize_structure import FileFormat
+from analysis_handler import AnalysisVisitor
 
 logger = logging.getLogger(__file__)
+
+
+            
 
 class StringTable(object):
     def __init__(self):
@@ -55,10 +59,19 @@ class Compiler(object):
 
     def ast_gen(self):
         self.ast = self.parser.parse(self.source)
+        if self.ast is None:
+            logger.error('Parsing Failed')
+            return False
         self.ast.show()
+        return True
 
     def analysis(self):
-        pass
+        av = AnalysisVisitor()
+        av.visit(self.ast)
+        if av.has_error():
+            logger.error('Compile Failed')
+            return False
+        return True
 
     def dump_stringtable(self):
         string_table = self.env.string_table
@@ -86,4 +99,5 @@ if __name__ == "__main__":
         source = f.read()
     compiler = Compiler(source)
     compiler.ast_gen()
-    compiler.compile()
+    compiler.analysis()
+    #compiler.compile()

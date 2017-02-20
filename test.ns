@@ -1,5 +1,6 @@
 {
     int abc;
+    int i;
 	i=2;
     abc=abc+(i+1);
     write abc;

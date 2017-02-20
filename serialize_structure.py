@@ -9,59 +9,26 @@ from Structure import Structure
 
 logger = logging.getLogger(__file__)
 
+# defines
 FileMD5Size = 16
 
-## symbol map
-class S_Symbol( Structure ):
-    structure = \
-    (
-        ("id", '<I'),
-        ("length", "<I=len( string )"),
-        ("string", "z"),
-    )
+#types
+# int 0
+# double 1
 
-# class SymbolMap( Structure ):
-#     structure = \
-#     (
-# 	('count' , '<I=data.GetSize()'), 
-# 	('size' , '<I=data.GetDataSize()'),
-# 	('data' , ':' , SerializeCollection ),
-#     )
-
-## TODO
-## File
-  # -------
-  # magic
-  # entry (of body)
-  # bodySize
-  # headerSize
-  # bodyMD5
-  # header
-  #  ------
-  #      SegmentTable -----
-  #          StringTableSegment
-  #          ASTSegment
-  #          --------------
-  # body
-  # ---------
-  # SymbolMap
-  # ------
-  # ASTEntry
-  # -------
-
-# class SegmentHeaderTable(Structure):
-#     structure = (
-#         ( "count", "<I"),
-#         ( "size", "<I=len(data)"),
-#         ( "data", ":"),
-#     )
-
-# class SegmentHeader(Structure):
-#     structure = (
-#         ('type', '<I=0'), #暂不用
-#         ('size', '<I'),
-#         ('entry', '<I'),
-#     )
+# enum NodeType
+# {
+#     CodeBlock = 0,
+#     DeclarationList, 1
+#     StatementList, 2
+#     Declaration, 3
+#     ForStmt, 4
+#     WriteStmt, 5
+#     AssignmentExpr, 6
+#     BinaryOp, 7
+#     ID, 8
+#     Number, 9
+# };
     
 ## File
   # -------
@@ -156,10 +123,11 @@ class S_BinaryOp(Structure):
         ("exp2", ":")
     )
 
-class S_ID(Structure):
+class S_Symbol(Structure):
     structure = (
         ("type", "<I=10"),
         ("_id", "<I"), # id in StringTable
+        ("_type", "<I"),
     )
 
 class S_Number(Structure):

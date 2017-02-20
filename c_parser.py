@@ -158,9 +158,11 @@ class Parser(object):
             p[0] = p[1] + p[2]
 
     def p_declaration(self, p):
-        """ declaration  : INT ID SEMI
+        """ declaration  : INT varsymbol SEMI
         """
         # declaration(ID, TYPE)
+        #var = VariableSymbol(p[2])
+        #p[0] = Declaration(var, p[1])
         p[0] = Declaration(p[2], p[1])
     
     def p_statement_list(self, p):
@@ -191,13 +193,15 @@ class Parser(object):
         p[0] = ForStmt(p[3], p[5], p[7], p[9])
 
     def p_write_statement(self, p):
-        ''' write_statement : WRITE ID SEMI '''
+        ''' write_statement : WRITE varsymbol SEMI '''
         # WriteStat(ID)
+        #var = VariableSymbol(p[2])
         p[0] = WriteStmt(p[2])
 
     def p_read_statement(self, p):
-        ''' read_statement : READ ID SEMI '''
+        ''' read_statement : READ varsymbol SEMI '''
         # WriteStat(ID)
+        #var = VariableSymbol(p[2])
         p[0] = ReadStmt(p[2])
     
     def p_assignment_statment(self, p):
@@ -206,7 +210,8 @@ class Parser(object):
 
     def p_assignment_expr(self, p):
         '''assignment_expr : ID EQUALS expression'''
-        p[0] = AssignmentExpr(p[1], p[3])
+        var = VariableSymbol(p[1])
+        p[0] = AssignmentExpr(var, p[3])
     
     def p_expression(self, p):
         ''' expression : bool_expression '''
@@ -233,7 +238,7 @@ class Parser(object):
                   | binary_expr TIMES binary_expr
                   | binary_expr DIVIDES binary_expr
                   | LPAREN binary_expr RPAREN
-                  | symbol
+                  | varsymbol
                   | number '''
         if len(p) == 2:
             p[0] = p[1]
@@ -244,13 +249,13 @@ class Parser(object):
                 p[0] = BinaryOp(p[1], p[2], p[3])
 
     
-    def p_symbol(self, p):
-        ''' symbol : ID '''
-        p[0] = Symbol(p[1])
+    def p_varsymbol(self, p):
+         ''' varsymbol : ID '''
+         p[0] = VariableSymbol(p[1])
 
     def p_number(self, p):
-        ''' number : NUM '''
-        p[0] = Number(p[1])
+         ''' number : NUM '''
+         p[0] = Number(p[1])
 
 # import sys
 # yacc.yacc()
