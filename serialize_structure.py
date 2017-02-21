@@ -43,7 +43,8 @@ FileMD5Size = 16
 class FileFormat(Structure):
     structure = (
         ( "magic", "<I=0"),
-        ( "entry", "<I=4 * 4 + 16 + len(stringtable)"),
+        ( "stringTableEntry", "<I=4 * 5 + 16"),
+        ( "bodyEntry", "<I=4 * 5 + 16 + len(stringtable)"),
         ( "bodySize", "<I=len(body)"),
         ( "stringtableSize", "<I=len(stringtable)"),
         ( "bodyMD5", "%ds" % FileMD5Size),

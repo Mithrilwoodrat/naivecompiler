@@ -11,9 +11,7 @@ namespace serialize
 
 enum NodeType
 {
-    CodeBlock = 0,
-    DeclarationList,
-    StatementList,
+    StatementList = 2,
     Declaration,
     ForStmt,
     WriteStmt,
@@ -25,12 +23,19 @@ enum NodeType
 
 const uint32_t FileMD5Size = 16 ;
 
-struct FileHeader
+struct StringTable {
+    uint8_t data[0];
+}__attribute__((packed)) ;
+
+struct FileFormat
 {
     uint32_t magic ;
-    uint32_t entry ;
+    uint32_t stringTableEntry ;
+    uint32_t bodyEntry ;
     uint32_t bodySize ;
+    uint32_t stringtableSize;
     uint8_t bodyMD5[ FileMD5Size ] ;
+    StringTable stringtable;
     uint8_t body[ 0 ] ;
 } __attribute__((packed)) ;
 

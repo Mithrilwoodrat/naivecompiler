@@ -8,7 +8,7 @@ from c_parser import Parser
 from c_ast import *
 from serialize_structure import FileFormat
 from analysis_handler import AnalysisVisitor
-from serialize_handler import minify_ast
+from serialize_handler import SerializeHandler
 
 logger = logging.getLogger(__file__)
 
@@ -64,6 +64,14 @@ class Compiler(object):
         self.ast.show()
         return True
 
+    def minify_ast(self, ast):
+        ''' 
+        minify for codegen. 
+        remove declarations.
+        '''
+        assert ast.__class__.__name__ == 'CodeBlock'
+        return ast.statement_list
+
     def analysis(self):
         av = AnalysisVisitor()
         av.visit(self.ast)
@@ -77,14 +85,24 @@ class Compiler(object):
         data = ''
         for string in string_table.table:
             data += string + '\0'
+        print 'dumped stringtable:',
+        for c in data:
+            print '%x' % ord(c),
+        print
         return data
+
+    def dump_body(self):
+        sh = SerializeHandler(self.env)
+        return sh.serialize(self.ast)
     
     def compile(self):
         obj = FileFormat()
-        ast = minify_ast(self.ast)
-        body = ast.serialize(self.env)
+        self.ast = self.minify_ast(self.ast)
+        self.ast.show()
+        body = self.dump_body()
+        #body = self.ast.serialize(self.env)
         stringtable = self.dump_stringtable()
-        logger.info("StringTable: %s " % stringtable)
+        logger.info("StringTable: %s ,len: %d" % (stringtable, len(stringtable)))
         obj['stringtable'] = stringtable
         obj['body'] = body
         obj[ "bodyMD5" ] = hashlib.md5( str(body) ).digest()
