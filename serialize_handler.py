@@ -21,6 +21,7 @@ class SerializeHandler(object):
         stmt_list['count'] = len(node.l)
         data = ''
         for stmt in node.l:
+            print stmt.__class__.__name__, len(str(self.serialize(stmt)))
             data += str(self.serialize(stmt))
             stmt_list['data'] = data
         return stmt_list

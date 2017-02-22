@@ -110,6 +110,7 @@ class S_AssignmentExpr(Structure):
     structure = (
         ("type", "<I=8"),
         ("id", "<I"),
+        ("size", "<I=4*4 + len(exp)"),
         ("exp_size", "<I=len(exp)"),
         ("exp", ":")
     )
@@ -118,6 +119,7 @@ class S_BinaryOp(Structure):
     structure = (
         ("type", "<I=9"),
         ("op", "c"),
+        ("size", "<I=4*4 + 2 + len(exp1) + len(exp2)"),
         ("exp1_size", "<I=len(exp1)"),
         ("exp2_size", "<I=len(exp2)"),
         ("exp1", ":"),

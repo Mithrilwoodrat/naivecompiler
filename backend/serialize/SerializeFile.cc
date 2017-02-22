@@ -1,8 +1,4 @@
 #include "SerializeFile.h"
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-
 
 namespace naivescript{
 namespace serialize {
@@ -21,16 +17,17 @@ bool SymbolTable::Parse( char * data, size_t size ) {
             }
         }
     }
+    std::cout << "Symbols : "; 
     for (auto &s : symbols) {
-        std::cout << s << std::endl;
+        std::cout << s << " ";
     }
+    std::cout << std::endl;
     return true;
 }
 
-bool SerializeFile::Load( void ) 
+bool SerializeFile::Load( const std::string& path ) 
 {
     // load binary file into std:string
-    FileFormat *file_header;
     std::ifstream fdata(path);
     if (!fdata) {
         std::cout << "Load File Failed" << std::endl;
@@ -46,22 +43,22 @@ bool SerializeFile::Load( void )
                std::istreambuf_iterator<char>());
     const char * data = data_str.c_str();
 
-    size_t length = data_str.size();
-
-    file_header = reinterpret_cast<FileFormat*>( const_cast<char *>(data) ); 
-    body_size = file_header->bodySize;
-    string_table_size = file_header->stringtableSize;
+    //size_t length = data_str.size();
+    FileFormat *file;
+    file = reinterpret_cast<FileFormat*>( const_cast<char *>(data) ); 
+    body_size = file->bodySize;
+    string_table_size = file->stringtableSize;
      std::cout << "StringTableEntry: " << 
-        file_header->stringTableEntry << std::endl;
+        file->stringTableEntry << std::endl;
     std::cout << "Bodyentry: " << 
-        file_header->bodyEntry << std::endl;
+        file->bodyEntry << std::endl;
     std::cout << "bodySize: " << 
-        file_header->bodySize << std::endl;
+        file->bodySize << std::endl;
     std::cout << "StringTableSize: " << 
-        file_header->stringtableSize << std::endl;
+        file->stringtableSize << std::endl;
 
-    symbol_table.Parse(const_cast<char *>(data) + file_header->stringTableEntry, string_table_size);
-
+    symbol_table.Parse(const_cast<char *>(data) + file->stringTableEntry, string_table_size);
+    this->body = reinterpret_cast<char *>(const_cast<char *>(data) + file->bodyEntry);
     return true;
 
 }

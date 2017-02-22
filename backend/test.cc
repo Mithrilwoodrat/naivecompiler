@@ -1,7 +1,13 @@
-#include "serialize/SerializeFile.h"
+#include "Compiler.h"
 #include <string>
 
+using namespace naivescript;
+
 int main() {
-    naivescript::serialize::SerializeFile file_handler("ns.data");
-    file_handler.Load();
+    Compiler * compiler = Compiler::GetCompiler();
+    compiler->LoadData("ns.data");
+    // ast::StmtList stmt_list;
+    // char *body = const_cast<char *>(file_handler.GetBody());
+    // stmt_list.Parse(reinterpret_cast<struct serialize::StmtList*>(body),
+    //      file_handler.GetBodySize() );
 }
