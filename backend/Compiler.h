@@ -2,8 +2,9 @@
 #define COMPILER_H
 
 #include <string>
+#include <iostream>
 #include "SerializeFile.h"
-#include "AST.h"
+#include "StmtList.h"
 
 namespace naivescript
 {
@@ -12,6 +13,7 @@ class Compiler
 {
 public:
     Compiler() {}
+    
     static Compiler * GetCompiler() {
         if (!instance) {
             instance = new Compiler();
@@ -19,17 +21,25 @@ public:
         return instance;
     }
 
-    static void LoadData(const std::string& path) {
-        GetCompiler()->file.Load(path);
-        GetCompiler()->symbol_table = GetCompiler()->file.GetSymbolTable();
+    void LoadData(const std::string& path) {
+        file.Load(path);
+        symbol_table = file.GetSymbolTable();
     };
 
     static const std::string& ResolveSymbol(uint32_t id) {
         return GetCompiler()->symbol_table->ResolveSymbol(id);
     }
+
+    void Compile( void ) {
+        char *body = const_cast<char *>(file.GetBody());
+        stmt_list.Parse(reinterpret_cast<struct serialize::StmtList*>(body),
+        file.GetBodySize() );
+    }
+    
     static Compiler* instance;
 private:
     const serialize::SymbolTable* symbol_table;
+    ast::StmtList stmt_list;
     serialize::SerializeFile file;
 };
 

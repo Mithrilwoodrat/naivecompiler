@@ -3,3 +3,4 @@
 parsetab.py
 build/
 *.data
+.vscode/

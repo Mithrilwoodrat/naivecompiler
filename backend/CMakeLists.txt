@@ -6,7 +6,7 @@ SET(CMAKE_CXX_COMPILER clang++)
 Option(ENABLE_DEBUG "Enable debug , true/false" true)
 
 if(ENABLE_DEBUG) 
-    Add_Definitions( -O0 -g -DDOLPHIN_DEBUG )
+    Add_Definitions( -O0 -g -DNSDEBUG )
     Message(STATUS  "Enable debug") 
 else() 
 Add_Definitions( -O4 ) 
@@ -22,6 +22,7 @@ Set( NSIncludeDir ${NSWorkingPath}
     /usr/include )
 
 Set( NSSrcFiles
+    ${NSWorkingPath}/NaiveScript.h
     ${NSWorkingPath}/Compiler.h
     ${NSWorkingPath}/Compiler.cc
     ${NSWorkingPath}/Util.h
@@ -31,10 +32,13 @@ Set( NSSrcFiles
     ${NSWorkingPath}/serialize/SerializeFile.h
     ${NSWorkingPath}/serialize/SerializeStructure.h
 
-    ${NSWorkingPath}/ast/AST.h
     ${NSWorkingPath}/ast/ASTNode.h
     ${NSWorkingPath}/ast/StmtList.h
-    ${NSWorkingPath}/ast/Assignment.h
+    ${NSWorkingPath}/ast/StmtList.cc
+    ${NSWorkingPath}/ast/AssignmentNode.h
+    ${NSWorkingPath}/ast/AssignmentNode.cc
+    ${NSWorkingPath}/ast/ValueNode.h
+    ${NSWorkingPath}/ast/ValueNode.cc
 )
 
 

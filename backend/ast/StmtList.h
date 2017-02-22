@@ -1,11 +1,10 @@
 #ifndef STMTLIST_H
 #define STMTLIST_H
 
+#include "NaiveScript.h"
 #include "ASTNode.h"
-#include "Assignment.h"
-#include "iostream"
+#include "AssignmentNode.h"
 #include "Util.h"
-#include <stdio.h>
 
 
 namespace naivescript{
@@ -15,7 +14,7 @@ class StmtFactory
 {
 public:
     static ASTNode * CreateAssignment(uint8_t *data, size_t size) {
-        Assignment *node = new Assignment();
+        AssignmentNode *node = new AssignmentNode();
         node->Parse(reinterpret_cast<struct serialize::Assignment*>(data), size);
         return node;
     }
@@ -26,26 +25,24 @@ class StmtList : public ASTNode
 public:
     virtual bool Parse( struct serialize::StmtList * stmt_list, size_t size )
     {
-        std::cout << "Parsing StmtList "  << std::endl;
-        std::cout << "TypeId: " << stmt_list->type << std::endl;
+        std::cout << "Parsing StmtList ";
+        //std::cout << "TypeId: " << stmt_list->type << std::endl;
         stmt_count =  stmt_list->count;
         std::cout << "Count: " << stmt_count << std::endl;
         uint8_t * data = stmt_list->data;
         size_t node_size;
         for (size_t i=0; i<stmt_count; i++) {
             uint32_t type = util::getStructType(data);
-            std::cout <<  "TypeId: " << type << std::endl;
+            //std::cout <<  "TypeId: " << type << std::endl;
             switch (type) {
                 case serialize::WriteStmt:
                     data += getStructSize(serialize::WriteStmt);
                     break;
                 case serialize::Assignment:
-                    std::cout << "Assigment " << "size: " << util::getVarStructSize(data) << std::endl;
+                    //std::cout << "Assigment " << "size: " << util::getVarStructSize(data) << std::endl;
                     node_size = util::getVarStructSize(data);
                     stmts.push_back(StmtFactory::CreateAssignment(data, node_size));
                     data += node_size;
-                    break;
-                case serialize::BinaryOp:
                     break;
                 default:
                     return false;
@@ -64,6 +61,12 @@ public:
         std::cout <<  "Node Count: " << stmt_count << std::endl;
         for (ASTNode * node : stmts) {
             node->show();
+        }
+    }
+
+    ~StmtList() {
+        for (ASTNode * node : stmts) {
+            free(node);
         }
     }
 
