@@ -6,20 +6,11 @@
 #include "Util.h"
 
 #include "ValueNode.h"
+#include "BinaryOpNode.h"
 
 
 namespace naivescript{
 namespace ast {
-
-class ExprFactory
-{
-public:
-    static ASTNode * CreateValue(uint8_t *data, size_t size) {
-        ValueNode *node = new ValueNode();
-        node->Parse(reinterpret_cast<struct serialize::Value*>(data), size);
-        return node;
-    }
-};
 
 class AssignmentNode : public ASTNode 
 {

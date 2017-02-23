@@ -25,8 +25,6 @@ public:
     virtual const std::vector<ASTNode *>& GetChildren( void ) = 0;
 };
 
-
-
 }
 }
 #endif

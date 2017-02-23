@@ -13,6 +13,7 @@ namespace ast {
 class BinaryOpNode : public ASTNode
 {
 public:
+    virtual bool Parse( struct serialize::BinaryOp * binaryop, size_t size );
 
     virtual void show( void) {
         std::cout <<  "BinaryOp\t";
@@ -30,7 +31,8 @@ private:
     std::string op;
     ASTNode * rhs;
     std::vector<ASTNode *> children;
-}
+};
+
 }
 }
 #endif

@@ -33,12 +33,18 @@ Set( NSSrcFiles
     ${NSWorkingPath}/serialize/SerializeStructure.h
 
     ${NSWorkingPath}/ast/ASTNode.h
+    ${NSWorkingPath}/ast/NodeFactory.h
+    ${NSWorkingPath}/ast/NodeFactory.cc
     ${NSWorkingPath}/ast/StmtList.h
     ${NSWorkingPath}/ast/StmtList.cc
     ${NSWorkingPath}/ast/AssignmentNode.h
     ${NSWorkingPath}/ast/AssignmentNode.cc
     ${NSWorkingPath}/ast/ValueNode.h
     ${NSWorkingPath}/ast/ValueNode.cc
+    ${NSWorkingPath}/ast/SymbolNode.h
+    ${NSWorkingPath}/ast/SymbolNode.cc
+    ${NSWorkingPath}/ast/BinaryOpNode.h
+    ${NSWorkingPath}/ast/BinaryOpNode.cc
 )
 
 

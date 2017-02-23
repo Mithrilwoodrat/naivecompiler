@@ -86,10 +86,10 @@ struct BinaryOp
     uint32_t type;
     uint8_t op;
     uint32_t size;
-    uint32_t expr1Size;
-    uint32_t expr2Size;
-    Expr expr1;
-    Expr expr2;
+    uint32_t lhsSize;
+    uint32_t rhsSize;
+    Expr lhs;
+    Expr rhs;
 }__attribute__((packed)) ;
 
 struct Symbol {

@@ -3,22 +3,13 @@
 
 #include "NaiveScript.h"
 #include "ASTNode.h"
+#include "NodeFactory.h"
 #include "AssignmentNode.h"
 #include "Util.h"
 
 
 namespace naivescript{
 namespace ast {
-
-class StmtFactory
-{
-public:
-    static ASTNode * CreateAssignment(uint8_t *data, size_t size) {
-        AssignmentNode *node = new AssignmentNode();
-        node->Parse(reinterpret_cast<struct serialize::Assignment*>(data), size);
-        return node;
-    }
-};
 
 class StmtList : public ASTNode
 {
@@ -41,7 +32,7 @@ public:
                 case serialize::Assignment:
                     //std::cout << "Assigment " << "size: " << util::getVarStructSize(data) << std::endl;
                     node_size = util::getVarStructSize(data);
-                    stmts.push_back(StmtFactory::CreateAssignment(data, node_size));
+                    stmts.push_back(NodeFactory::CreateAssignment(data, node_size));
                     data += node_size;
                     break;
                 default:
