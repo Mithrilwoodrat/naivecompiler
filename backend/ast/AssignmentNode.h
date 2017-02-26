@@ -17,9 +17,9 @@ class AssignmentNode : public ASTNode
 public:
     virtual bool Parse( struct serialize::Assignment * assignment, size_t size ) ;
 
-    virtual void show( void) {
+    virtual void show( void ) {
         std::cout <<  "Assignment\t";
-        //expr->show();
+        expr->show();
     }
 
     virtual const std::vector<ASTNode *>& GetChildren( void ) 

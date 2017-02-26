@@ -1,7 +1,7 @@
 project(naivescript)
 cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_C_COMPILER clang)
-SET(CMAKE_CXX_COMPILER clang++)
+SET(CMAKE_CXX_COMPILER g++)
 
 Option(ENABLE_DEBUG "Enable debug , true/false" true)
 
@@ -33,6 +33,7 @@ Set( NSSrcFiles
     ${NSWorkingPath}/serialize/SerializeStructure.h
 
     ${NSWorkingPath}/ast/ASTNode.h
+    ${NSWorkingPath}/ast/ASTNode.cc
     ${NSWorkingPath}/ast/NodeFactory.h
     ${NSWorkingPath}/ast/NodeFactory.cc
     ${NSWorkingPath}/ast/StmtList.h
@@ -45,6 +46,9 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/SymbolNode.cc
     ${NSWorkingPath}/ast/BinaryOpNode.h
     ${NSWorkingPath}/ast/BinaryOpNode.cc
+
+    ${NSWorkingPath}/ast/NodeVisitor.h
+    ${NSWorkingPath}/ast/NodeVisitor.cc
 )
 
 
