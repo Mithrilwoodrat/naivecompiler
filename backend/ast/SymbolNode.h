@@ -14,14 +14,18 @@ public:
     SymbolNode() : symboltype(0) {}
     virtual bool Parse( struct serialize::Symbol * symbol, size_t size );
 
-    virtual void show(void) {
-        std::cout <<  "ID: " << id << std::endl;
+    virtual void show(void) 
+    {
+        std::cout <<  "ID: " << id;
     }
 
     virtual const std::vector<ASTNode *>& GetChildren( void ) 
     {
         return children;
     }
+
+    virtual void accept(Visitor* v);
+
 private:
     std::string id;
     uint32_t symboltype;

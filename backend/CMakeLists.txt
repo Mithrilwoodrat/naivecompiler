@@ -1,7 +1,7 @@
 project(naivescript)
 cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_C_COMPILER clang)
-SET(CMAKE_CXX_COMPILER g++)
+SET(CMAKE_CXX_COMPILER clang++)
 
 Option(ENABLE_DEBUG "Enable debug , true/false" true)
 

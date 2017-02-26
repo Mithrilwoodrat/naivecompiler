@@ -12,14 +12,17 @@
 namespace naivescript{
 namespace ast {
 
+class Visitor;
+
 class AssignmentNode : public ASTNode 
 {
 public:
     virtual bool Parse( struct serialize::Assignment * assignment, size_t size ) ;
 
     virtual void show( void ) {
-        std::cout <<  "Assignment\t";
+        std::cout <<  "Assignment: ID: " << id << " = ";
         expr->show();
+        std::cout << std::endl;
     }
 
     virtual const std::vector<ASTNode *>& GetChildren( void ) 
@@ -28,6 +31,8 @@ public:
         return children;
     }
     
+    virtual void accept(Visitor* v);
+
     ~AssignmentNode()
     { 
         free(expr);

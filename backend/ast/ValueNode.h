@@ -16,7 +16,7 @@ public:
     virtual bool Parse( struct serialize::Value * value, size_t size );
 
     virtual void show(void) {
-        std::cout <<  "ConstValue: " << val << std::endl;
+        std::cout <<  "ConstValue: " << val;
     }
 
     virtual const std::vector<ASTNode *>& GetChildren( void ) 
@@ -24,6 +24,7 @@ public:
         return children;
     }
 
+    virtual void accept(Visitor* v);
 private:
     uint32_t val;
     uint32_t valuetype;

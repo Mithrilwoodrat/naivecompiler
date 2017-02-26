@@ -5,6 +5,7 @@
 namespace naivescript
 {
 namespace ast {
+
 bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t size ) 
 {
     std::cout << "Parsing Assignment: ";
@@ -27,5 +28,11 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
     }
     return true;
 }
+
+void AssignmentNode::accept(Visitor* v)
+{
+    v->visit(this);
+}
+
 }
 }

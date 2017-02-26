@@ -42,18 +42,21 @@ public:
         return true;
     }
 
-    virtual const std::vector<ASTNode *>& GetChildren( void ) 
+    virtual const std::vector<ASTNode *>& GetChildren( void ) override
     {
         return stmts;
     }
 
-    virtual void show( void) {
+    virtual void show( void ) override
+    {
         std::cout <<  "StmtList\t";
         std::cout <<  "Node Count: " << stmt_count << std::endl;
         for (ASTNode * node : stmts) {
             node->show();
         }
-    } 
+    }
+
+    virtual void accept(Visitor* v) override;
 
     ~StmtList() {
         for (ASTNode * node : stmts) {

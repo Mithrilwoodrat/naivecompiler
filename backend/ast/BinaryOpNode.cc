@@ -26,24 +26,29 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
                 return false;
         }
 
-        uint8_t* p_rhs = p_lhs + binaryop->lhsSize + 4 * 4 + 2;
+        uint8_t* p_rhs = p_lhs + binaryop->lhsSize;
         type = util::getStructType(p_rhs);
         switch(type) {
             case serialize::Value:
-                rhs = NodeFactory::CreateValue(p_rhs, binaryop->lhsSize);
+                rhs = NodeFactory::CreateValue(p_rhs, binaryop->rhsSize);
                 break;
             case serialize::Symbol:
-                rhs = NodeFactory::CreateSymbol(p_rhs, binaryop->lhsSize);
+                rhs = NodeFactory::CreateSymbol(p_rhs, binaryop->rhsSize);
                 break;
             case serialize::BinaryOp:
-                rhs = NodeFactory::CreateBinaryOp(p_rhs, binaryop->lhsSize);
+                rhs = NodeFactory::CreateBinaryOp(p_rhs, binaryop->rhsSize);
                 break;
             default:
+                std::cout << "Unknown Type" << std::endl;
                 return false;
         }
 
-
         return true;
+}
+
+void BinaryOpNode::accept(Visitor* v)
+{
+    v->visit(this);
 }
 
 }

@@ -35,7 +35,7 @@ public:
         char *body = const_cast<char *>(file.GetBody());
         stmt_list.Parse(reinterpret_cast<struct serialize::StmtList*>(body),
         file.GetBodySize() );
-        stmt_list.visit(&showVisitor);
+        stmt_list.accept(&showVisitor);
     }
     
     static Compiler* instance;

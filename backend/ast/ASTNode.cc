@@ -6,9 +6,5 @@
 namespace naivescript{
 namespace ast {
 
-void ASTNode::visit(Visitor* v) {
-        v->visit(this);
-}    
-
 }
 }

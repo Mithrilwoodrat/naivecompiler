@@ -13,5 +13,11 @@ bool SymbolNode::Parse( struct serialize::Symbol * symbol, size_t size ) {
     return true;
 }
 
+void SymbolNode::accept(Visitor* v)
+{
+    v->visit(this);
+}
+
+
 }
 }

@@ -14,7 +14,7 @@ class ASTNode
 {
 public:
     //virtual bool Parse( uint8_t * data, size_t size ) = 0;
-    virtual void visit(Visitor* v);
+    virtual void accept(Visitor* v) = 0;
     virtual void show( void ) = 0;
     virtual const std::vector<ASTNode *>& GetChildren( void ) = 0;
 };

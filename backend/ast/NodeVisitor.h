@@ -17,7 +17,6 @@ namespace ast {
 class Visitor
 {
   public:
-    virtual void visit(ASTNode *node) {  }
     virtual void visit(StmtList *node) = 0;
     virtual void visit(AssignmentNode *node) = 0;
     virtual void visit(BinaryOpNode *node) = 0;

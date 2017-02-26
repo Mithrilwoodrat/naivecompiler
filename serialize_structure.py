@@ -119,7 +119,7 @@ class S_BinaryOp(Structure):
     structure = (
         ("type", "<I=9"),
         ("op", "c"),
-        ("size", "<I=4*4 + 2 + len(exp1) + len(exp2)"),
+        ("size", "<I=4*4 + 1 + len(exp1) + len(exp2)"),
         ("exp1_size", "<I=len(exp1)"),
         ("exp2_size", "<I=len(exp2)"),
         ("exp1", ":"),
