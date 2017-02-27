@@ -30,6 +30,8 @@ Set( NSSrcFiles
 
     ${NSWorkingPath}/serialize/SerializeFile.cc
     ${NSWorkingPath}/serialize/SerializeFile.h
+    ${NSWorkingPath}/serialize/SymbolTable.h
+    ${NSWorkingPath}/serialize/SymbolTable.cc
     ${NSWorkingPath}/serialize/SerializeStructure.h
 
     ${NSWorkingPath}/ast/ASTNode.h
