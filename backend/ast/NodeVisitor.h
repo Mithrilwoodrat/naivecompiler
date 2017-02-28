@@ -2,38 +2,36 @@
 #define NODEVISITOR_H
 
 #include "NaiveScript.h"
-#include "ASTNode.h"
-#include "Util.h"
-
-#include "StmtList.h"
-#include "AssignmentNode.h"
-#include "ValueNode.h"
-#include "BinaryOpNode.h"
-#include "SymbolNode.h"
+#include "llvm/IR/IRBuilder.h"
 
 namespace naivescript{
-namespace ast {
+
+class StmtList;
+class AssignmentNode;
+class BinaryOpNode;
+class SymbolNode;
+class ValueNode;
+
 
 class Visitor
 {
   public:
-    virtual void visit(StmtList *node) = 0;
-    virtual void visit(AssignmentNode *node) = 0;
-    virtual void visit(BinaryOpNode *node) = 0;
-    virtual void visit(SymbolNode *node) = 0;
-    virtual void visit(ValueNode *node) = 0;
+    virtual llvm::Value* visit(StmtList *node) = 0;
+    virtual llvm::Value* visit(AssignmentNode *node) = 0;
+    virtual llvm::Value* visit(BinaryOpNode *node) = 0;
+    virtual llvm::Value* visit(SymbolNode *node) = 0;
+    virtual llvm::Value* visit(ValueNode *node) = 0;
 };
 
 class ASTShowVisitor : public Visitor
 {
-    virtual void visit(StmtList *node);
-    virtual void visit(AssignmentNode *node);
-    virtual void visit(BinaryOpNode *node);
-    virtual void visit(SymbolNode *node);
-    virtual void visit(ValueNode *node);
+    virtual llvm::Value* visit(StmtList *node);
+    virtual llvm::Value* visit(AssignmentNode *node);
+    virtual llvm::Value* visit(BinaryOpNode *node);
+    virtual llvm::Value* visit(SymbolNode *node);
+    virtual llvm::Value* visit(ValueNode *node);
 };
 
-}
 }
 
 #endif

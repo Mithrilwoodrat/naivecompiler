@@ -5,7 +5,6 @@
 #include "stdint.h"
 
 namespace naivescript{
-namespace ast {
 
 class NodeFactory
 {
@@ -16,7 +15,6 @@ public:
     static ASTNode* CreateSymbol(uint8_t *data, uint32_t size);
 };
 
-}
 }
 
 #endif

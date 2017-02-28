@@ -4,7 +4,5 @@
 
 
 namespace naivescript{
-namespace ast {
 
-}
 }

@@ -3,7 +3,6 @@
 
 namespace naivescript
 {
-namespace ast {
 
 bool SymbolNode::Parse( struct serialize::Symbol * symbol, size_t size ) {
     std::cout << "Parsing Symbol: ";
@@ -13,11 +12,9 @@ bool SymbolNode::Parse( struct serialize::Symbol * symbol, size_t size ) {
     return true;
 }
 
-void SymbolNode::accept(Visitor* v)
+llvm::Value* SymbolNode::accept(Visitor* v)
 {
-    v->visit(this);
+    return v->visit(this);
 }
 
-
-}
 }

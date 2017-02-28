@@ -10,7 +10,6 @@
 
 
 namespace naivescript{
-namespace ast {
 
 class Visitor;
 
@@ -31,7 +30,15 @@ public:
         return children;
     }
     
-    virtual void accept(Visitor* v);
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline const std::string& GetID( void ) const {
+        return id;
+    }
+
+    inline ASTNode* GetExpr( void )  {
+        return expr;
+    }
 
     ~AssignmentNode()
     { 
@@ -43,6 +50,5 @@ private:
     ASTNode* expr;
 };
 
-}
 }
 #endif

@@ -6,7 +6,6 @@
 #include "Util.h"
 
 namespace naivescript{
-namespace ast {
 
 class ValueNode : public ASTNode {
 
@@ -24,13 +23,20 @@ public:
         return children;
     }
 
-    virtual void accept(Visitor* v);
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline const uint32_t GetVal( void ) const {
+        return val;
+    }
+
+    inline const uint32_t GetValType( void ) const {
+        return val;
+    }
 private:
     uint32_t val;
     uint32_t valuetype;
     std::vector<ASTNode *> children;
 };
 
-}
 }
 #endif

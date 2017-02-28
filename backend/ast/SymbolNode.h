@@ -6,7 +6,6 @@
 #include "Util.h"
 
 namespace naivescript{
-namespace ast {
 
 class SymbolNode : public ASTNode
 {
@@ -24,13 +23,16 @@ public:
         return children;
     }
 
-    virtual void accept(Visitor* v);
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline const std::string& GetSymbol( void ) const {
+        return id;
+    }
 
 private:
     std::string id;
     uint32_t symboltype;
     std::vector<ASTNode *> children;
 };
-}
 }
 #endif

@@ -4,7 +4,6 @@
 
 namespace naivescript
 {
-namespace ast {
 
 bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t size ) 
 {
@@ -29,10 +28,9 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
     return true;
 }
 
-void AssignmentNode::accept(Visitor* v)
+llvm::Value* AssignmentNode::accept(Visitor* v)
 {
-    v->visit(this);
+    return v->visit(this);
 }
 
-}
 }

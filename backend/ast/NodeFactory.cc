@@ -9,7 +9,6 @@
 
 
 namespace naivescript{
-namespace ast {
 
 ASTNode * NodeFactory::CreateAssignment(uint8_t *data, uint32_t size) {
     AssignmentNode *node = new AssignmentNode();
@@ -35,5 +34,4 @@ ASTNode* NodeFactory::CreateSymbol(uint8_t *data, uint32_t size) {
     return node;
 }
 
-}
 }

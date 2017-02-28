@@ -1,27 +1,36 @@
 #include "NodeVisitor.h"
 
+#include "StmtList.h"
+#include "AssignmentNode.h"
+#include "ValueNode.h"
+#include "BinaryOpNode.h"
+#include "SymbolNode.h"
+
 namespace naivescript{
-namespace ast {
 
-void ASTShowVisitor::visit(StmtList * node) {
+llvm::Value* ASTShowVisitor::visit(StmtList * node) {
     node->show();
+    return nullptr;
 }
 
-void ASTShowVisitor::visit(AssignmentNode *node) {
+llvm::Value* ASTShowVisitor::visit(AssignmentNode *node) {
     node->show();
+    return nullptr;
 }
 
-void ASTShowVisitor::visit(BinaryOpNode *node) {
+llvm::Value* ASTShowVisitor::visit(BinaryOpNode *node) {
     node->show();
+    return nullptr;
 }
 
-void ASTShowVisitor::visit(SymbolNode *node) {
+llvm::Value* ASTShowVisitor::visit(SymbolNode *node) {
     node->show();
+    return nullptr;
 }
 
-void ASTShowVisitor::visit(ValueNode *node) {
+llvm::Value* ASTShowVisitor::visit(ValueNode *node) {
     node->show();
+    return nullptr;
 }
 
-}
 }

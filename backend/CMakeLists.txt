@@ -18,43 +18,31 @@ Set( NSWorkingPath ${CMAKE_CURRENT_SOURCE_DIR} )
 
 Set( NSIncludeDir ${NSWorkingPath} 
     ${NSWorkingPath}/serialize
-    ${NSWorkingPath}/ast 
+    ${NSWorkingPath}/ast
+    ${NSWorkingPath}/codegen 
     /usr/include )
 
 Set( NSSrcFiles
-    ${NSWorkingPath}/NaiveScript.h
-    ${NSWorkingPath}/Compiler.h
     ${NSWorkingPath}/Compiler.cc
-    ${NSWorkingPath}/Util.h
     ${NSWorkingPath}/Util.cc
 
     ${NSWorkingPath}/serialize/SerializeFile.cc
-    ${NSWorkingPath}/serialize/SerializeFile.h
-    ${NSWorkingPath}/serialize/SymbolTable.h
     ${NSWorkingPath}/serialize/SymbolTable.cc
-    ${NSWorkingPath}/serialize/SerializeStructure.h
 
-    ${NSWorkingPath}/ast/ASTNode.h
     ${NSWorkingPath}/ast/ASTNode.cc
-    ${NSWorkingPath}/ast/NodeFactory.h
     ${NSWorkingPath}/ast/NodeFactory.cc
-    ${NSWorkingPath}/ast/StmtList.h
     ${NSWorkingPath}/ast/StmtList.cc
-    ${NSWorkingPath}/ast/AssignmentNode.h
     ${NSWorkingPath}/ast/AssignmentNode.cc
-    ${NSWorkingPath}/ast/ValueNode.h
     ${NSWorkingPath}/ast/ValueNode.cc
-    ${NSWorkingPath}/ast/SymbolNode.h
     ${NSWorkingPath}/ast/SymbolNode.cc
-    ${NSWorkingPath}/ast/BinaryOpNode.h
     ${NSWorkingPath}/ast/BinaryOpNode.cc
-
-    ${NSWorkingPath}/ast/NodeVisitor.h
     ${NSWorkingPath}/ast/NodeVisitor.cc
+
+    ${NSWorkingPath}/codegen/CodeGen.cc
 )
 
 
 
 add_executable(testNS  ${NSSrcFiles} test.cc)
 Target_Include_Directories( testNS PUBLIC ${NSIncludeDir} )
-#target_link_libraries(test PUBLIC gflags glog)
+target_link_libraries(testNS PUBLIC LLVM-3.9)

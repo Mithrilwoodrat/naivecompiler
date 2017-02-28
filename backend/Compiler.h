@@ -6,6 +6,7 @@
 #include "SerializeFile.h"
 #include "StmtList.h"
 #include "NodeVisitor.h"
+#include "CodeGen.h"
 
 namespace naivescript
 {
@@ -35,15 +36,17 @@ public:
         char *body = const_cast<char *>(file.GetBody());
         stmt_list.Parse(reinterpret_cast<struct serialize::StmtList*>(body),
         file.GetBodySize() );
-        stmt_list.accept(&showVisitor);
+        stmt_list.show();
+        genVisitor.dump(&stmt_list);
     }
     
     static Compiler* instance;
 private:
     const serialize::SymbolTable* symbol_table;
-    ast::StmtList stmt_list;
+    StmtList stmt_list;
     serialize::SerializeFile file;
-    ast::ASTShowVisitor showVisitor;
+    CodeGenVisitor genVisitor;
+    // ASTShowVisitor showVisitor;
 };
 
 }

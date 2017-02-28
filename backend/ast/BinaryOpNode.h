@@ -8,7 +8,6 @@
 
 
 namespace naivescript{
-namespace ast {
 
 class BinaryOpNode : public ASTNode
 {
@@ -31,7 +30,19 @@ public:
         return children;
     }
 
-    virtual void accept(Visitor* v);
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline const char GetOp( void ) const {
+        return op;
+    }
+
+    inline ASTNode* GetLHS( void )  {
+        return lhs;
+    }
+
+    inline ASTNode* GetRHS( void )  {
+        return rhs;
+    }
 
     ~BinaryOpNode() 
     {
@@ -45,11 +56,10 @@ public:
     
 private:
     ASTNode * lhs;
-    std::string op;
+    char op;
     ASTNode * rhs;
     std::vector<ASTNode *> children;
 };
 
-}
 }
 #endif

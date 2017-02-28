@@ -9,7 +9,6 @@
 
 
 namespace naivescript{
-namespace ast {
 
 class StmtList : public ASTNode
 {
@@ -56,7 +55,7 @@ public:
         }
     }
 
-    virtual void accept(Visitor* v) override;
+    virtual llvm::Value* accept(Visitor* v) override;
 
     ~StmtList() {
         for (ASTNode * node : stmts) {
@@ -69,6 +68,5 @@ private:
     std::vector<ASTNode*> stmts;
 };
 
-}
 }
 #endif

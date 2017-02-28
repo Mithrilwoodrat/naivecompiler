@@ -2,7 +2,6 @@
 #include "Compiler.h"
 
 namespace naivescript{
-namespace ast {
 
 bool ValueNode::Parse( struct serialize::Value * value, size_t size ) 
 {
@@ -13,10 +12,9 @@ bool ValueNode::Parse( struct serialize::Value * value, size_t size )
     return true;
 }
 
-void ValueNode::accept(Visitor* v)
+llvm::Value* ValueNode::accept(Visitor* v)
 {
-    v->visit(this);
+    return v->visit(this);
 }
 
-}
 }

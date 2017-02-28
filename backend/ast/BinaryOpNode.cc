@@ -4,7 +4,6 @@
 
 
 namespace naivescript{
-namespace ast {
 
 bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
         std::cout << "Parsing BinaryOP: ";
@@ -46,10 +45,9 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
         return true;
 }
 
-void BinaryOpNode::accept(Visitor* v)
+llvm::Value* BinaryOpNode::accept(Visitor* v)
 {
-    v->visit(this);
+    return v->visit(this);
 }
 
-}
 }
