@@ -46,7 +46,6 @@ private:
     StmtList stmt_list;
     serialize::SerializeFile file;
     CodeGenVisitor genVisitor;
-    // ASTShowVisitor showVisitor;
 };
 
 }

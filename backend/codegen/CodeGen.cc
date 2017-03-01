@@ -15,20 +15,25 @@ Value *LogErrorV(const char *Str) {
 
 void CodeGenVisitor::dump( StmtList *node) {
         Value * val = node->accept(this);
-        val->dump();
+        if (val) {
+            val->dump();
+        }
 }
 
 Value* CodeGenVisitor::visit(StmtList * stmtlist) {
-    Value* retval;
-    for (ASTNode * node : stmtlist->GetChildren()) {
+    Value* retval = nullptr;
+    if ( ! stmtlist->GetChildren().size() ) {
+        return LogErrorV("Empty StmtList");
+    }
+    for (ASTNode * node : stmtlist->GetChildren() ) {
         retval = node->accept(this);
     }
     return retval;
 }
 
 Value* CodeGenVisitor::visit(AssignmentNode *node) {
+    std::cout << "Register Symbol: " << node->GetID() <<  std::endl;
     Value * tmpval = node->GetExpr()->accept(this);
-    std::cout << "Register Symbol:" << node->GetID() <<  std::endl;
     NamedValues[node->GetID()] = tmpval;
     return tmpval;
 }
@@ -53,7 +58,7 @@ Value* CodeGenVisitor::visit(BinaryOpNode *node) {
 
 Value* CodeGenVisitor::visit(SymbolNode *node) {
     std::string symbol = node->GetSymbol();
-    std::cout << "Use Of Symbol" << symbol <<  std::endl;
+    std::cout << "Use Of Symbol: " << symbol <<  std::endl;
     if (!NamedValues.count(symbol)) {
         return LogErrorV("Using Uninitialize Variable");
     }
@@ -61,10 +66,10 @@ Value* CodeGenVisitor::visit(SymbolNode *node) {
 }
 
 Value* CodeGenVisitor::visit(ValueNode *node) {
-    Value* tmp = ConstantInt::get(TheContext, APInt(/*nbits*/32, node->GetVal(), /*bool*/true));
-    tmp->dump();
+    //Value* tmp = ConstantFP::get(TheContext, APFloat(static_cast<float>(node->GetVal())));
+    Value* tmp = ConstantInt::get(TheContext, APInt(32, node->GetVal(), false));
+    //tmp->dump();
     return tmp;
-    //return ConstantFP::get(TheContext, APFloat());
 }
 
 }

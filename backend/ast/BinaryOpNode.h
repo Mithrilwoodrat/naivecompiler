@@ -23,7 +23,7 @@ public:
         rhs->show();
     }
 
-    virtual const std::vector<ASTNode *>& GetChildren( void ) 
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
     {
         children.push_back(lhs);
         children.push_back(rhs);

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
+import logging
 from serialize_structure import *
+
+logger = logging.getLogger(__file__)
 
 class ASTNode(object):
     attr_names = ()
@@ -48,9 +51,12 @@ class CodeBlock(ASTNode):
         return codeblock
 
 class DeclarationList(ASTNode):
-    def __init__(self):
+    def __init__(self, declaration):
         self.node_name = "DeclarationList"
-        self.l = []
+        if type(declaration) is Declaration:
+            self.l = [declaration]
+        else:
+            logger.error('Initial with error type')
         
     def add_declaration(self, d):
         self.l.append(d)
@@ -75,9 +81,12 @@ class DeclarationList(ASTNode):
         return declaration_list
 
 class StmtList(ASTNode):
-    def __init__(self):
+    def __init__(self, stmt):
         self.node_name = "StmtList"
-        self.l = []
+        if 'Stmt' in stmt.__class__.__name__:
+            self.l = [stmt]
+        else:
+            logger.error('Initial with error type: {0}'.format(stmt.__class__))
 
     def add_stat(self, s):
         self.l.append(s)
@@ -154,7 +163,7 @@ class ForStmt(Statement):
     def children(self):
         return [self.assigment_expr1,
                 self.bool_expr,
-                self.assigment_expr3,
+                self.assigment_expr2,
                 self.body]
 
 
@@ -231,7 +240,7 @@ class BinaryOp(ASTNode):
         binary_op['exp2'] = str(self.lhs.serialize(env))
         return binary_op
         
-class BoolExpr(object):
+class BoolExpr(ASTNode):
     attr_names = ('op',)
     def __init__(self, lhs, op , rhs):
         self.node_name = "BoolExpr"

@@ -41,7 +41,7 @@ public:
         return true;
     }
 
-    virtual const std::vector<ASTNode *>& GetChildren( void ) override
+    virtual const std::vector<ASTNode *> GetChildren( void ) override
     {
         return stmts;
     }

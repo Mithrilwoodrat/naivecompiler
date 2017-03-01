@@ -18,7 +18,7 @@ public:
         std::cout <<  "ConstValue: " << val;
     }
 
-    virtual const std::vector<ASTNode *>& GetChildren( void ) 
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
     {
         return children;
     }

@@ -18,7 +18,7 @@ public:
         std::cout <<  "ID: " << id;
     }
 
-    virtual const std::vector<ASTNode *>& GetChildren( void ) 
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
     {
         return children;
     }

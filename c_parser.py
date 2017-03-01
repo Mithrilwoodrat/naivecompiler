@@ -153,7 +153,7 @@ class Parser(object):
                         |  declaration_list declaration
         """
         if len(p) == 2:
-            p[0] = p[1]
+            p[0] = DeclarationList(p[1])
         else:
             p[0] = p[1] + p[2]
 
@@ -170,7 +170,7 @@ class Parser(object):
                        | statement_list statement 
         '''
         if len(p) == 2:
-            p[0] = p[1]
+            p[0] = StmtList(p[1])
         else:
             p[0] = p[1] + p[2]
 

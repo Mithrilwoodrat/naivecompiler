@@ -24,7 +24,7 @@ public:
         std::cout << std::endl;
     }
 
-    virtual const std::vector<ASTNode *>& GetChildren( void ) 
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
     {
         children.push_back(expr);
         return children;
