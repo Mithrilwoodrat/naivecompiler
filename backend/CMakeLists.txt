@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_C_COMPILER clang)
 SET(CMAKE_CXX_COMPILER clang++)
 
+
 Option(ENABLE_DEBUG "Enable debug , true/false" true)
 
 if(ENABLE_DEBUG) 
@@ -12,7 +13,10 @@ else()
 Add_Definitions( -O4 ) 
 endif()
 
-Add_Definitions( -Wall -Werror -fPIC -std=c++11)
+Add_Definitions( -Wall -Werror -fPIC -std=c++11 
+-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
+
+#find_package(LLVM 3.8 CONFIG)
 
 Set( NSWorkingPath ${CMAKE_CURRENT_SOURCE_DIR} )
 
@@ -45,4 +49,4 @@ Set( NSSrcFiles
 
 add_executable(testNS  ${NSSrcFiles} test.cc)
 Target_Include_Directories( testNS PUBLIC ${NSIncludeDir} )
-target_link_libraries(testNS PUBLIC LLVM-3.9)
+target_link_libraries(testNS PUBLIC LLVM-3.8)
