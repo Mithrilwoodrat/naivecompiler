@@ -45,9 +45,21 @@ class Param(ASTNode):
     def children(self):
         return [self.param_name]
 
+    def __add__(self, rhs):
+        if type(rhs) is ParamList:
+            rhs.l.append(self)
+            return rhs
+        elif type(rhs) is Param:
+            pl = ParamList(self)
+            rl.l.append(rhs)
+            return pl
+
 class ParamList(ASTNode):
-    def __init__(self, param):
-        if type(param) is Param:
+    def __init__(self, param=None):
+        self.l = []
+        if param is None:
+            self.l = []
+        elif type(param) is Param:
             self.l = [param]
         else:
             logger.error('Initial with error type')

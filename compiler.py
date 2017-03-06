@@ -118,4 +118,4 @@ if __name__ == "__main__":
     compiler = Compiler(source)
     compiler.ast_gen()
     compiler.analysis()
-    compiler.compile()
+    #compiler.compile()

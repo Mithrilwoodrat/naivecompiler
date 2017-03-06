@@ -42,7 +42,8 @@ class Lexer(object):
         "for":"FOR",
         "int":"INT",
         "read":"READ",
-        "write":"WRITE"}
+        "write":"WRITE",
+        "void": "VOID"}
 
     # singlewords = ('{', '}', '(', ')' , ';')
     # binop = ('+', '-', '*', '/', '=', '>', '<')
@@ -54,7 +55,7 @@ class Lexer(object):
         "IF", "ELSE", 'FOR','INT', 'READ', 'WRITE',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
         "GE", 'LE', 'NE',
-        "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA",
+        "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA","VOID",
         "COMMENTS"
     )
     
@@ -83,6 +84,7 @@ class Lexer(object):
     t_RPAREN  = r'\)'
     t_SEMI = r';'
     t_COMMA = r','
+    t_VOID = r'void'
     t_AND     = r'&&'
     t_OR      = r'\|\|'
     
@@ -144,9 +146,9 @@ class Parser(object):
     def p_error(self, p):
         print("Syntax error at '%s', '%s'" % (p.value, p.lineno))
 
-    def p_source(self, p):
-        ''' source : funcdef
-                   | source funcdef
+    def p_funcdeflist(self, p):
+        ''' funcdeflist : funcdef
+                   | funcdeflist funcdef
         '''
         if len(p) == 2:
             p[0] = FuncDefList(p[1])
@@ -266,12 +268,16 @@ class Parser(object):
 
     def p_param_list(self, p):
         ''' param_list : param
-                       | param_list param COMMA
+                       | param COMMA param_list
+                       | VOID
         '''
         if len(p) == 2:
-            p[0] = ParamList(p[1])
+            if p[1] == 'void':
+                p[0] = ParamList()
+            else:
+                p[0] = ParamList(p[1])
         else:
-            p[0] = p[1] + p[2]
+            p[0] = p[1] + p[3]
         
     def p_funcdef(self, p):
         ''' funcdef : type methodsymbol LPAREN  param_list RPAREN code_block'''

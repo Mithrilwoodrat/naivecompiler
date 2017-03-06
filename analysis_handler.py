@@ -62,7 +62,4 @@ class AnalysisVisitor(NodeVisitor):
     def visit_AssignmentExpr(self, node):
         self.scope.resolve_symbol(node._id.name)
         helper = self.AssignmentExprHelpr(self.scope)
-        helper.visit(node) 
-        
-        
-
+        helper.visit(node)

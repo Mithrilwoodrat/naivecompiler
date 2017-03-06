@@ -1,4 +1,10 @@
-int main(int x)
+int fuck(int x, int y)
+{
+    int abc;
+	abc = 3;
+}
+
+int main( void )
 {
     int abc;
     int i;
