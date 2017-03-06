@@ -33,7 +33,69 @@ class SymbolTable(object):
 class AST(object):
     def __init__(self):
         pass
+    
+class Param(ASTNode):
+    attr_names = ('param_type', )
+    def __init__(self, param_type, param_name):
+        super(Param, self).__init__()
+        self.node_name = "Param"
+        self.param_type = param_type
+        self.param_name = param_name
 
+    def children(self):
+        return [self.param_name]
+
+class ParamList(ASTNode):
+    def __init__(self, param):
+        if type(param) is Param:
+            self.l = [param]
+        else:
+            logger.error('Initial with error type')
+
+    def __add__(self, rhs):
+        if type(rhs) is Param:
+            self.l.append(rhs)
+        elif type(rhs) is ParamList:
+            self.l += rhs.l
+        return self
+
+    def children(self):
+        return self.l
+        
+class FunctionDef(ASTNode):
+    attr_names = ('return_type', )
+    def __init__(self, return_type, function_name, param_list, body):
+        self.node_name = "FunctionDef"
+        super(FunctionDef, self).__init__()
+        self.return_type = return_type
+        self.function_name = function_name
+        self.param_list = param_list
+        self.body = body
+
+    def children(self):
+        return [self.function_name, self.param_list, self.body]
+
+class FuncDefList(ASTNode):
+    def __init__(self, funcdef):
+        self.node_name = "FuncDefList"
+        if type(funcdef) is FunctionDef:
+            self.l = [funcdef]
+        else:
+            logger.error('Initial with error type')
+        
+    def add_funcdef(self, f):
+        self.l.append(f)
+
+    def __add__(self, rhs):
+        if type(rhs) is FunctionDef:
+            self.add_funcdef(rhs)
+        elif type(rhs) is FuncDefList:
+            self.l += rhs.l
+        return self
+
+    def children(self):
+        return self.l
+        
 class CodeBlock(ASTNode):
     def __init__(self, declaration_list, statement_list):
         self.node_name = "CodeBlock"
@@ -271,9 +333,14 @@ class Symbol(ASTNode):
         return symbol
 
 class MethodSymbol(Symbol):
-    pass
+    attr_names = ('name',)
+    def __init__(self, name):
+        super(MethodSymbol, self).__init__(name)
+        self.node_name = "MethodSymbol"
+
 
 class VariableSymbol(Symbol):
+    attr_names = ('name',)
     def __init__(self, name):
         super(VariableSymbol, self).__init__(name)
         self.node_name = "VariableSymbol"

@@ -69,10 +69,12 @@ class Compiler(object):
         minify for codegen. 
         remove declarations.
         '''
-        assert ast.__class__.__name__ == 'CodeBlock'
+        assert ast.__class__.__name__ == 'FuncDefList'
         return ast.statement_list
 
     def analysis(self):
+        if self.ast is None:
+            return
         av = AnalysisVisitor()
         av.visit(self.ast)
         if av.has_error():

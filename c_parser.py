@@ -54,7 +54,7 @@ class Lexer(object):
         "IF", "ELSE", 'FOR','INT', 'READ', 'WRITE',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
         "GE", 'LE', 'NE',
-        "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI",
+        "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA",
         "COMMENTS"
     )
     
@@ -82,6 +82,7 @@ class Lexer(object):
     t_LPAREN  = r'\('
     t_RPAREN  = r'\)'
     t_SEMI = r';'
+    t_COMMA = r','
     t_AND     = r'&&'
     t_OR      = r'\|\|'
     
@@ -143,6 +144,15 @@ class Parser(object):
     def p_error(self, p):
         print("Syntax error at '%s', '%s'" % (p.value, p.lineno))
 
+    def p_source(self, p):
+        ''' source : funcdef
+                   | source funcdef
+        '''
+        if len(p) == 2:
+            p[0] = FuncDefList(p[1])
+        else:
+            p[0] = p[1] + p[2]
+        
     def p_code_block(self, p):
         '''code_block : LBRACE declaration_list statement_list RBRACE
         '''
@@ -158,7 +168,7 @@ class Parser(object):
             p[0] = p[1] + p[2]
 
     def p_declaration(self, p):
-        """ declaration  : INT varsymbol SEMI
+        """ declaration  : type varsymbol SEMI
         """
         # declaration(ID, TYPE)
         #var = VariableSymbol(p[2])
@@ -222,6 +232,8 @@ class Parser(object):
                         | bool_expression GE bool_expression
                         | bool_expression LE bool_expression
                         | bool_expression LT bool_expression
+                        | bool_expression AND bool_expression
+                        | bool_expression OR bool_expression
                         | LPAREN bool_expression RPAREN
                         | binary_expr'''
         if len(p) == 2:
@@ -247,15 +259,39 @@ class Parser(object):
                 p[0] = p[2]
             else:
                 p[0] = BinaryOp(p[1], p[2], p[3])
+                
+    def p_param(self, p):
+        ''' param : type varsymbol '''
+        p[0] = Param(p[1], p[2])
 
+    def p_param_list(self, p):
+        ''' param_list : param
+                       | param_list param COMMA
+        '''
+        if len(p) == 2:
+            p[0] = ParamList(p[1])
+        else:
+            p[0] = p[1] + p[2]
+        
+    def p_funcdef(self, p):
+        ''' funcdef : type methodsymbol LPAREN  param_list RPAREN code_block'''
+        p[0] = FunctionDef(p[1], p[2], p[4], p[6])
     
+    def p_type(self, p):
+        ''' type : INT '''
+        p[0] = p[1]
+        
+    def p_methodsymbol(self, p):
+        ''' methodsymbol : ID '''
+        p[0] = MethodSymbol(p[1])
+        
     def p_varsymbol(self, p):
-         ''' varsymbol : ID '''
-         p[0] = VariableSymbol(p[1])
+        ''' varsymbol : ID '''
+        p[0] = VariableSymbol(p[1])
 
     def p_number(self, p):
-         ''' number : NUM '''
-         p[0] = Number(p[1])
+        ''' number : NUM '''
+        p[0] = Number(p[1])
 
 # import sys
 # yacc.yacc()
