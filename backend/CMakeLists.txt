@@ -49,4 +49,4 @@ Set( NSSrcFiles
 
 add_executable(testNS  ${NSSrcFiles} test.cc)
 Target_Include_Directories( testNS PUBLIC ${NSIncludeDir} )
-target_link_libraries(testNS PUBLIC LLVM-3.8)
+target_link_libraries(testNS PUBLIC LLVM-3.9)
