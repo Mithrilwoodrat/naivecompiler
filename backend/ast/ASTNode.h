@@ -3,13 +3,16 @@
 
 #include "vector"
 #include "SerializeStructure.h"
-#include "llvm/IR/IRBuilder.h"
 
+namespace llvm{
+class Value;
+}
 
 namespace naivescript{
 
 class Visitor;
 
+	 
 class ASTNode 
 {
 public:

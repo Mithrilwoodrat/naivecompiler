@@ -2,7 +2,10 @@
 #define NODEVISITOR_H
 
 #include "NaiveScript.h"
-#include "llvm/IR/IRBuilder.h"
+
+namespace llvm{
+class Value;
+}
 
 namespace naivescript{
 
