@@ -2,6 +2,7 @@
 from ply import lex, yacc
 from ply.lex import TOKEN
 from c_ast import *
+import logging
 
 
 class Lexer(object):
@@ -41,8 +42,8 @@ class Lexer(object):
         "else":"ELSE",
         "for":"FOR",
         "int":"INT",
-        "read":"READ",
-        "write":"WRITE",
+        #"read":"READ",
+        #"write":"WRITE",
         "void": "VOID"}
 
     # singlewords = ('{', '}', '(', ')' , ';')
@@ -51,8 +52,8 @@ class Lexer(object):
     # comment = ('/*', '*/'
     #)
     tokens = (
-        "ID", "NUM", "NORMSTRING",
-        "IF", "ELSE", 'FOR','INT', 'READ', 'WRITE',
+        "ID", "INT_CONST", "NORMSTRING",
+        "IF", "ELSE", 'FOR','INT', # 'READ', 'WRITE',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
         "GE", 'LE', 'NE',
         "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA","VOID",
@@ -64,9 +65,9 @@ class Lexer(object):
     t_ELSE = r'else'
     t_FOR = r'for'
     t_INT = r'int'
-    t_READ = r'read'
-    t_WRITE = r'write'
-    t_NUM = r'[0-9]+'
+    #t_READ = r'read'
+    #t_WRITE = r'write'
+    t_INT_CONST = r'[0-9]+'
     t_NORMSTRING    = r'"([^"\n]|(\\"))*"'
     t_PLUS = r'\+'
     t_MINUS = r'-'
@@ -190,8 +191,7 @@ class Parser(object):
         ''' statement : assignment_statement 
                   | compound_statement
                   | for_statement
-                  | read_statement
-                  | write_statement
+                  | funccall
         '''
         p[0] = p[1]
     
@@ -204,17 +204,17 @@ class Parser(object):
         # forstat(a,b,c,body)
         p[0] = ForStmt(p[3], p[5], p[7], p[9])
 
-    def p_write_statement(self, p):
-        ''' write_statement : WRITE varsymbol SEMI '''
-        # WriteStat(ID)
-        #var = VariableSymbol(p[2])
-        p[0] = WriteStmt(p[2])
+    # def p_write_statement(self, p):
+    #     ''' write_statement : WRITE varsymbol SEMI '''
+    #     # WriteStat(ID)
+    #     #var = VariableSymbol(p[2])
+    #     p[0] = WriteStmt(p[2])
 
-    def p_read_statement(self, p):
-        ''' read_statement : READ varsymbol SEMI '''
-        # WriteStat(ID)
-        #var = VariableSymbol(p[2])
-        p[0] = ReadStmt(p[2])
+    # def p_read_statement(self, p):
+    #     ''' read_statement : READ varsymbol SEMI '''
+    #     # WriteStat(ID)
+    #     #var = VariableSymbol(p[2])
+    #     p[0] = ReadStmt(p[2])
     
     def p_assignment_statment(self, p):
         '''assignment_statement : assignment_expr SEMI'''
@@ -253,7 +253,7 @@ class Parser(object):
                   | binary_expr DIVIDES binary_expr
                   | LPAREN binary_expr RPAREN
                   | varsymbol
-                  | number '''
+                  | constant '''
         if len(p) == 2:
             p[0] = p[1]
         else:
@@ -278,11 +278,50 @@ class Parser(object):
                 p[0] = ParamList(p[1])
         else:
             p[0] = p[1] + p[3]
+
+    def p_argument(self, p):
+        ''' argument : varsymbol
+                     | constant
+        '''
+        p[0] = p[1]
+
+    def p_argument_list(self, p):
+        ''' argument_list : argument 
+                          | argument COMMA argument_list
+        '''
+        if len(p) == 2:
+            p[0] = ArgumentList(p[1])
+        else:
+            p[0] = p[3].l.append(p[1])
         
     def p_funcdef(self, p):
-        ''' funcdef : type methodsymbol LPAREN  param_list RPAREN code_block'''
-        p[0] = FunctionDef(p[1], p[2], p[4], p[6])
+        ''' funcdef : type methodsymbol LPAREN param_list RPAREN code_block
+                    | type methodsymbol LPAREN RPAREN code_block
+        '''
+        if len(p) == 7:
+            p[0] = FunctionDef(p[1], p[2], p[4], p[6])
+        elif len(p) == 6:
+            param_list = ParamList()
+            p[0] = FunctionDef(p[1], p[2], param_list, p[5])
+        else:
+            logging.error("wrong funcdef")
+            print len(p)
+            print [i for i in p]
     
+    def p_funccall(self, p):
+        ''' funccall : methodsymbol LPAREN argument_list RPAREN SEMI
+                     | methodsymbol LPAREN RPAREN SEMI
+        '''
+        if len(p) == 6:
+            p[0] = FuncCall(p[1], p[3])
+        elif len(p) == 5:
+            argument_list = ArgumentList()
+            p[0] = FuncCall(p[1], argument_list)
+        else:
+            logging.error("wrong FuncCall")
+            print len(p)
+            print [i for i in p]
+            
     def p_type(self, p):
         ''' type : INT '''
         p[0] = p[1]
@@ -295,8 +334,8 @@ class Parser(object):
         ''' varsymbol : ID '''
         p[0] = VariableSymbol(p[1])
 
-    def p_number(self, p):
-        ''' number : NUM '''
+    def p_constant(self, p):
+        ''' constant : INT_CONST '''
         p[0] = Number(p[1])
 
 # import sys

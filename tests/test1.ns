@@ -4,11 +4,12 @@ int fuck(int x, int y)
 	abc = 3;
 }
 
-int main( void )
+int main()
 {
     int abc;
     int i;
     i=2;
     abc=4*(i+1);
-    write abc;
+    write(abc);
+	exit();
 }

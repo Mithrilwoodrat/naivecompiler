@@ -73,7 +73,19 @@ class ParamList(ASTNode):
 
     def children(self):
         return self.l
-        
+
+    
+class ArgumentList(ASTNode):
+    def __init__(self, argument=None):
+        if argument:
+            self.l = [argument]
+        else:
+            self.l = []
+
+    def children(self):
+        return self.l
+
+    
 class FunctionDef(ASTNode):
     attr_names = ('return_type', )
     def __init__(self, return_type, function_name, param_list, body):
@@ -87,13 +99,14 @@ class FunctionDef(ASTNode):
     def children(self):
         return [self.function_name, self.param_list, self.body]
 
+    
 class FuncDefList(ASTNode):
     def __init__(self, funcdef):
         self.node_name = "FuncDefList"
         if type(funcdef) is FunctionDef:
             self.l = [funcdef]
         else:
-            logger.error('Initial with error type')
+            logger.error('Initial with error type: {0}'.format(funcdef))
         
     def add_funcdef(self, f):
         self.l.append(f)
@@ -221,6 +234,15 @@ class Statement(ASTNode):
             stat_list.add_stat(self)
             stat_list.add_stat(rhs)
         return stat_list
+
+
+class FuncCall(Statement):
+    def __init__(self, func_name, argument_list):
+        self.func_name = func_name
+        self.argument_list = argument_list
+    
+    def children(self):
+        return [self.func_name, self.argument_list]
 
 
 class IfStmt(object):
