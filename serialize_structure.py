@@ -18,16 +18,18 @@ FileMD5Size = 16
 
 # enum NodeType
 # {
-#     CodeBlock = 0,
-#     DeclarationList, 1
-#     StatementList, 2
-#     Declaration, 3
-#     ForStmt, 4
-#     WriteStmt, 5
-#     AssignmentExpr, 6
-#     BinaryOp, 7
-#     ID, 8
-#     Number, 9
+#     S_FuncList = 0,
+#     S_Func = 1,
+#     CodeBlock = 2,
+#     DeclarationList, 3
+#     StatementList, 4
+#     Declaration, 5
+#     ForStmt, 6
+#     FuncCall, 7
+#     AssignmentExpr, 8
+#     BinaryOp, 9
+#     Symbol, 10
+#     Const, 11
 # };
     
 ## File
@@ -52,8 +54,6 @@ class FileFormat(Structure):
         ( "body", ":"),
     )
 
-    
-
 class S_DeclarationList(Structure):
     structure = (
         ( "type", "<I=2"),
@@ -72,11 +72,30 @@ class S_StatementList(Structure):
 
 class S_CodeBlock(Structure):
     structure = (
-        ( "type", "<I=1"),
-        ( "declaration_list", ":", S_DeclarationList),
-        ( "statement_list", ":", S_StatementList)
+        ("type", "<I=1"),
+        ("DeclsSize", "<I=len(declaration_list)"),
+        ("StmtsSize", "<I=len(statement_list)"),
+        ("declaration_list", ":", S_DeclarationList),
+        ("statement_list", ":", S_StatementList)
     )
 
+class S_Function(Structure):
+    structure = (
+        ("type", "<I"),
+        ("id", "<I"),
+        ("paramsSize", "<I=len(param_list)"),
+        ("bodySize", "<I=len(body)"),
+        ("param_list", ":", S_DeclarationList),
+        ("body", ":", S_CodeBlock)
+    )
+
+class S_FuncList(Structure):
+    structure = (
+        ( "type", "<I"),
+        ( "count", "<I"),
+        ( "size", "<I=len(data)"),
+        ( "data", ":"),
+    )
 
 class S_Declaration(Structure):
     structure = (
@@ -133,7 +152,7 @@ class S_Symbol(Structure):
         ("_type", "<I"),
     )
 
-class S_Number(Structure):
+class S_Const(Structure):
     structure = (
         ("type", "<I=11"),
         ("_type", "<I"),

@@ -147,6 +147,10 @@ class Parser(object):
     def p_error(self, p):
         print("Syntax error at '%s', '%s'" % (p.value, p.lineno))
 
+    def p_root(self, p):
+        ''' root : funcdeflist '''
+        p[0] = AST(p[1])
+            
     def p_funcdeflist(self, p):
         ''' funcdeflist : funcdef
                    | funcdeflist funcdef
@@ -264,7 +268,7 @@ class Parser(object):
                 
     def p_param(self, p):
         ''' param : type varsymbol '''
-        p[0] = Param(p[1], p[2])
+        p[0] = Declaration(p[2], p[1])
 
     def p_param_list(self, p):
         ''' param_list : param
@@ -273,9 +277,9 @@ class Parser(object):
         '''
         if len(p) == 2:
             if p[1] == 'void':
-                p[0] = ParamList()
+                p[0] = DeclarationList()
             else:
-                p[0] = ParamList(p[1])
+                p[0] = DeclarationList(p[1])
         else:
             p[0] = p[1] + p[3]
 
@@ -299,10 +303,10 @@ class Parser(object):
                     | type methodsymbol LPAREN RPAREN code_block
         '''
         if len(p) == 7:
-            p[0] = FunctionDef(p[1], p[2], p[4], p[6])
+            p[0] = FuncDef(p[1], p[2], p[4], p[6])
         elif len(p) == 6:
-            param_list = ParamList()
-            p[0] = FunctionDef(p[1], p[2], param_list, p[5])
+            param_list = DeclarationList()
+            p[0] = FuncDef(p[1], p[2], param_list, p[5])
         else:
             logging.error("wrong funcdef")
             print len(p)

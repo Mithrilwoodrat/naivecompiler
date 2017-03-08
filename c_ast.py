@@ -26,13 +26,12 @@ class ASTNode(object):
         raise NotImplementedError
 
 
-        
-class SymbolTable(object):
-    pass
+class AST(ASTNode):
+    def __init__(self, root):
+        self.root = root
 
-class AST(object):
-    def __init__(self):
-        pass
+    def children(self):
+        return [self.root]
     
 class Param(ASTNode):
     attr_names = ('param_type', )
@@ -86,11 +85,11 @@ class ArgumentList(ASTNode):
         return self.l
 
     
-class FunctionDef(ASTNode):
+class FuncDef(ASTNode):
     attr_names = ('return_type', )
     def __init__(self, return_type, function_name, param_list, body):
-        self.node_name = "FunctionDef"
-        super(FunctionDef, self).__init__()
+        self.node_name = "FuncDef"
+        super(FuncDef, self).__init__()
         self.return_type = return_type
         self.function_name = function_name
         self.param_list = param_list
@@ -103,7 +102,7 @@ class FunctionDef(ASTNode):
 class FuncDefList(ASTNode):
     def __init__(self, funcdef):
         self.node_name = "FuncDefList"
-        if type(funcdef) is FunctionDef:
+        if type(funcdef) is FuncDef:
             self.l = [funcdef]
         else:
             logger.error('Initial with error type: {0}'.format(funcdef))
@@ -112,7 +111,7 @@ class FuncDefList(ASTNode):
         self.l.append(f)
 
     def __add__(self, rhs):
-        if type(rhs) is FunctionDef:
+        if type(rhs) is FuncDef:
             self.add_funcdef(rhs)
         elif type(rhs) is FuncDefList:
             self.l += rhs.l
@@ -138,9 +137,11 @@ class CodeBlock(ASTNode):
         return codeblock
 
 class DeclarationList(ASTNode):
-    def __init__(self, declaration):
+    def __init__(self, declaration=None):
         self.node_name = "DeclarationList"
-        if type(declaration) is Declaration:
+        if declaration is None:
+            self.l = []
+        elif type(declaration) is Declaration:
             self.l = [declaration]
         else:
             logger.error('Initial with error type')
@@ -278,19 +279,6 @@ class ReadStmt(Statement):
 
     def children(self):
         return [self._id]
-
-class WriteStmt(Statement):
-    def __init__(self, ID):
-        self._id = ID
-        self.node_name = "WriteStat"
-
-    def children(self):
-        return [self._id]
-
-    def serialize(self, env):
-        writestmt = S_WriteStmt()
-        writestmt['id'] = env.add_string(self._id.name)
-        return writestmt
 
 class AssignmentStmt(Statement):
     def __init__(self, AssignmentExpr):

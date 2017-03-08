@@ -69,8 +69,8 @@ class Compiler(object):
         minify for codegen. 
         remove declarations.
         '''
-        assert ast.__class__.__name__ == 'FuncDefList'
-        return ast.statement_list
+        assert ast.__class__.__name__ == 'AST'
+        return ast.root
 
     def analysis(self):
         if self.ast is None:
