@@ -16,22 +16,20 @@ FileMD5Size = 16
 # int 0
 # double 1
 
-# enum NodeType
-# {
-#     S_FuncList = 0,
-#     S_Func = 1,
-#     CodeBlock = 2,
-#     DeclarationList, 3
-#     StatementList, 4
-#     Declaration, 5
-#     ForStmt, 6
-#     FuncCall, 7
-#     AssignmentExpr, 8
-#     BinaryOp, 9
-#     Symbol, 10
-#     Const, 11
-# };
-    
+Type_FuncList = 0
+Type_Function = 1
+Type_CodeBlock = 2
+Type_DeclarationList = 3
+Type_StatementList = 4
+Type_ArgumentList = 5
+Type_Declaration = 6
+Type_ForStmt =  7
+Type_FuncCall =  8
+Type_AssignmentExpr = 9
+Type_BinaryOp =  10
+Type_Symbol = 11
+Type_Const = 12
+
 ## File
   # -------
   # magic
@@ -56,7 +54,7 @@ class FileFormat(Structure):
 
 class S_DeclarationList(Structure):
     structure = (
-        ( "type", "<I=2"),
+        ( "type", "<I=%d" % Type_DeclarationList),
         ( "count", "<I"),
         ( "size", "<I=len(data)"),
         ( "data", ":"), # for declaration in DeclarationList: data+=str(declaration)
@@ -64,7 +62,7 @@ class S_DeclarationList(Structure):
 
 class S_StatementList(Structure):
     structure = (
-        ( "type", "<I=3"),
+        ( "type", "<I=%d" % Type_StatementList),
         ( "count", "<I"),
         ( "size", "<I=len(data)"),
         ( "data", ":"), # for stmt in StatementList: data+=str(stmt)
@@ -72,34 +70,52 @@ class S_StatementList(Structure):
 
 class S_CodeBlock(Structure):
     structure = (
-        ("type", "<I=1"),
+        ("type", "<I=%d" % Type_CodeBlock),
         ("DeclsSize", "<I=len(declaration_list)"),
         ("StmtsSize", "<I=len(statement_list)"),
-        ("declaration_list", ":", S_DeclarationList),
-        ("statement_list", ":", S_StatementList)
+        ("decl_list", ":", S_DeclarationList),
+        ("stmt_list", ":", S_StatementList)
     )
 
 class S_Function(Structure):
     structure = (
-        ("type", "<I"),
+        ("type", "<I=%d" % Type_Function),
         ("id", "<I"),
+        ("return_type", "<I"),
         ("paramsSize", "<I=len(param_list)"),
         ("bodySize", "<I=len(body)"),
         ("param_list", ":", S_DeclarationList),
         ("body", ":", S_CodeBlock)
     )
 
+class S_FuncCall(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_FuncCall),
+        ("id", "<I"),
+        ("size", "<I=4*4 + len(param_list)"),
+        ("argsSize", "<I=len(param_list)"),
+        ("argument_list", ":", S_DeclarationList),
+    )
+    
 class S_FuncList(Structure):
     structure = (
-        ( "type", "<I"),
+        ( "type", "<I=%d" % Type_FuncList),
         ( "count", "<I"),
         ( "size", "<I=len(data)"),
         ( "data", ":"),
     )
 
+class S_ArgumentList(Structure):
+    structure = (
+        ( "type", "<I=%d" % Type_ArgumentList),
+        ( "count", "<I"),
+        ( "size", "<I=len(data)"),
+        ( "data", ":"),
+    )
+    
 class S_Declaration(Structure):
     structure = (
-        ( "type", "<I=4"),
+        ( "type", "<I=%d" % Type_Declaration),
         ( "_type", "<I"), # int : 0, double : 1
         ( "id", "<I"),
     )
@@ -107,27 +123,16 @@ class S_Declaration(Structure):
 
 class S_ForStmt(Structure):
     structure = (
-        ( "type", "<I=5"),
+        ( "type", "<I=%d" % Type_ForStmt),
         ( "assigment_expr", ":"),
         ( "bool_expr", ":"),
         ( "assigment_expr", ":")
     )
 
-class S_ReadStmt(Structure):
-    structure = (
-        ("type", "<I=6"),
-        ("id", "<I"),
-    )   
-
-class S_WriteStmt(Structure):
-    structure = (
-        ("type", "<I=7"),
-        ("id", "<I"),
-    )
-
+    
 class S_AssignmentExpr(Structure):
     structure = (
-        ("type", "<I=8"),
+        ("type", "<I=%d" % Type_AssignmentExpr),
         ("id", "<I"),
         ("size", "<I=4*4 + len(exp)"),
         ("exp_size", "<I=len(exp)"),
@@ -136,7 +141,7 @@ class S_AssignmentExpr(Structure):
 
 class S_BinaryOp(Structure):
     structure = (
-        ("type", "<I=9"),
+        ("type", "<I=%d" % Type_BinaryOp),
         ("op", "c"),
         ("size", "<I=4*4 + 1 + len(exp1) + len(exp2)"),
         ("exp1_size", "<I=len(exp1)"),
@@ -147,14 +152,14 @@ class S_BinaryOp(Structure):
 
 class S_Symbol(Structure):
     structure = (
-        ("type", "<I=10"),
+        ("type", "<I=%d" % Type_Symbol),
         ("_id", "<I"), # id in StringTable
         ("_type", "<I"),
     )
 
 class S_Const(Structure):
     structure = (
-        ("type", "<I=11"),
+        ("type", "<I=%d" % Type_Const),
         ("_type", "<I"),
         ("val", "<I"),
     )

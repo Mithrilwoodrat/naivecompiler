@@ -33,46 +33,6 @@ class AST(ASTNode):
     def children(self):
         return [self.root]
     
-class Param(ASTNode):
-    attr_names = ('param_type', )
-    def __init__(self, param_type, param_name):
-        super(Param, self).__init__()
-        self.node_name = "Param"
-        self.param_type = param_type
-        self.param_name = param_name
-
-    def children(self):
-        return [self.param_name]
-
-    def __add__(self, rhs):
-        if type(rhs) is ParamList:
-            rhs.l.append(self)
-            return rhs
-        elif type(rhs) is Param:
-            pl = ParamList(self)
-            rl.l.append(rhs)
-            return pl
-
-class ParamList(ASTNode):
-    def __init__(self, param=None):
-        self.l = []
-        if param is None:
-            self.l = []
-        elif type(param) is Param:
-            self.l = [param]
-        else:
-            logger.error('Initial with error type')
-
-    def __add__(self, rhs):
-        if type(rhs) is Param:
-            self.l.append(rhs)
-        elif type(rhs) is ParamList:
-            self.l += rhs.l
-        return self
-
-    def children(self):
-        return self.l
-
     
 class ArgumentList(ASTNode):
     def __init__(self, argument=None):
@@ -85,11 +45,11 @@ class ArgumentList(ASTNode):
         return self.l
 
     
-class FuncDef(ASTNode):
+class Function(ASTNode):
     attr_names = ('return_type', )
     def __init__(self, return_type, function_name, param_list, body):
         self.node_name = "FuncDef"
-        super(FuncDef, self).__init__()
+        super(Function, self).__init__()
         self.return_type = return_type
         self.function_name = function_name
         self.param_list = param_list
@@ -99,10 +59,10 @@ class FuncDef(ASTNode):
         return [self.function_name, self.param_list, self.body]
 
     
-class FuncDefList(ASTNode):
+class FuncList(ASTNode):
     def __init__(self, funcdef):
-        self.node_name = "FuncDefList"
-        if type(funcdef) is FuncDef:
+        self.node_name = "FuncList"
+        if type(funcdef) is Function:
             self.l = [funcdef]
         else:
             logger.error('Initial with error type: {0}'.format(funcdef))
@@ -111,9 +71,9 @@ class FuncDefList(ASTNode):
         self.l.append(f)
 
     def __add__(self, rhs):
-        if type(rhs) is FuncDef:
+        if type(rhs) is Function:
             self.add_funcdef(rhs)
-        elif type(rhs) is FuncDefList:
+        elif type(rhs) is FuncList:
             self.l += rhs.l
         return self
 
@@ -124,11 +84,11 @@ class CodeBlock(ASTNode):
     def __init__(self, declaration_list, statement_list):
         self.node_name = "CodeBlock"
         super(CodeBlock, self).__init__()
-        self.declaration_list = declaration_list
-        self.statement_list = statement_list
+        self.decl_list = declaration_list
+        self.stmt_list = statement_list
 
     def children(self):
-        return [self.declaration_list, self.statement_list]
+        return [self.decl_list, self.stmt_list]
 
     def serialize(self, env):
         codeblock = S_CodeBlock()
@@ -367,18 +327,12 @@ class VariableSymbol(Symbol):
         super(VariableSymbol, self).__init__(name)
         self.node_name = "VariableSymbol"
 
-class Number(ASTNode):
+class Const(ASTNode):
     attr_names = ('val',)
     def __init__(self, val):
-        self.node_name = "Number"
+        self.node_name = "const"
         self.val = val
         self._type = 0
         
     def children(self):
         return []
-
-    def serialize(self, env):
-        number = S_Number()
-        number['val'] = int(self.val)
-        number['_type'] = self._type
-        return number

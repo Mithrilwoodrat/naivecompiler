@@ -156,7 +156,7 @@ class Parser(object):
                    | funcdeflist funcdef
         '''
         if len(p) == 2:
-            p[0] = FuncDefList(p[1])
+            p[0] = FuncList(p[1])
         else:
             p[0] = p[1] + p[2]
         
@@ -303,10 +303,10 @@ class Parser(object):
                     | type methodsymbol LPAREN RPAREN code_block
         '''
         if len(p) == 7:
-            p[0] = FuncDef(p[1], p[2], p[4], p[6])
+            p[0] = Function(p[1], p[2], p[4], p[6])
         elif len(p) == 6:
             param_list = DeclarationList()
-            p[0] = FuncDef(p[1], p[2], param_list, p[5])
+            p[0] = Function(p[1], p[2], param_list, p[5])
         else:
             logging.error("wrong funcdef")
             print len(p)
@@ -340,7 +340,7 @@ class Parser(object):
 
     def p_constant(self, p):
         ''' constant : INT_CONST '''
-        p[0] = Number(p[1])
+        p[0] = Const(p[1])
 
 # import sys
 # yacc.yacc()

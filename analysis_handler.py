@@ -60,12 +60,12 @@ class FuncHelper(NodeVisitor):
 
 class AnalysisVisitor(NodeVisitor):
     def __init__(self):
-        self.has_error = False
+        self._has_error = False
 
     def has_error(self):
-        return self.has_error
+        return self._has_error
 
-    def visit_FuncDef(self, node):
+    def visit_Function(self, node):
         helper = FuncHelper()
         helper.visit(node)
         self.has_error = helper.has_error
