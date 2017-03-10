@@ -4,9 +4,9 @@
 #include <string>
 #include <iostream>
 #include "SerializeFile.h"
-#include "StmtList.h"
+#include "FunctionList.h"
 #include "NodeVisitor.h"
-#include "CodeGen.h"
+//#include "CodeGen.h"
 
 namespace naivescript
 {
@@ -34,18 +34,18 @@ public:
 
     void Compile( void ) {
         char *body = const_cast<char *>(file.GetBody());
-        stmt_list.Parse(reinterpret_cast<struct serialize::StmtList*>(body),
+        func_list.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
         file.GetBodySize() );
-        stmt_list.show();
-        genVisitor.dump(&stmt_list);
+        func_list.show();
+        // genVisitor.dump(&stmt_list);
     }
     
     static Compiler* instance;
 private:
     const serialize::SymbolTable* symbol_table;
-    StmtList stmt_list;
+    FunctionList func_list;
     serialize::SerializeFile file;
-    CodeGenVisitor genVisitor;
+    //CodeGenVisitor genVisitor;
 };
 
 }

@@ -61,7 +61,7 @@ class Compiler(object):
         if self.ast is None:
             logger.error('Parsing Failed')
             return False
-        self.ast.show()
+        # self.ast.show()
         return True
 
     def minify_ast(self, ast):
@@ -100,7 +100,7 @@ class Compiler(object):
     def compile(self):
         obj = FileFormat()
         self.ast = self.minify_ast(self.ast)
-        self.ast.show()
+        #self.ast.show()
         body = self.dump_body()
         #body = self.ast.serialize(self.env)
         stringtable = self.dump_stringtable()

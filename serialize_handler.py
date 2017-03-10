@@ -8,7 +8,7 @@ class SerializeHandler(object):
 
     def serialize(self, node):
         method = 'serialize_' + node.__class__.__name__
-        print method + ' called' 
+        # print method + ' called' 
         visitor = getattr(self, method, self.generic_serialize)
         return visitor(node)
 
@@ -28,24 +28,27 @@ class SerializeHandler(object):
 
     def serialize_Function(self, node):
         func = S_Function()
-        func['id'] = node.function_name.name
+        func['id'] = self.env.add_string(node.function_name.name)
         func['return_type'] = 0
-        func['param_list'] = self.serialize(node.param_list)
-        func['body'] = self.serialize(node.body)
+        func['param_list'] = str(self.serialize(node.param_list))
+        func['body'] = str(self.serialize(node.body))
+        return func
 
     def serialize_CodeBlock(self, node):
         code_block = S_CodeBlock()
-        code_block['decl_list'] = self.serialize(node.decl_list)
-        code_block['stmt_list'] = self.serialize(node.stmt_list)
+        code_block['decl_list'] = str(self.serialize(node.decl_list))
+        code_block['stmt_list'] = str(self.serialize(node.stmt_list))
+        return code_block
 
     def serialize_DeclarationList(self, node):
         decl_list = S_DeclarationList()
         decl_list['count'] = len(node.l)
         data = ''
         for decl in node.l:
-            print decl.__class__.__name__, len(str(self.serialize(decl)))
+            # print decl.__class__.__name__, len(str(self.serialize(decl)))
             data += str(self.serialize(decl))
-            decl_list['data'] = data
+        decl_list['data'] = data
+        # decl_list['size'] = len(data)
         return decl_list
 
     def serialize_Declaration(self, node):
@@ -59,9 +62,9 @@ class SerializeHandler(object):
         stmt_list['count'] = len(node.l)
         data = ''
         for stmt in node.l:
-            print stmt.__class__.__name__, len(str(self.serialize(stmt)))
+            # print stmt.__class__.__name__, len(str(self.serialize(stmt)))
             data += str(self.serialize(stmt))
-            stmt_list['data'] = data
+        stmt_list['data'] = data
         return stmt_list
 
     def serialize_ArgumentList(self, node):
@@ -69,9 +72,9 @@ class SerializeHandler(object):
         arg_list['count'] = len(node.l)
         data = ''
         for arg in node.l:
-            print arg.__class__.__name__, len(str(self.serialize(arg)))
+            # print arg.__class__.__name__, len(str(self.serialize(arg)))
             data += str(self.serialize(arg))
-            arg_list['data'] = data
+        arg_list['data'] = data
         return arg_list
         
 
@@ -87,8 +90,8 @@ class SerializeHandler(object):
     def serialize_BinaryOp(self, node):
         binary_op = S_BinaryOp()
         binary_op['op'] = node.op
-        binary_op['exp1'] = str(self.serialize(node.lhs))
-        binary_op['exp2'] = str(self.serialize(node.rhs))
+        binary_op['exp1'] = self.serialize(node.lhs)
+        binary_op['exp2'] = self.serialize(node.rhs)
         return binary_op
 
     def serialize_VariableSymbol(self, node):
@@ -105,6 +108,7 @@ class SerializeHandler(object):
 
     def serialize_FuncCall(self, node):
         func_call = S_FuncCall()
-        func_call['id'] = node.func_name.name
+        func_call['id'] = self.env.add_string(node.func_name.name)
         func_call['argument_list'] = self.serialize(node.argument_list)
+        return func_call
 

@@ -13,7 +13,7 @@ uint32_t getStructType(uint8_t* data) {
 }
 
 uint32_t getVarStructSize(uint8_t* data) {
-    return *((uint32_t*)(data) + 2);
+    return *((uint32_t*)(data) + 1);
 }
 #ifdef __cplusplus
 }

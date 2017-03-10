@@ -9,6 +9,11 @@ class Value;
 
 namespace naivescript{
 
+class FunctionList;
+class Function;
+class Declaration;
+class DeclarationList;
+class CodeBlock;
 class StmtList;
 class AssignmentNode;
 class BinaryOpNode;
@@ -19,6 +24,11 @@ class ValueNode;
 class Visitor
 {
   public:
+    virtual llvm::Value* visit(FunctionList *node) = 0;
+    virtual llvm::Value* visit(Function *node) = 0;
+    virtual llvm::Value* visit(Declaration *node) = 0;
+    virtual llvm::Value* visit(DeclarationList *node) = 0;
+    virtual llvm::Value* visit(CodeBlock *node) = 0;
     virtual llvm::Value* visit(StmtList *node) = 0;
     virtual llvm::Value* visit(AssignmentNode *node) = 0;
     virtual llvm::Value* visit(BinaryOpNode *node) = 0;

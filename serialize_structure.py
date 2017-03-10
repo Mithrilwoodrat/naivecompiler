@@ -52,6 +52,13 @@ class FileFormat(Structure):
         ( "body", ":"),
     )
 
+class S_Declaration(Structure):
+    structure = (
+        ( "type", "<I=%d" % Type_Declaration),
+        ( "_type", "<I"), # int : 0, double : 1
+        ( "id", "<I"),
+    )
+
 class S_DeclarationList(Structure):
     structure = (
         ( "type", "<I=%d" % Type_DeclarationList),
@@ -71,30 +78,31 @@ class S_StatementList(Structure):
 class S_CodeBlock(Structure):
     structure = (
         ("type", "<I=%d" % Type_CodeBlock),
-        ("DeclsSize", "<I=len(declaration_list)"),
-        ("StmtsSize", "<I=len(statement_list)"),
-        ("decl_list", ":", S_DeclarationList),
-        ("stmt_list", ":", S_StatementList)
+        ("DeclsSize", "<I=len(decl_list)"),
+        ("StmtsSize", "<I=len(stmt_list)"),
+        ("decl_list", ":"),
+        ("stmt_list", ":")
     )
 
 class S_Function(Structure):
     structure = (
         ("type", "<I=%d" % Type_Function),
+        ("size", "<I=4*6 + len(param_list) + len(body)"),
         ("id", "<I"),
         ("return_type", "<I"),
         ("paramsSize", "<I=len(param_list)"),
         ("bodySize", "<I=len(body)"),
-        ("param_list", ":", S_DeclarationList),
-        ("body", ":", S_CodeBlock)
+        ("param_list", ":"),
+        ("body", ":")
     )
 
 class S_FuncCall(Structure):
     structure = (
         ("type", "<I=%d" % Type_FuncCall),
+        ("size", "<I=4*4+len(argument_list)"),
         ("id", "<I"),
-        ("size", "<I=4*4 + len(param_list)"),
-        ("argsSize", "<I=len(param_list)"),
-        ("argument_list", ":", S_DeclarationList),
+        ("argsSize", "<I=len(argument_list)"),
+        ("argument_list", ":"),
     )
     
 class S_FuncList(Structure):
@@ -112,13 +120,6 @@ class S_ArgumentList(Structure):
         ( "size", "<I=len(data)"),
         ( "data", ":"),
     )
-    
-class S_Declaration(Structure):
-    structure = (
-        ( "type", "<I=%d" % Type_Declaration),
-        ( "_type", "<I"), # int : 0, double : 1
-        ( "id", "<I"),
-    )
 
 
 class S_ForStmt(Structure):
@@ -133,8 +134,8 @@ class S_ForStmt(Structure):
 class S_AssignmentExpr(Structure):
     structure = (
         ("type", "<I=%d" % Type_AssignmentExpr),
-        ("id", "<I"),
         ("size", "<I=4*4 + len(exp)"),
+        ("id", "<I"),
         ("exp_size", "<I=len(exp)"),
         ("exp", ":")
     )
@@ -142,10 +143,10 @@ class S_AssignmentExpr(Structure):
 class S_BinaryOp(Structure):
     structure = (
         ("type", "<I=%d" % Type_BinaryOp),
-        ("op", "c"),
         ("size", "<I=4*4 + 1 + len(exp1) + len(exp2)"),
         ("exp1_size", "<I=len(exp1)"),
         ("exp2_size", "<I=len(exp2)"),
+        ("op", "c"),
         ("exp1", ":"),
         ("exp2", ":")
     )

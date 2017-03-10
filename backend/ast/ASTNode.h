@@ -11,7 +11,6 @@ class Value;
 namespace naivescript{
 
 class Visitor;
-
 	 
 class ASTNode 
 {
