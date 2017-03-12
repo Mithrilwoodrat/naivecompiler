@@ -13,9 +13,9 @@ public:
     Declaration() : symboltype(0) {}
     virtual bool Parse( struct serialize::Declaration * decl, size_t size );
 
-    virtual void show(void) 
+    virtual void show(void)
     {
-        std::cout <<  "ID: " << id;
+        std::cout <<  "Declaration: ID: " << id << "\t" << "type: " << symboltype << std::endl;
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 

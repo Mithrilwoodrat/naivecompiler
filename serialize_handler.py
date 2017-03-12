@@ -21,7 +21,7 @@ class SerializeHandler(object):
         func_list['count'] = len(node.l)
         data = ''
         for func in node.l:
-            print func.__class__.__name__, len(str(self.serialize(func)))
+            # print func.__class__.__name__, len(str(self.serialize(func)))
             data += str(self.serialize(func))
             func_list['data'] = data
         return func_list
@@ -30,8 +30,8 @@ class SerializeHandler(object):
         func = S_Function()
         func['id'] = self.env.add_string(node.function_name.name)
         func['return_type'] = 0
-        func['param_list'] = str(self.serialize(node.param_list))
-        func['body'] = str(self.serialize(node.body))
+        func['param_list'] = self.serialize(node.param_list)
+        func['body'] = self.serialize(node.body)
         return func
 
     def serialize_CodeBlock(self, node):

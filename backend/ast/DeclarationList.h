@@ -19,15 +19,14 @@ public:
         count =  decl_list->count;
         std::cout << "Count: " << count << std::endl;
         uint8_t * data = decl_list->data;
-        size_t node_size;
+        size_t node_size = getStructSize(serialize::Declaration);
         size_t total_size = 0;
         for (size_t i=0; i<count; i++) {
-            node_size = getStructSize(serialize::Declaration);
             children.push_back(NodeFactory::CreateDeclaration(data, node_size));
             data += node_size;
-            total_size += node_size;
             if (total_size > size)
                 break;
+            total_size += node_size;
         }
         return true;
     }

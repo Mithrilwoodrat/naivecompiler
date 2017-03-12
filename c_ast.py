@@ -119,24 +119,18 @@ class DeclarationList(ASTNode):
     def children(self):
         return self.l
 
-    def serialize(self, env):
-        declaration_list = S_DeclarationList()
-        declaration_list['count'] = len(self.l)
-        data = ''
-        for declaration in self.l:
-            data += str(declaration.serialize(env))
-        declaration_list['data'] = data
-        return declaration_list
 
 class StmtList(ASTNode):
-    def __init__(self, stmt):
+    def __init__(self, stmt=None):
         self.node_name = "StmtList"
-        if 'Stmt' in stmt.__class__.__name__:
+        if stmt is None:
+            self.l = []
+        elif  issubclass(stmt.__class__, Statement):
             self.l = [stmt]
         else:
             logger.error('Initial with error type: {0}'.format(stmt.__class__))
 
-    def add_stat(self, s):
+    def add_stmt(self, s):
         self.l.append(s)
 
     def __add__(self, rhs):
@@ -148,16 +142,8 @@ class StmtList(ASTNode):
 
     def children(self):
         return self.l
-    
-    def serialize(self, env):
-        stmt_list = S_StatementList()
-        stmt_list['count'] = len(self.l)
-        data = ''
-        for stmt in self.l:
-            data += str(stmt.serialize(env))
-        stmt_list['data'] = data
-        return stmt_list
 
+    
 class Declaration(ASTNode):
     '''Declaration: Type ID SEIM'''
     attr_names = ('_type', )
@@ -169,32 +155,14 @@ class Declaration(ASTNode):
         return [self._id]
 
     def __add__(self, rhs):
-        declaration_list = DeclarationList()
-        if type(rhs) is DeclarationList:
-            rhs.add_declaration(self)
-            return rhs
-        else:
-            declaration_list.add_declaration(self)
-            declaration_list.add_declaration(rhs)
-            return declaration_list
-
-    def serialize(self, env):
-        declaration = S_Declaration()
-        declaration['_type'] = 0
-        declaration['id'] = env.add_string(self._id.name)
-        return declaration
+        decls = DeclarationList(self)
+        return decls + rhs
         
 
 class Statement(ASTNode):
     def __add__(self, rhs):
-        stat_list = StmtList()
-        if type(rhs) is StmtList:
-            rhs.add_stat(self)
-            return rhs
-        else:
-            stat_list.add_stat(self)
-            stat_list.add_stat(rhs)
-        return stat_list
+        stmts = StmtList(self)
+        return stmts + rhs
 
 
 class FuncCall(Statement):

@@ -23,7 +23,9 @@ class StringTable(object):
             self.table.append(string)
             old_index = self.index
             self.index+=1
+            # logging.info("add symbol: {}".format(string))
             return old_index
+        # logging.info("get symbol: {}".format(string))
         return self.table.index(string)
 
     def get_id(self,string):
@@ -100,9 +102,8 @@ class Compiler(object):
     def compile(self):
         obj = FileFormat()
         self.ast = self.minify_ast(self.ast)
-        #self.ast.show()
+        self.ast.show()
         body = self.dump_body()
-        #body = self.ast.serialize(self.env)
         stringtable = self.dump_stringtable()
         logger.info("StringTable: %s ,len: %d" % (stringtable, len(stringtable)))
         obj['stringtable'] = stringtable

@@ -98,8 +98,8 @@ struct CodeBlock
 struct Declaration
 {
     uint32_t type;
-    uint32_t id;
     uint32_t symboltype;
+    uint32_t id;
 }__attribute__((packed)) ;
 
 struct Function

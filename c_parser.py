@@ -167,7 +167,7 @@ class Parser(object):
     
     def p_declaration_list(self, p):
         """ declaration_list    : declaration
-                        |  declaration_list declaration
+                        |  declaration declaration_list 
         """
         if len(p) == 2:
             p[0] = DeclarationList(p[1])
@@ -184,7 +184,7 @@ class Parser(object):
     
     def p_statement_list(self, p):
         ''' statement_list : statement
-                       | statement_list statement 
+                       | statement statement_list 
         '''
         if len(p) == 2:
             p[0] = StmtList(p[1])
