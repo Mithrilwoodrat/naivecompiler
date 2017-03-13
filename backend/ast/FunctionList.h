@@ -10,10 +10,10 @@
 
 namespace naivescript{
 
-class FunctionList : public ASTNode
+class FunctionList
 {
 public:
-    virtual bool Parse( struct serialize::FunctionList * func_list, size_t size )
+    bool Parse( struct serialize::FunctionList * func_list, size_t size )
     {
         std::cout << "Parsing FunctionList ";
         count =  func_list->count;
@@ -28,31 +28,31 @@ public:
         return true;
     }
 
-    virtual const std::vector<ASTNode *> GetChildren( void ) override
+    const std::vector<Function *> GetChildren( void ) 
     {
         return children;
     }
 
-    virtual void show( void ) override
+    void show( void )
     {
         std::cout <<  "FunctionList\t";
         std::cout <<  "Node Count: " << count << std::endl;
-        for (ASTNode * node : children) {
+        for (Function * node : children) {
             node->show();
         }
     }
 
-    virtual llvm::Value* accept(Visitor* v) override;
+    std::vector<llvm::Function*> accept(Visitor* v);
 
     ~FunctionList() {
-        for (ASTNode * node : children) {
+        for (Function * node : children) {
             free(node);
         }
     }
 
 private:
     size_t count;
-    std::vector<ASTNode*> children;
+    std::vector<Function*> children;
 };
 
 }

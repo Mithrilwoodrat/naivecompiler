@@ -31,6 +31,11 @@ public:
         return children;
     }
 
+    StmtList* GetStmts(void)
+    {
+        return static_cast<StmtList*>(stmts);
+    }
+
     virtual void show( void ) override
     {
         std::cout <<  "CodeBlock\t";

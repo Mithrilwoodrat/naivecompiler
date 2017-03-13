@@ -7,4 +7,5 @@ int main() {
     Compiler * compiler = Compiler::GetCompiler();
     compiler->LoadData("ns.data");
     compiler->Compile();
+    return 0;
 }

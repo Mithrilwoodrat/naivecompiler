@@ -6,7 +6,7 @@
 #include "SerializeFile.h"
 #include "FunctionList.h"
 #include "NodeVisitor.h"
-//#include "CodeGen.h"
+#include "CodeGen.h"
 
 namespace naivescript
 {
@@ -37,7 +37,7 @@ public:
         func_list.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
         file.GetBodySize() );
         func_list.show();
-        // genVisitor.dump(&stmt_list);
+        genVisitor.dump(&func_list);
     }
     
     static Compiler* instance;
@@ -45,7 +45,7 @@ private:
     const serialize::SymbolTable* symbol_table;
     FunctionList func_list;
     serialize::SerializeFile file;
-    //CodeGenVisitor genVisitor;
+    CodeGenVisitor genVisitor;
 };
 
 }

@@ -5,6 +5,7 @@
 
 namespace llvm{
 class Value;
+class Function;
 }
 
 namespace naivescript{
@@ -24,8 +25,8 @@ class ValueNode;
 class Visitor
 {
   public:
-    virtual llvm::Value* visit(FunctionList *node) = 0;
-    virtual llvm::Value* visit(Function *node) = 0;
+    virtual std::vector<llvm::Function*> visit(FunctionList *node) = 0;
+    virtual llvm::Function* visit(Function *node) = 0;
     virtual llvm::Value* visit(Declaration *node) = 0;
     virtual llvm::Value* visit(DeclarationList *node) = 0;
     virtual llvm::Value* visit(CodeBlock *node) = 0;

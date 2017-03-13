@@ -10,17 +10,32 @@
 
 namespace naivescript{
 
-class Function : public ASTNode
+class Function
 {
 public:
-    virtual bool Parse( struct serialize::Function * func, size_t size );
+    bool Parse( struct serialize::Function * func, size_t size );
 
-    virtual const std::vector<ASTNode *> GetChildren( void ) override
+    const std::vector<ASTNode *> GetChildren( void )
     {
         return children;
     }
 
-    virtual void show( void ) override
+    std::string GetFuncName(void)
+    {
+        return func_name;
+    }
+
+    DeclarationList * GetParams(void) 
+    {
+        return static_cast<DeclarationList*>(params_list);
+    }
+
+    CodeBlock* GetBody(void)
+    {
+        return static_cast<CodeBlock*>(body);
+    }
+
+    void show( void )
     {
         std::cout <<  "Function\t";
         std::cout << func_name << std::endl;
@@ -29,7 +44,7 @@ public:
         }
     }
 
-    virtual llvm::Value* accept(Visitor* v) override;
+    llvm::Function* accept(Visitor* v);
 
     ~Function() {
         for (ASTNode * node : children) {

@@ -44,7 +44,7 @@ ASTNode* NodeFactory::CreateSymbol(uint8_t *data, uint32_t size) {
     return node;
 }
 
-ASTNode* NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
+Function* NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
 {
     auto *node = new Function();
     node->Parse(reinterpret_cast<struct serialize::Function*>(data), size);

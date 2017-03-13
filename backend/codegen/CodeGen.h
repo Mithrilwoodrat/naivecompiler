@@ -23,12 +23,16 @@
 #include <string>
 #include <vector>
 
-using namespace llvm;
-
 namespace naivescript{
-static    LLVMContext TheContext;
-static    IRBuilder<> Builder(TheContext);
-static    std::unique_ptr<Module> TheModule;
+static    llvm::LLVMContext TheContext;
+static    llvm::IRBuilder<> Builder(TheContext);
+static    llvm::Module TheModule("naivescript", TheContext);
+
+class FunctionList;
+class Function;
+class Declaration;
+class DeclarationList;
+class CodeBlock;
 class StmtList;
 class AssignmentNode;
 class BinaryOpNode;
@@ -38,14 +42,19 @@ class ValueNode;
 class CodeGenVisitor : public Visitor
 {
 public:
-    void dump( StmtList *node);
-    virtual Value* visit(StmtList *node);
-    virtual Value* visit(AssignmentNode *node);
-    virtual Value* visit(BinaryOpNode *node);
-    virtual Value* visit(SymbolNode *node);
-    virtual Value* visit(ValueNode *node);
+    void dump( FunctionList *node);
+    virtual std::vector<llvm::Function*> visit(FunctionList *node);
+    virtual llvm::Function* visit(Function *node);
+    virtual llvm::Value* visit(Declaration *node);
+    virtual llvm::Value* visit(DeclarationList *node);
+    virtual llvm::Value* visit(CodeBlock *node);
+    virtual llvm::Value* visit(StmtList *node);
+    virtual llvm::Value* visit(AssignmentNode *node);
+    virtual llvm::Value* visit(BinaryOpNode *node);
+    virtual llvm::Value* visit(SymbolNode *node);
+    virtual llvm::Value* visit(ValueNode *node);
 private:
-    std::map<std::string, Value *> NamedValues;
+    std::map<std::string, llvm::Value *> NamedValues;
 };
 }
 #endif

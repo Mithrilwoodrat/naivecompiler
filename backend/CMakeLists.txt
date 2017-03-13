@@ -49,43 +49,43 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/BinaryOpNode.cc
     ${NSWorkingPath}/ast/NodeVisitor.cc
 
-    #${NSWorkingPath}/codegen/CodeGen.cc
+    ${NSWorkingPath}/codegen/CodeGen.cc
 )
 
-#link_directories(/usr/local/lib/)
+link_directories(/usr/local/lib/)
 
 add_executable(testNS  ${NSSrcFiles} test.cc)
 Target_Include_Directories( testNS PUBLIC ${NSIncludeDir} )
-#target_link_libraries(testNS PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVMLTO -lLLVMObjCARCOpts -lLLVMSymbolize
-#  -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMXCoreDisassembler
-#  -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter
-#  -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser
-#  -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter
-#  -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser
-#  -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter
-#  -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser
-#  -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter
-#  -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter
-#  -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info
-#  -lLLVMMSP430AsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen
-#  -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter
-#  -lLLVMHexagonDisassembler -lLLVMHexagonCodeGen -lLLVMHexagonAsmParser
-#  -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMCppBackendCodeGen
-#  -lLLVMCppBackendInfo -lLLVMBPFCodeGen -lLLVMBPFDesc -lLLVMBPFInfo
-#  -lLLVMBPFAsmPrinter -lLLVMARMDisassembler -lLLVMARMCodeGen
-#  -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter
-#  -lLLVMAMDGPUCodeGen -lLLVMAMDGPUAsmParser -lLLVMAMDGPUDesc
-#  -lLLVMAMDGPUUtils -lLLVMAMDGPUInfo -lLLVMAMDGPUAsmPrinter
-#  -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser
-#  -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter
-#  -lLLVMAArch64Utils -lLLVMMIRParser -lLLVMLibDriver -lLLVMOption
-#  -lLLVMTableGen -lLLVMLineEditor -lLLVMX86Disassembler -lLLVMX86AsmParser
-#  -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc
-#  -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils
-#  -lLLVMMCJIT -lLLVMPasses -lLLVMipo -lLLVMVectorize -lLLVMLinker
-#  -lLLVMIRReader -lLLVMAsmParser -lLLVMDebugInfoCodeView -lLLVMInterpreter
-#  -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation
-#  -lLLVMProfileData -lLLVMBitWriter -lLLVMOrcJIT -lLLVMTransformUtils
-#  -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld
-#  -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMMC -lLLVMCore
-#  -lLLVMSupport)
+target_link_libraries(testNS PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVMLTO -lLLVMObjCARCOpts -lLLVMSymbolize
+ -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMXCoreDisassembler
+ -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter
+ -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser
+ -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter
+ -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser
+ -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter
+ -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser
+ -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter
+ -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter
+ -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info
+ -lLLVMMSP430AsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen
+ -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter
+ -lLLVMHexagonDisassembler -lLLVMHexagonCodeGen -lLLVMHexagonAsmParser
+ -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMCppBackendCodeGen
+ -lLLVMCppBackendInfo -lLLVMBPFCodeGen -lLLVMBPFDesc -lLLVMBPFInfo
+ -lLLVMBPFAsmPrinter -lLLVMARMDisassembler -lLLVMARMCodeGen
+ -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter
+ -lLLVMAMDGPUCodeGen -lLLVMAMDGPUAsmParser -lLLVMAMDGPUDesc
+ -lLLVMAMDGPUUtils -lLLVMAMDGPUInfo -lLLVMAMDGPUAsmPrinter
+ -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser
+ -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter
+ -lLLVMAArch64Utils -lLLVMMIRParser -lLLVMLibDriver -lLLVMOption
+ -lLLVMTableGen -lLLVMLineEditor -lLLVMX86Disassembler -lLLVMX86AsmParser
+ -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc
+ -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils
+ -lLLVMMCJIT -lLLVMPasses -lLLVMipo -lLLVMVectorize -lLLVMLinker
+ -lLLVMIRReader -lLLVMAsmParser -lLLVMDebugInfoCodeView -lLLVMInterpreter
+ -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMInstrumentation
+ -lLLVMProfileData -lLLVMBitWriter -lLLVMOrcJIT -lLLVMTransformUtils
+ -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld
+ -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMMC -lLLVMCore
+ -lLLVMSupport)

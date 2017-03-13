@@ -6,6 +6,7 @@
 
 namespace llvm{
 class Value;
+class Function;
 }
 
 namespace naivescript{

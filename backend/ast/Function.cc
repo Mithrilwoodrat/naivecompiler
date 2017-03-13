@@ -19,7 +19,7 @@ bool Function::Parse( struct serialize::Function * func, size_t size )
     return true;
 }
 
-llvm::Value* Function::accept(Visitor* v)
+llvm::Function* Function::accept(Visitor* v)
 {
     return v->visit(this);
 }

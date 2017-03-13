@@ -13,17 +13,22 @@ public:
     Declaration() : symboltype(0) {}
     virtual bool Parse( struct serialize::Declaration * decl, size_t size );
 
-    virtual void show(void)
+    virtual void show(void) override
     {
         std::cout <<  "Declaration: ID: " << id << "\t" << "type: " << symboltype << std::endl;
     }
 
-    virtual const std::vector<ASTNode *> GetChildren( void ) 
+    virtual const std::vector<ASTNode *> GetChildren( void ) override
     {
         return children;
     }
 
-    virtual llvm::Value* accept(Visitor* v);
+    std::string GetId(void)
+    {
+        return id;
+    }
+
+    virtual llvm::Value* accept(Visitor* v) override;
 
     inline const std::string& GetSymbol( void ) const {
         return id;
