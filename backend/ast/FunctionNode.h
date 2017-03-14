@@ -1,5 +1,5 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#ifndef FUNCTIONNODE_H
+#define FUNCTIONNODE_H
 
 #include "NaiveScript.h"
 #include "ASTNode.h"
@@ -10,7 +10,7 @@
 
 namespace naivescript{
 
-class Function
+class FunctionNode
 {
 public:
     bool Parse( struct serialize::Function * func, size_t size );
@@ -46,7 +46,7 @@ public:
 
     llvm::Function* accept(Visitor* v);
 
-    ~Function() {
+    ~FunctionNode() {
         for (ASTNode * node : children) {
             free(node);
         }

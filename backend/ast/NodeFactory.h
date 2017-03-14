@@ -6,12 +6,12 @@
 
 namespace naivescript{
 
-class Function;
+class FunctionNode;
 
 class NodeFactory
 {
 public:
-    static Function* CreateFunction(uint8_t *data, uint32_t size);
+    static FunctionNode* CreateFunction(uint8_t *data, uint32_t size);
     static ASTNode* CreateCodeBlock(uint8_t *data, uint32_t size);
     static ASTNode* CreateDeclaration(uint8_t *data, uint32_t size);
     static ASTNode* CreateDeclarationList(uint8_t *data, uint32_t size);

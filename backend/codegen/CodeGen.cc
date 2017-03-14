@@ -1,7 +1,7 @@
 #include "CodeGen.h"
 #include "ASTNode.h"
 #include "FunctionList.h"
-#include "Function.h"
+#include "FunctionNode.h"
 #include "Declaration.h"
 #include "DeclarationList.h"
 #include "CodeBlock.h"
@@ -19,7 +19,7 @@ llvm::Value *LogErrorV(const char *Str) {
 }
 
 void CodeGenVisitor::dump( FunctionList *node) {
-    for (Function * f : node->GetChildren() ) {
+    for (FunctionNode * f : node->GetChildren() ) {
         llvm::Function * func = f->accept(this);
         if (func) {
             func->dump();
@@ -27,19 +27,37 @@ void CodeGenVisitor::dump( FunctionList *node) {
     }
 }
 
-std::vector<llvm::Function*> CodeGenVisitor::visit(FunctionList *node)
+void CodeGenVisitor::run(FunctionList *node)
 {
-    std::vector<llvm::Function*> funcs;
-    for (Function * f : node->GetChildren() ) {
-        llvm::Function * func = f->accept(this);
+    auto funcs = node->accept(this);
+    TheModule->dump();
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    //std::unique_ptr<llvm::Module> mod = llvm::make_unique<llvm::Module>(TheModule);
+    llvm::ExecutionEngine *engine = llvm::EngineBuilder(std::move(owner)).create();
+    engine->finalizeObject(); // memory for generated code marked executable:
+    for (const auto &f : funcs ) {
+        if (f.first == "main") {
+            if (f.second)
+                engine->runFunction(f.second, std::vector<llvm::GenericValue>());
+        }
+    }
+}
+
+std::map<std::string, llvm::Function*> CodeGenVisitor::visit(FunctionList *node)
+{
+    std::map<std::string, llvm::Function*> funcs;
+    for (FunctionNode * f : node->GetChildren() ) {
+        auto * func = f->accept(this);
         if (func) {
-            funcs.push_back(func);
+            funcs[f->GetFuncName()] = func;
         }
     }
     return funcs;
 }
 
-llvm::Function* CodeGenVisitor::visit(Function *func)
+llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
 {
     auto decls = func->GetParams()->GetChildren();
     std::vector<std::string> params_names;
@@ -56,7 +74,7 @@ llvm::Function* CodeGenVisitor::visit(Function *func)
 
     llvm::Function *F =
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
-        &TheModule);
+        TheModule);
 
     uint32_t Idx = 0;
     for (auto &Arg : F->args()) {

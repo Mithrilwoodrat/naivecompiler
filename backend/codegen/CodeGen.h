@@ -15,6 +15,10 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/GenericValue.h>
+#include <llvm/ExecutionEngine/MCJIT.h>
+#include <llvm/Support/TargetSelect.h>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
@@ -24,12 +28,14 @@
 #include <vector>
 
 namespace naivescript{
-static    llvm::LLVMContext TheContext;
-static    llvm::IRBuilder<> Builder(TheContext);
-static    llvm::Module TheModule("naivescript", TheContext);
+static  llvm::LLVMContext TheContext;
+static  llvm::IRBuilder<> Builder(TheContext);
+static  std::unique_ptr<llvm::Module> owner = llvm::make_unique<llvm::Module>("naivescript", TheContext);
+static  llvm::Module *TheModule = owner.get();
+//static    llvm::Module TheModule("naivescript", TheContext);
 
 class FunctionList;
-class Function;
+class FunctionNode;
 class Declaration;
 class DeclarationList;
 class CodeBlock;
@@ -43,8 +49,9 @@ class CodeGenVisitor : public Visitor
 {
 public:
     void dump( FunctionList *node);
-    virtual std::vector<llvm::Function*> visit(FunctionList *node);
-    virtual llvm::Function* visit(Function *node);
+    void run( FunctionList *node );
+    virtual std::map<std::string, llvm::Function*> visit(FunctionList *node);
+    virtual llvm::Function* visit(FunctionNode *node);
     virtual llvm::Value* visit(Declaration *node);
     virtual llvm::Value* visit(DeclarationList *node);
     virtual llvm::Value* visit(CodeBlock *node);

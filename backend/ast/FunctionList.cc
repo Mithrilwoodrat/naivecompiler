@@ -4,7 +4,7 @@
 namespace naivescript
 {
 
-std::vector<llvm::Function*>FunctionList::accept(Visitor* v)
+std::map<std::string, llvm::Function*>FunctionList::accept(Visitor* v)
 {
     return v->visit(this);
 }

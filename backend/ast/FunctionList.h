@@ -4,7 +4,7 @@
 #include "NaiveScript.h"
 #include "ASTNode.h"
 #include "NodeFactory.h"
-#include "Function.h"
+#include "FunctionNode.h"
 #include "Util.h"
 
 
@@ -28,7 +28,7 @@ public:
         return true;
     }
 
-    const std::vector<Function *> GetChildren( void ) 
+    const std::vector<FunctionNode *> GetChildren( void ) 
     {
         return children;
     }
@@ -37,22 +37,22 @@ public:
     {
         std::cout <<  "FunctionList\t";
         std::cout <<  "Node Count: " << count << std::endl;
-        for (Function * node : children) {
+        for (FunctionNode * node : children) {
             node->show();
         }
     }
 
-    std::vector<llvm::Function*> accept(Visitor* v);
+    std::map<std::string, llvm::Function*> accept(Visitor* v);
 
     ~FunctionList() {
-        for (Function * node : children) {
+        for (FunctionNode * node : children) {
             free(node);
         }
     }
 
 private:
     size_t count;
-    std::vector<Function*> children;
+    std::vector<FunctionNode*> children;
 };
 
 }

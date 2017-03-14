@@ -4,7 +4,7 @@
 #include "ValueNode.h"
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
-#include "Function.h"
+#include "FunctionNode.h"
 #include "Declaration.h"
 #include "DeclarationList.h"
 #include "CodeBlock.h"
@@ -44,9 +44,9 @@ ASTNode* NodeFactory::CreateSymbol(uint8_t *data, uint32_t size) {
     return node;
 }
 
-Function* NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
+FunctionNode* NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
 {
-    auto *node = new Function();
+    auto *node = new FunctionNode();
     node->Parse(reinterpret_cast<struct serialize::Function*>(data), size);
     return node;
 }
