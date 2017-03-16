@@ -63,7 +63,7 @@ llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
     std::vector<std::string> params_names;
 
     for (ASTNode* decl : decls) {
-        params_names.push_back(static_cast<Declaration*>(decl)->GetId());
+        params_names.push_back(static_cast<Declaration*>(decl)->GetID());
     }
 
     std::vector<llvm::Type *> Args(decls.size(),
@@ -90,15 +90,28 @@ llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
 
 llvm::Value* CodeGenVisitor::visit(Declaration *node)
 {
+    llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+    llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+                   TheFunction->getEntryBlock().begin());
+    llvm::AllocaInst *Alloca =  TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr, node->GetID());
+    NamedValues[node->GetID()] = Alloca;
     return nullptr;
 }
+
 llvm::Value* CodeGenVisitor::visit(DeclarationList *node)
 {
+    if ( ! node->GetChildren().size() ) {
+        return LogErrorV("Empty StmtList");
+    }
+    for (auto decl : node->GetChildren()) {
+        decl->accept(this);
+    }
     return nullptr;
 }
 
 llvm::Value* CodeGenVisitor::visit(CodeBlock *node) 
 {
+    node->GetDecls()->accept(this);
     return node->GetStmts()->accept(this);
 }
 
@@ -114,9 +127,10 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
 }
 
 llvm::Value* CodeGenVisitor::visit(AssignmentNode *node) {
-    std::cout << "Register Symbol: " << node->GetID() <<  std::endl;
+    std::cout << "Assignment Var: " << node->GetID() <<  std::endl;
     llvm::Value * tmpval = node->GetExpr()->accept(this);
-    NamedValues[node->GetID()] = tmpval;
+    auto Variable = NamedValues.at(node->GetID());
+    Builder.CreateStore(tmpval, Variable);
     return tmpval;
 }
 
@@ -140,11 +154,12 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node) {
 
 llvm::Value* CodeGenVisitor::visit(SymbolNode *node) {
     std::string symbol = node->GetSymbol();
-    std::cout << "Use Of Symbol: " << symbol <<  std::endl;
+    std::cout << "Use Of Var: " << symbol <<  std::endl;
     if (!NamedValues.count(symbol)) {
         return LogErrorV("Using Uninitialize Variable");
     }
-    return NamedValues.at(node->GetSymbol());
+    auto Val = NamedValues.at(symbol);
+    return Builder.CreateLoad(Val, symbol);
 }
 
 llvm::Value* CodeGenVisitor::visit(ValueNode *node) {

@@ -23,7 +23,7 @@ public:
         return children;
     }
 
-    std::string GetId(void)
+    std::string GetID(void)
     {
         return id;
     }

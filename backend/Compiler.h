@@ -37,7 +37,6 @@ public:
         func_list.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
         file.GetBodySize() );
         func_list.show();
-        //genVisitor.visit(&func_list);
         genVisitor.run(&func_list);
     }
     

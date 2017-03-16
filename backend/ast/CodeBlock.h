@@ -36,6 +36,11 @@ public:
         return static_cast<StmtList*>(stmts);
     }
 
+    DeclarationList* GetDecls(void)
+    {
+        return static_cast<DeclarationList*>(decls);
+    }
+
     virtual void show( void ) override
     {
         std::cout <<  "CodeBlock\t";

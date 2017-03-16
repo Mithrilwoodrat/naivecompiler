@@ -61,7 +61,7 @@ public:
     virtual llvm::Value* visit(SymbolNode *node);
     virtual llvm::Value* visit(ValueNode *node);
 private:
-    std::map<std::string, llvm::Value *> NamedValues;
+    std::map<std::string, llvm::AllocaInst*> NamedValues;
 };
 }
 #endif
