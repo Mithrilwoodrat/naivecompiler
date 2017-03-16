@@ -17,7 +17,7 @@ uint32_t getVarStructSize(uint8_t* data) {
 }
 
 void debug_parse(uint8_t *data, uint32_t size) {
-    int i;
+    uint32_t i;
     for(i=0;i<size;i++)
         printf("%x", *data++);
     printf("\n");

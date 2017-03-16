@@ -1,5 +1,5 @@
-#ifndef ASSIGNMENT_H
-#define ASSIGNMENT_H
+#ifndef RETURNNODE_H
+#define RETURNNODE_H
 
 #include "NaiveScript.h"
 #include "Statement.h"
@@ -13,14 +13,14 @@ namespace naivescript{
 
 class Visitor;
 
-class AssignmentNode : public Statement 
+class ReturnNode : public Statement 
 {
 public:
-    AssignmentNode() : Statement(serialize::TypeAssignmentExpr) {}
-    virtual bool Parse( struct serialize::Assignment * assignment, size_t size ) ;
+    ReturnNode() : Statement(serialize::TypeReturnStmt) {}
+    virtual bool Parse( struct serialize::ReturnStmt * return_stmt, size_t size ) ;
 
     virtual void show( void ) {
-        std::cout <<  "Assignment: ID: " << id << " = ";
+        std::cout <<  "Return: ";
         expr->show();
         std::cout << std::endl;
     }
@@ -33,15 +33,11 @@ public:
     
     virtual llvm::Value* accept(Visitor* v);
 
-    inline const std::string& GetID( void ) const {
-        return id;
-    }
-
     inline ASTNode* GetExpr( void )  {
         return expr;
     }
 
-    ~AssignmentNode()
+    ~ReturnNode()
     { 
         free(expr);
     }

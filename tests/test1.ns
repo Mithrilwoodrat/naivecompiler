@@ -1,7 +1,8 @@
 int fuck(int x, int y)
 {
-    int abc;
-    abc = 3;
+    int ret;
+    ret = 1;
+	return ret;
 }
 
 int main()
@@ -12,4 +13,5 @@ int main()
     abc=4*(i+1);
     write(abc);
     exit();
+	return 0;
 }

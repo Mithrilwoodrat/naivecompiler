@@ -84,8 +84,13 @@ class SerializeHandler(object):
     def serialize_AssignmentExpr(self, node):
         assigment_expr =  S_AssignmentExpr()
         assigment_expr['id'] = self.env.add_string(node._id.name)
-        assigment_expr['exp'] = self.serialize(node.rhs)
+        assigment_expr['expr'] = self.serialize(node.rhs)
         return assigment_expr
+
+    def serialize_ReturnStmt(self, node):
+        return_statement = S_ReturnStmt()
+        return_statement['expr'] = self.serialize(node.expr)
+        return return_statement
 
     def serialize_BinaryOp(self, node):
         binary_op = S_BinaryOp()

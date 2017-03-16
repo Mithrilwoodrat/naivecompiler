@@ -42,8 +42,7 @@ class Lexer(object):
         "else":"ELSE",
         "for":"FOR",
         "int":"INT",
-        #"read":"READ",
-        #"write":"WRITE",
+        "return":"RETURN",
         "void": "VOID"}
 
     # singlewords = ('{', '}', '(', ')' , ';')
@@ -53,7 +52,7 @@ class Lexer(object):
     #)
     tokens = (
         "ID", "INT_CONST", "NORMSTRING",
-        "IF", "ELSE", 'FOR','INT', # 'READ', 'WRITE',
+        "IF", "ELSE", 'FOR','INT', 'RETURN',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
         "GE", 'LE', 'NE',
         "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA","VOID",
@@ -196,6 +195,7 @@ class Parser(object):
                   | compound_statement
                   | for_statement
                   | funccall
+                  | return_statement
         '''
         p[0] = p[1]
     
@@ -208,17 +208,9 @@ class Parser(object):
         # forstat(a,b,c,body)
         p[0] = ForStmt(p[3], p[5], p[7], p[9])
 
-    # def p_write_statement(self, p):
-    #     ''' write_statement : WRITE varsymbol SEMI '''
-    #     # WriteStat(ID)
-    #     #var = VariableSymbol(p[2])
-    #     p[0] = WriteStmt(p[2])
-
-    # def p_read_statement(self, p):
-    #     ''' read_statement : READ varsymbol SEMI '''
-    #     # WriteStat(ID)
-    #     #var = VariableSymbol(p[2])
-    #     p[0] = ReadStmt(p[2])
+    def p_return_statement(self, p):
+        ''' return_statement : RETURN expression SEMI '''
+        p[0] = ReturnStmt(p[2])
     
     def p_assignment_statment(self, p):
         '''assignment_statement : assignment_expr SEMI'''

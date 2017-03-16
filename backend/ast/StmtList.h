@@ -25,13 +25,18 @@ public:
             uint32_t type = util::getStructType(data);
             //std::cout <<  "TypeId: " << type << std::endl;
             switch (type) {
-                case serialize::FuncCall:
-                    data += getStructSize(serialize::FuncCall);
+                case serialize::TypeFuncCall:
+                    data += util::getVarStructSize(data);
                     break;
-                case serialize::AssignmentExpr:
+                case serialize::TypeAssignmentExpr:
                     //std::cout << "Assigment " << "size: " << util::getVarStructSize(data) << std::endl;
                     node_size = util::getVarStructSize(data);
                     children.push_back(NodeFactory::CreateAssignment(data, node_size));
+                    data += node_size;
+                    break;
+                case serialize::TypeReturnStmt:
+                    node_size = util::getVarStructSize(data);
+                    children.push_back(NodeFactory::CreateReturnNode(data, node_size));
                     data += node_size;
                     break;
                 default:

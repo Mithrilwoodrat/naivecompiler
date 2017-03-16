@@ -41,6 +41,7 @@ class DeclarationList;
 class CodeBlock;
 class StmtList;
 class AssignmentNode;
+class ReturnNode;
 class BinaryOpNode;
 class SymbolNode;
 class ValueNode;
@@ -57,6 +58,7 @@ public:
     virtual llvm::Value* visit(CodeBlock *node);
     virtual llvm::Value* visit(StmtList *node);
     virtual llvm::Value* visit(AssignmentNode *node);
+    virtual llvm::Value* visit(ReturnNode *node);
     virtual llvm::Value* visit(BinaryOpNode *node);
     virtual llvm::Value* visit(SymbolNode *node);
     virtual llvm::Value* visit(ValueNode *node);

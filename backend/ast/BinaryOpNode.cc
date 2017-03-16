@@ -12,13 +12,13 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
         uint8_t *p_lhs = (uint8_t *)(binaryop->lhs.data);
         uint32_t type = util::getStructType(p_lhs);
         switch(type) {
-            case serialize::Value:
+            case serialize::TypeValue:
                 lhs = NodeFactory::CreateValue(p_lhs, binaryop->lhsSize);
                 break;
-            case serialize::Symbol:
+            case serialize::TypeSymbol:
                 lhs = NodeFactory::CreateSymbol(p_lhs, binaryop->lhsSize);
                 break;
-            case serialize::BinaryOp:
+            case serialize::TypeBinaryOp:
                 lhs = NodeFactory::CreateBinaryOp(p_lhs, binaryop->lhsSize);
                 break;
             default:
@@ -28,13 +28,13 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
         uint8_t* p_rhs = p_lhs + binaryop->lhsSize;
         type = util::getStructType(p_rhs);
         switch(type) {
-            case serialize::Value:
+            case serialize::TypeValue:
                 rhs = NodeFactory::CreateValue(p_rhs, binaryop->rhsSize);
                 break;
-            case serialize::Symbol:
+            case serialize::TypeSymbol:
                 rhs = NodeFactory::CreateSymbol(p_rhs, binaryop->rhsSize);
                 break;
-            case serialize::BinaryOp:
+            case serialize::TypeBinaryOp:
                 rhs = NodeFactory::CreateBinaryOp(p_rhs, binaryop->rhsSize);
                 break;
             default:

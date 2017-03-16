@@ -1,6 +1,7 @@
 #include "NodeFactory.h"
 #include "SerializeStructure.h"
 #include "AssignmentNode.h"
+#include "ReturnNode.h"
 #include "ValueNode.h"
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
@@ -9,7 +10,6 @@
 #include "DeclarationList.h"
 #include "CodeBlock.h"
 #include "StmtList.h"
-#include "Compiler.h"
 
 
 namespace naivescript{
@@ -23,6 +23,13 @@ ASTNode * NodeFactory::CreateStmtList(uint8_t *data, uint32_t size) {
 ASTNode * NodeFactory::CreateAssignment(uint8_t *data, uint32_t size) {
     AssignmentNode *node = new AssignmentNode();
     node->Parse(reinterpret_cast<struct serialize::Assignment*>(data), size);
+    return node;
+}
+
+ASTNode* NodeFactory::CreateReturnNode(uint8_t *data, uint32_t size)
+{
+    ReturnNode *node = new ReturnNode();
+    node->Parse(reinterpret_cast<struct serialize::ReturnStmt*>(data), size);
     return node;
 }
 

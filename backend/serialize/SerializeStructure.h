@@ -11,19 +11,20 @@ namespace serialize
 
 enum NodeType
 {
-    FuncList = 0,
-    Function = 1,
-    CodeBlock = 2,
-    DeclarationList = 3,
-    StatementList = 4,
-    ArgumentList = 5,
-    Declaration = 6,
-    ForStmt =  7,
-    FuncCall =  8,
-    AssignmentExpr = 9,
-    BinaryOp =  10,
-    Symbol = 11,
-    Value = 12,
+    TypeFuncList = 0,
+    TypeFunction = 1,
+    TypeCodeBlock = 2,
+    TypeDeclarationList = 3,
+    TypeStatementList = 4,
+    TypeArgumentList = 5,
+    TypeDeclaration = 6,
+    TypeForStmt =  7,
+    TypeFuncCall =  8,
+    TypeAssignmentExpr = 9,
+    TypeReturnStmt = 10,
+    TypeBinaryOp =  11,
+    TypeSymbol = 12,
+    TypeValue = 13,
 };
 
 enum ValueType
@@ -124,7 +125,6 @@ struct FuncCall
 }__attribute__((packed)) ;
 
 
-
 struct Assignment
 {
     uint32_t type;
@@ -134,6 +134,13 @@ struct Assignment
     uint8_t expr[0];
 }__attribute__((packed)) ;
 
+struct ReturnStmt
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t exprSize;
+    uint8_t expr[0];
+}__attribute__((packed)) ;
 
 struct BinaryOp
 {

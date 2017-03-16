@@ -1,5 +1,6 @@
 #include "CodeGen.h"
 #include "ASTNode.h"
+#include "Statement.h"
 #include "FunctionList.h"
 #include "FunctionNode.h"
 #include "Declaration.h"
@@ -7,6 +8,7 @@
 #include "CodeBlock.h"
 #include "StmtList.h"
 #include "AssignmentNode.h"
+#include "ReturnNode.h"
 #include "ValueNode.h"
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
@@ -121,7 +123,12 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
         return LogErrorV("Empty StmtList");
     }
     for (ASTNode * node : stmtlist->GetChildren() ) {
-        retval = node->accept(this);
+        Statement* stmt = static_cast<Statement *>(node);
+        if (stmt->GetNodeType() == serialize::TypeReturnStmt) {
+            return stmt->accept(this);
+        } else {
+            stmt->accept(this);
+        }
     }
     return retval;
 }
@@ -131,6 +138,11 @@ llvm::Value* CodeGenVisitor::visit(AssignmentNode *node) {
     llvm::Value * tmpval = node->GetExpr()->accept(this);
     auto Variable = NamedValues.at(node->GetID());
     Builder.CreateStore(tmpval, Variable);
+    return tmpval;
+}
+
+llvm::Value* CodeGenVisitor::visit(ReturnNode *node) {
+    llvm::Value * tmpval = node->GetExpr()->accept(this);
     return tmpval;
 }
 

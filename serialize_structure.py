@@ -4,7 +4,6 @@ import sys
 import ctypes
 import traceback
 from Structure import Structure
-#from ctypes import CFUNCTYPE, POINTER, Structure, c_int, c_double, c_uint, c_char_p, c_void_p, c_ulonglong, cast
 
 
 logger = logging.getLogger(__file__)
@@ -26,9 +25,10 @@ Type_Declaration = 6
 Type_ForStmt =  7
 Type_FuncCall =  8
 Type_AssignmentExpr = 9
-Type_BinaryOp =  10
-Type_Symbol = 11
-Type_Const = 12
+Type_ReturnStmt = 10
+Type_BinaryOp =  11
+Type_Symbol = 12
+Type_Const = 13
 
 ## File
   # -------
@@ -134,12 +134,20 @@ class S_ForStmt(Structure):
 class S_AssignmentExpr(Structure):
     structure = (
         ("type", "<I=%d" % Type_AssignmentExpr),
-        ("size", "<I=4*4 + len(exp)"),
+        ("size", "<I=4*4 + len(expr)"),
         ("id", "<I"),
-        ("exp_size", "<I=len(exp)"),
-        ("exp", ":")
+        ("expr_size", "<I=len(expr)"),
+        ("expr", ":")
     )
 
+class S_ReturnStmt(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_ReturnStmt),
+        ("size", "<I=4*3 + len(expr)"),
+        ("expr_size", "<I=len(expr)"),
+        ("expr", ":")
+    )
+    
 class S_BinaryOp(Structure):
     structure = (
         ("type", "<I=%d" % Type_BinaryOp),

@@ -190,24 +190,16 @@ class ForStmt(Statement):
                 self.bool_expr,
                 self.assigment_expr2,
                 self.body]
+    
 
-
-    def serialize(self, env):
-        raise NotImplementedError
-
-class ReadStmt(Statement):
-    def __init__(self, ID):
-        self._id = ID
-        self.node_name = "ReadStat"
-
-    def serialize(self, env):
-        readstmt = S_WriteStmt()
-        readstmt['id'] = env.add_string(self._id.name)
-        return readstmt
+class ReturnStmt(Statement):
+    def __init__(self, expr):
+        self.expr = expr
 
     def children(self):
-        return [self._id]
+        return [self.expr]
 
+    
 class AssignmentStmt(Statement):
     def __init__(self, AssignmentExpr):
         self.node_name = "AssigmentStmt"

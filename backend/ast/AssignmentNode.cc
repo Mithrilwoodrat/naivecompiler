@@ -12,13 +12,13 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
     std::cout << "ID: " << id << std::endl;
     uint32_t type = util::getStructType(assignment->expr);
     switch(type) {
-        case serialize::Value:
+        case serialize::TypeValue:
             expr = NodeFactory::CreateValue(assignment->expr, assignment->exprSize);
             break;
-        case serialize::Symbol:
+        case serialize::TypeSymbol:
             expr = NodeFactory::CreateSymbol(assignment->expr, assignment->exprSize);
             break;
-        case serialize::BinaryOp:
+        case serialize::TypeBinaryOp:
             expr = NodeFactory::CreateBinaryOp(assignment->expr, assignment->exprSize);
             //std::cout << "BinaryOp" << std::endl;
             break;
