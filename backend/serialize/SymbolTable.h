@@ -8,7 +8,7 @@ namespace serialize {
 
 class SymbolTable{
 public:
-    bool Parse( char * data, size_t size);
+    bool Parse( uint8_t * data, size_t size);
 
     const std::string & ResolveSymbol(uint32_t id) const {
         if (id < symbols.size()) {

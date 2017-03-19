@@ -11,6 +11,7 @@ bool ReturnNode::Parse( struct serialize::ReturnStmt * return_stmt, size_t size 
     uint32_t type = util::getStructType(return_stmt->expr);
     switch(type) {
         case serialize::TypeValue:
+            util::debug_parse(return_stmt->expr, return_stmt->exprSize);
             expr = NodeFactory::CreateValue(return_stmt->expr, return_stmt->exprSize);
             break;
         case serialize::TypeSymbol:

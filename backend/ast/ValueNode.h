@@ -10,7 +10,7 @@ namespace naivescript{
 class ValueNode : public ASTNode {
 
 public:
-    ValueNode() : val(0) {}
+    ValueNode() : val(0) , valuetype(0) {}
 
     virtual bool Parse( struct serialize::Value * value, size_t size );
 

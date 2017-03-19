@@ -18,7 +18,7 @@ public:
         return body_size;
     }
 
-    const char * GetBody(void) const {
+    const u_int8_t * GetBody(void) const {
         return body;
     }
 
@@ -35,7 +35,7 @@ private:
     size_t string_table_size;
     size_t body_size;
     SymbolTable symbol_table;
-    const char * body;
+    const u_int8_t * body;
 };
 
 }

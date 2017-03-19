@@ -3,14 +3,14 @@
 namespace naivescript{
 namespace serialize {
 
-bool SymbolTable::Parse( char * data, size_t size ) {
+bool SymbolTable::Parse( uint8_t * data, size_t size ) {
     size_t start = 0;
-    symbols.push_back(std::string(const_cast<char *>(data) + start));
+    symbols.push_back(std::string(reinterpret_cast<char *>(data+ start)));
     for (size_t i=0; i < size - 1; i++) {
         if (data[i] == '\0') {
             if (i + 1 < size -1) {
                 start = i+1;
-                symbols.push_back(std::string(const_cast<char *>(data) + start));
+                symbols.push_back(std::string(reinterpret_cast<char *>(data+ start)));
             } else {
                 break;
             }

@@ -32,13 +32,7 @@ public:
         return GetCompiler()->symbol_table->ResolveSymbol(id);
     }
 
-    void Compile( void ) {
-        char *body = const_cast<char *>(file.GetBody());
-        func_list.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
-        file.GetBodySize() );
-        func_list.show();
-        genVisitor.run(&func_list);
-    }
+    void Compile( void );
     
     static Compiler* instance;
 private:

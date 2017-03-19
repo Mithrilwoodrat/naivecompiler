@@ -1,29 +1,44 @@
 #include "SerializeFile.h"
 
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <stdio.h>
+
 namespace naivescript{
 namespace serialize {
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+uint8_t * LoadBinaryFile(const char *filename)
+{
+    struct stat sbuf;
+    if (stat(filename, &sbuf) < 0) {
+        return NULL;
+    }
+    size_t filesize = sbuf.st_size;
+    FILE* fd = fopen(filename, "r");
+    uint8_t *filebody = (uint8_t *)malloc(filesize);
+    memset(filebody, filesize, 0);
+    fread (filebody, 1, filesize, fd);
+    fclose(fd);
+    return filebody;
+}
+#ifdef __cplusplus
+}
+#endif
+
 bool SerializeFile::Load( const std::string& path ) 
 {
-    // load binary file into std:string
-    std::ifstream fdata(path);
-    if (!fdata) {
-        std::cout << "Load File Failed" << std::endl;
-        return false;
-    }
-    std::string data_str;
-    
-    fdata.seekg(0, std::ios::end);   
-    data_str.reserve(fdata.tellg());
-    fdata.seekg(0, std::ios::beg);
+    const char *filename = path.c_str();
+    uint8_t *filebody = LoadBinaryFile(filename);
 
-    data_str.assign((std::istreambuf_iterator<char>(fdata)),
-               std::istreambuf_iterator<char>());
-    const char * data = data_str.c_str();
-
-    //size_t length = data_str.size();
     FileFormat *file;
-    file = reinterpret_cast<FileFormat*>( const_cast<char *>(data) ); 
+    file = reinterpret_cast<FileFormat*>( filebody ); 
     body_size = file->bodySize;
     string_table_size = file->stringtableSize;
      std::cout << "StringTableEntry: " << 
@@ -35,8 +50,8 @@ bool SerializeFile::Load( const std::string& path )
     std::cout << "StringTableSize: " << 
         file->stringtableSize << std::endl;
 
-    symbol_table.Parse(const_cast<char *>(data) + file->stringTableEntry, string_table_size);
-    this->body = reinterpret_cast<char *>(const_cast<char *>(data) + file->bodyEntry);
+    symbol_table.Parse(filebody + file->stringTableEntry, string_table_size);
+    this->body = reinterpret_cast<u_int8_t *>(filebody + file->bodyEntry);
     return true;
 
 }

@@ -13,5 +13,5 @@ int main()
     abc=4*(i+1);
     write(abc);
     exit();
-	return 0;
+	return 1;
 }

@@ -46,7 +46,7 @@ struct FileFormat
     uint32_t bodySize ;
     uint32_t stringtableSize;
     uint8_t bodyMD5[ FileMD5Size ] ;
-    struct StringTable stringtable;
+    StringTable stringtable;
     uint8_t body[ 0 ] ;
 } __attribute__((packed)) ;
 
