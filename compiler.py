@@ -109,7 +109,7 @@ class Compiler(object):
         obj['stringtable'] = stringtable
         obj['body'] = body
         obj[ "bodyMD5" ] = hashlib.md5( str(body) ).digest()
-        with open('ns.data','w') as fout:
+        with open('ns.data','wb') as fout:
             fout.write(str(obj))
     
 if __name__ == "__main__":

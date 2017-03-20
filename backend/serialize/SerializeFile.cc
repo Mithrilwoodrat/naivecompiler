@@ -21,7 +21,7 @@ uint8_t * LoadBinaryFile(const char *filename)
         return NULL;
     }
     size_t filesize = sbuf.st_size;
-    FILE* fd = fopen(filename, "r");
+    FILE* fd = fopen(filename, "rb");
     uint8_t *filebody = (uint8_t *)malloc(filesize);
     memset(filebody, filesize, 0);
     fread (filebody, 1, filesize, fd);
