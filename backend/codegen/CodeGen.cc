@@ -74,20 +74,28 @@ llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
     llvm::FunctionType *FT =
       llvm::FunctionType::get(llvm::Type::getInt32Ty(TheContext), Args, false);
 
-    llvm::Function *F =
+    llvm::Function *TheFunction =
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
         TheModule);
+        
+    llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", TheFunction);
+    Builder.SetInsertPoint(BB);
 
     uint32_t Idx = 0;
-    for (auto &Arg : F->args()) {
+    for (auto &Arg : TheFunction->args()) {
         Arg.setName(params_names[Idx++]);
+        llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+            TheFunction->getEntryBlock().begin());
+        llvm::AllocaInst *Alloca =  TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr, Arg.getName());
+        Builder.CreateStore(&Arg, Alloca);
+        // Add arguments to variable symbol table.
+        NamedValues[Arg.getName()] = Alloca;
     }
 
-    llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", F);
-    Builder.SetInsertPoint(BB);
+    
     llvm::Value *retval = func->GetBody()->accept(this);
     Builder.CreateRet(retval);
-    return F;
+    return TheFunction;
 }
 
 llvm::Value* CodeGenVisitor::visit(Declaration *node)
