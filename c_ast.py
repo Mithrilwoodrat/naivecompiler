@@ -160,10 +160,15 @@ class Declaration(ASTNode):
         
 
 class Statement(ASTNode):
+    def __init__(self):
+        pass
+    
     def __add__(self, rhs):
         stmts = StmtList(self)
         return stmts + rhs
 
+    def children(self):
+        return []
 
 class FuncCall(Statement):
     def __init__(self, func_name, argument_list):
@@ -174,22 +179,26 @@ class FuncCall(Statement):
         return [self.func_name, self.argument_list]
 
 
-class IfStmt(object):
-    pass
+class IfStmt(Statement):
+    def __init__(self, cond, iftrue, iffalse=None):
+        self.cond = cond
+        self.iftrue = iftrue
+        self.iffalse = iffalse
 
-class ForStmt(Statement):
-    def __init__(self, expr1, expr2, expr3, body):
-        self.assigment_expr1 = expr1
-        self.bool_expr = expr2
-        self.assigment_expr2 = expr3
+    def children(self):
+        if self.iffalse is None:
+            return [self.cond, self.iftrue]
+        return [self.cond, self.iftrue, self.iffalse]
+    
+
+class WhileStmt(Statement):
+    def __init__(self, expr, body):
+        self.bool_expr = expr
         self.body = body
         self.node_name = "ForStat"
 
     def children(self):
-        return [self.assigment_expr1,
-                self.bool_expr,
-                self.assigment_expr2,
-                self.body]
+        return [self.bool_expr, self.body]
     
 
 class ReturnStmt(Statement):
@@ -243,20 +252,13 @@ class BinaryOp(ASTNode):
         binary_op['exp1'] = str(self.lhs.serialize(env))
         binary_op['exp2'] = str(self.lhs.serialize(env))
         return binary_op
-        
-class BoolExpr(ASTNode):
-    attr_names = ('op',)
-    def __init__(self, lhs, op , rhs):
-        self.node_name = "BoolExpr"
-        self.lhs = lhs
-        self.op = op
-        self.rhs = rhs
-    
-    def children(self):
-        return [self.lhs, self.rhs]
 
-    def serialize(self, env):
-        raise NotImplementedError
+class BreakStmt(Statement):
+    pass
+
+class ContinueStmt(Statement):
+    pass
+
 
 class Symbol(ASTNode):
     attr_names = ('name', )

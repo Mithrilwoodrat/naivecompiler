@@ -67,6 +67,21 @@ class SerializeHandler(object):
         stmt_list['data'] = data
         return stmt_list
 
+    def serialize_WhileStmt(self, node):
+        while_stmt = S_WhileStmt()
+        while_stmt['expr'] = self.serialize(node.bool_expr)
+        while_stmt['body'] = self.serialize(node.body)
+        return while_stmt
+
+    def serialize_IfStmt(self, node):
+        if_stmt = S_IfStmt()
+        if_stmt['cond'] = self.serialize(node.cond)
+        if_stmt['then'] = self.serialize(node.iftrue)
+        if_stmt['_else'] = ''
+        if node.iffalse:
+            if_stmt['_else'] = self.serialize(node.iffalse)
+        return if_stmt
+        
     def serialize_ArgumentList(self, node):
         arg_list = S_StatementList()
         arg_list['count'] = len(node.l)
@@ -91,6 +106,12 @@ class SerializeHandler(object):
         return_statement = S_ReturnStmt()
         return_statement['expr'] = self.serialize(node.expr)
         return return_statement
+
+    def serialize_BreakStmt(self, node):
+        return S_BreakStmt()
+
+    def serialize_ContinueStmt(self, node):
+        return S_ContinueStmt()
 
     def serialize_BinaryOp(self, node):
         binary_op = S_BinaryOp()

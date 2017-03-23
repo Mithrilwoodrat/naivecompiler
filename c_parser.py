@@ -40,9 +40,11 @@ class Lexer(object):
     keywords = {
         "if":'IF',
         "else":"ELSE",
-        "for":"FOR",
         "int":"INT",
         "return":"RETURN",
+        "while": "WHILE",
+        "break": "BREAK",
+        "continue": "CONTINUE",
         "void": "VOID"}
 
     # singlewords = ('{', '}', '(', ')' , ';')
@@ -52,8 +54,9 @@ class Lexer(object):
     #)
     tokens = (
         "ID", "INT_CONST", "NORMSTRING",
-        "IF", "ELSE", 'FOR','INT', 'RETURN',
+        "IF", "ELSE", 'WHILE', 'RETURN', 'BREAK', 'CONTINUE',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
+        'INT',
         "GE", 'LE', 'NE',
         "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA","VOID",
         "COMMENTS"
@@ -62,7 +65,9 @@ class Lexer(object):
     identifier       = r'[a-zA-Z_][0-9a-zA-Z_]*'
     t_IF = r'if'
     t_ELSE = r'else'
-    t_FOR = r'for'
+    t_WHILE = r'while'
+    t_BREAK = r'break'
+    t_CONTINUE = r'continue'
     t_INT = r'int'
     #t_READ = r'read'
     #t_WRITE = r'write'
@@ -192,10 +197,10 @@ class Parser(object):
 
     def p_statement(self, p):
         ''' statement : assignment_statement 
-                  | compound_statement
-                  | for_statement
+                  | while_statement
                   | funccall
-                  | return_statement
+                  | jump_statement
+                  | selection_statement
         '''
         p[0] = p[1]
     
@@ -203,10 +208,37 @@ class Parser(object):
         ''' compound_statement : LBRACE statement_list RBRACE'''
         p[0] = p[2]
     
-    def p_for_statement(self, p):
-        '''for_statement : FOR LPAREN assignment_expr SEMI expression SEMI assignment_expr RPAREN compound_statement '''
-        # forstat(a,b,c,body)
-        p[0] = ForStmt(p[3], p[5], p[7], p[9])
+    def p_while_statement(self, p):
+        '''while_statement : WHILE LPAREN expression RPAREN compound_statement'''
+        p[0] = WhileStmt(p[3], p[5])
+
+    def p_if_statement1(self, p):
+        '''if_statement1 : IF LPAREN expression RPAREN compound_statement ELSE compound_statement'''
+        p[0] = IfStmt(p[3], p[5], p[7])
+
+    def p_if_statement2(self, p):
+        '''if_statement2 : IF LPAREN expression RPAREN compound_statement'''
+        p[0] = IfStmt(p[3], p[5])
+        
+    def p_selection_statement(self, p):
+        ''' selection_statement : if_statement1
+                                | if_statement2
+        '''
+        p[0] = p[1]
+
+    def p_break_statement(self, p):
+        """ break_statement  : BREAK SEMI """
+        p[0] = BreakStmt()
+
+    def p_continue_statement(self, p):
+        """ continue_statement  : CONTINUE SEMI """
+        p[0] = ContinueStmt()
+
+    def p_jump_statement(self, p):
+        """ jump_statement  : return_statement
+                            | continue_statement
+                            | break_statement"""
+        p[0] = p[1]
 
     def p_return_statement(self, p):
         ''' return_statement : RETURN expression SEMI '''
@@ -222,31 +254,21 @@ class Parser(object):
         p[0] = AssignmentExpr(var, p[3])
     
     def p_expression(self, p):
-        ''' expression : bool_expression '''
+        ''' expression : binary_expr '''
         p[0] = p[1]
-    
-    def p_bool_expression(self, p):
-        ''' bool_expression : bool_expression GT bool_expression
-                        | bool_expression GE bool_expression
-                        | bool_expression LE bool_expression
-                        | bool_expression LT bool_expression
-                        | bool_expression AND bool_expression
-                        | bool_expression OR bool_expression
-                        | LPAREN bool_expression RPAREN
-                        | binary_expr'''
-        if len(p) == 2:
-            p[0] = p[1]
-        else:
-            if p[1] == '(':
-                p[0] = p[2]
-            else:
-                p[0] = BoolExpr(p[1], p[2], p[3])
 
     def p_binary_expr(self, p):
         ''' binary_expr : binary_expr PLUS binary_expr
                   | binary_expr MINUS binary_expr
                   | binary_expr TIMES binary_expr
                   | binary_expr DIVIDES binary_expr
+                  | binary_expr GT binary_expr
+                  | binary_expr LT binary_expr
+                  | binary_expr LE binary_expr
+                  | binary_expr GE binary_expr
+                  | binary_expr NE binary_expr
+                  | binary_expr AND binary_expr
+                  | binary_expr OR binary_expr
                   | LPAREN binary_expr RPAREN
                   | varsymbol
                   | constant '''

@@ -9,8 +9,13 @@ int main()
 {
     int abc;
     int i;
-    i=2;
-    abc=4*(i+1);
+	i=2;
+	while (1) {
+	  abc = abc + 4*(i+1);
+	  if (abc > 10) {
+	       break;
+      }
+	}
     write(abc);
     exit();
 	return 1;

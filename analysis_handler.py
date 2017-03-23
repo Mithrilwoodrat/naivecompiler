@@ -52,6 +52,9 @@ class FuncHelper(NodeVisitor):
         
     def visit_VariableSymbol(self, node):
         self.scope.resolve_symbol(node.name)
+
+    def visit_BreakStmt(self, node):
+        pass
         
     # def visit_AssignmentExpr(self, node):
     #     self.scope.resolve_symbol(node._id.name)
@@ -69,3 +72,6 @@ class AnalysisVisitor(NodeVisitor):
         helper = FuncHelper()
         helper.visit(node)
         self.has_error = helper.has_error
+
+    def visit_BreakStmt(self, node):
+        pass

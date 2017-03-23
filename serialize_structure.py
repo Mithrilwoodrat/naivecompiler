@@ -22,13 +22,16 @@ Type_DeclarationList = 3
 Type_StatementList = 4
 Type_ArgumentList = 5
 Type_Declaration = 6
-Type_ForStmt =  7
-Type_FuncCall =  8
-Type_AssignmentExpr = 9
-Type_ReturnStmt = 10
-Type_BinaryOp =  11
-Type_Symbol = 12
-Type_Const = 13
+Type_WhileStmt =  7
+Type_IfStmt =  8
+Type_FuncCall =  9
+Type_AssignmentExpr = 10
+Type_ReturnStmt = 11
+Type_BreakStmt = 12
+Type_ContinueStmt = 13
+Type_BinaryOp =  14
+Type_Symbol = 15
+Type_Const = 16
 
 ## File
   # -------
@@ -121,13 +124,26 @@ class S_ArgumentList(Structure):
         ( "data", ":"),
     )
 
-
-class S_ForStmt(Structure):
+class S_IfStmt(Structure):
     structure = (
-        ( "type", "<I=%d" % Type_ForStmt),
-        ( "assigment_expr", ":"),
-        ( "bool_expr", ":"),
-        ( "assigment_expr", ":")
+        ( "type", "<I=%d" % Type_IfStmt),
+        ( "size", "<I=4*5 + len(cond) + len(then) + len(_else)"),
+        ( "condSize", "<I=len(cond)"),
+        ( "thenSize", "<I=len(then)"),
+        ( "elseSize", "<I=len(_else)"),
+        ( "cond", ":"),
+        ( "then", ":"),
+        ( "_else", ":")
+    )
+
+class S_WhileStmt(Structure):
+    structure = (
+        ( "type", "<I=%d" % Type_WhileStmt),
+        ( "size", "<I=4*4 + len(body) + len(expr)"),
+        ( "exprSize", "<I=len(expr)"),
+        ( "bodySize", "<I=len(body)"),
+        ( "expr", ":"),
+        ( "body", ":")
     )
 
     
@@ -146,6 +162,18 @@ class S_ReturnStmt(Structure):
         ("size", "<I=4*3 + len(expr)"),
         ("expr_size", "<I=len(expr)"),
         ("expr", ":")
+    )
+
+class S_BreakStmt(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_BreakStmt),
+        ("size", "<I=4*2"),
+    )
+
+class S_ContinueStmt(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_ContinueStmt),
+        ("size", "<I=4*2"),
     )
     
 class S_BinaryOp(Structure):
