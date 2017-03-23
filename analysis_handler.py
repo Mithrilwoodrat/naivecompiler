@@ -53,8 +53,13 @@ class FuncHelper(NodeVisitor):
     def visit_VariableSymbol(self, node):
         self.scope.resolve_symbol(node.name)
 
+    def visit_ContinueStmt(self, node):
+        logging.error("continue outside loop!")
+        self.scope.has_error = True
+
     def visit_BreakStmt(self, node):
-        pass
+        logging.error("break outside loop!")
+        self.scope.has_error = True
         
     # def visit_AssignmentExpr(self, node):
     #     self.scope.resolve_symbol(node._id.name)
@@ -72,6 +77,3 @@ class AnalysisVisitor(NodeVisitor):
         helper = FuncHelper()
         helper.visit(node)
         self.has_error = helper.has_error
-
-    def visit_BreakStmt(self, node):
-        pass

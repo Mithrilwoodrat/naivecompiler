@@ -18,13 +18,16 @@ enum NodeType
     TypeStatementList = 4,
     TypeArgumentList = 5,
     TypeDeclaration = 6,
-    TypeForStmt =  7,
-    TypeFuncCall =  8,
-    TypeAssignmentExpr = 9,
-    TypeReturnStmt = 10,
-    TypeBinaryOp =  11,
-    TypeSymbol = 12,
-    TypeValue = 13,
+    TypeWhileStmt =  7,
+    TypeIfStmt =  8,
+    TypeFuncCall =  9,
+    TypeAssignmentExpr = 10,
+    TypeReturnStmt = 11,
+    TypeBreakStmt = 12,
+    TypeContinueStmt = 13,
+    TypeBinaryOp =  14,
+    TypeSymbol = 15,
+    TypeValue = 16,
 };
 
 enum ValueType
@@ -141,6 +144,20 @@ struct ReturnStmt
     uint32_t exprSize;
     uint8_t expr[0];
 }__attribute__((packed)) ;
+
+struct BreakStmt
+{
+    uint32_t type;
+    uint32_t size;
+}__attribute__((packed)) ;
+
+
+struct ContinueStmt
+{
+    uint32_t type;
+    uint32_t size;
+}__attribute__((packed)) ;
+
 
 struct BinaryOp
 {

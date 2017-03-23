@@ -20,5 +20,44 @@ public:
 
 };
 
+class BreakNode : public Statement
+{
+public:
+    BreakNode() : Statement(serialize::TypeBreakStmt) {}
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
+    {
+        return children;
+    }
+    
+    virtual llvm::Value* accept(Visitor* v)
+    {
+       return nullptr;
+    }
+    virtual void show( void ) {
+        std::cout <<  "Break" << std::endl;
+    }
+private:
+    std::vector<ASTNode *> children;
+};
+
+class ContinueNode : public Statement
+{
+public:
+    ContinueNode() : Statement(serialize::TypeContinueStmt) {}
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
+    {
+        return children;
+    }
+    virtual llvm::Value* accept(Visitor* v)
+    {
+       return nullptr;
+    }
+    virtual void show( void ) {
+        std::cout << "Continue" << std::endl;
+    }
+private:
+    std::vector<ASTNode *> children;
+};
+
 }
 #endif
