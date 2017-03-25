@@ -10,6 +10,8 @@
 #include "DeclarationList.h"
 #include "CodeBlock.h"
 #include "StmtList.h"
+#include "IfNode.h"
+#include "WhileNode.h"
 
 
 namespace naivescript{
@@ -23,6 +25,18 @@ ASTNode * NodeFactory::CreateStmtList(uint8_t *data, uint32_t size) {
 ASTNode * NodeFactory::CreateAssignment(uint8_t *data, uint32_t size) {
     AssignmentNode *node = new AssignmentNode();
     node->Parse(reinterpret_cast<struct serialize::Assignment*>(data), size);
+    return node;
+}
+
+ASTNode * NodeFactory::CreateWhileNode(uint8_t *data, uint32_t size) {
+    WhileNode *node = new WhileNode();
+    node->Parse(reinterpret_cast<struct serialize::WhileStmt*>(data), size);
+    return node;
+}
+
+ASTNode * NodeFactory::CreateIfNode(uint8_t *data, uint32_t size) {
+    IfNode *node = new IfNode();
+    node->Parse(reinterpret_cast<struct serialize::IfStmt*>(data), size);
     return node;
 }
 

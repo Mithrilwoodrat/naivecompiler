@@ -39,7 +39,19 @@ class FuncCallHelper(NodeVisitor):
         self.scope = scope
             
     
+class LoopHelper(NodeVisitor):
+    def __init__(self):
+        self.scope = Scope()
+        
+    def has_error(self):
+        return self.scope.has_error
 
+    def visit_ContinueStmt(self, node):
+        logging.info("continue inside loop!")
+
+    def visit_BreakStmt(self, node):
+        logging.info("break inside loop!")
+        
 class FuncHelper(NodeVisitor):
     def __init__(self):
         self.scope = Scope()
@@ -53,6 +65,11 @@ class FuncHelper(NodeVisitor):
     def visit_VariableSymbol(self, node):
         self.scope.resolve_symbol(node.name)
 
+    def visit_WhileStmt(self, node):
+        helper = LoopHelper()
+        helper.visit(node)
+        self.has_error = helper.has_error
+        
     def visit_ContinueStmt(self, node):
         logging.error("continue outside loop!")
         self.scope.has_error = True

@@ -26,6 +26,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <stack>
 
 namespace naivescript{
 static  llvm::LLVMContext TheContext;
@@ -46,6 +47,12 @@ class BinaryOpNode;
 class SymbolNode;
 class ValueNode;
 
+typedef struct jumpTable
+{
+    llvm::BasicBlock* start;
+    llvm::BasicBlock* end;
+}jumpTable;
+
 class CodeGenVisitor : public Visitor
 {
 public:
@@ -57,6 +64,8 @@ public:
     virtual llvm::Value* visit(DeclarationList *node);
     virtual llvm::Value* visit(CodeBlock *node);
     virtual llvm::Value* visit(StmtList *node);
+    virtual llvm::Value* visit(IfNode *node);
+    virtual llvm::Value* visit(WhileNode *node);
     virtual llvm::Value* visit(AssignmentNode *node);
     virtual llvm::Value* visit(ReturnNode *node);
     virtual llvm::Value* visit(BinaryOpNode *node);
@@ -64,6 +73,7 @@ public:
     virtual llvm::Value* visit(ValueNode *node);
 private:
     std::map<std::string, llvm::AllocaInst*> NamedValues;
+    std::stack<jumpTable> BlockStack;
 };
 }
 #endif

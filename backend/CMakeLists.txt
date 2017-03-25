@@ -44,6 +44,8 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/DeclarationList.cc
     ${NSWorkingPath}/ast/StmtList.cc
     ${NSWorkingPath}/ast/AssignmentNode.cc
+    ${NSWorkingPath}/ast/IfNode.cc
+    ${NSWorkingPath}/ast/WhileNode.cc
     ${NSWorkingPath}/ast/ReturnNode.cc
     ${NSWorkingPath}/ast/ValueNode.cc
     ${NSWorkingPath}/ast/SymbolNode.cc

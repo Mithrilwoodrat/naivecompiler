@@ -11,10 +11,15 @@ int main()
     int i;
     i=2;
     while (1) {
-        abc = abc + 4*(i+1);
-        if (abc > 10) {
-            break;
+        abc = abc + 1;
+        if (abc > 1) {
+            
+            if (abc > 10) {
+                a = a+1;
+                break;
+            }
         }
+        
 	}
     return 0;    
 }

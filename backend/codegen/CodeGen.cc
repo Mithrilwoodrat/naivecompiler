@@ -9,6 +9,8 @@
 #include "StmtList.h"
 #include "AssignmentNode.h"
 #include "ReturnNode.h"
+#include "WhileNode.h"
+#include "IfNode.h"
 #include "ValueNode.h"
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
@@ -78,8 +80,8 @@ llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
         TheModule);
         
-    llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", TheFunction);
-    Builder.SetInsertPoint(BB);
+    llvm::BasicBlock *Entry = llvm::BasicBlock::Create(TheContext, "entry", TheFunction);
+    Builder.SetInsertPoint(Entry);
 
     uint32_t Idx = 0;
     for (auto &Arg : TheFunction->args()) {
@@ -91,10 +93,11 @@ llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
         // Add arguments to variable symbol table.
         NamedValues[Arg.getName()] = Alloca;
     }
-
-    
-    llvm::Value *retval = func->GetBody()->accept(this);
-    Builder.CreateRet(retval);
+    func->GetBody()->accept(this);
+    //llvm::Value *retval = func->GetBody()->accept(this);
+    // llvm::BasicBlock *End = llvm::BasicBlock::Create(TheContext, "End", TheFunction);
+    // Builder.SetInsertPoint(End);
+    //Builder.CreateRet(retval);
     return TheFunction;
 }
 
@@ -122,7 +125,8 @@ llvm::Value* CodeGenVisitor::visit(DeclarationList *node)
 llvm::Value* CodeGenVisitor::visit(CodeBlock *node) 
 {
     node->GetDecls()->accept(this);
-    return node->GetStmts()->accept(this);
+    node->GetStmts()->accept(this);
+    return nullptr;
 }
 
 llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
@@ -141,7 +145,32 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
     return retval;
 }
 
-llvm::Value* CodeGenVisitor::visit(AssignmentNode *node) {
+llvm::Value* CodeGenVisitor::visit(WhileNode *node) 
+{
+    auto ParentBlock = Builder.GetInsertBlock()->getParent();
+    llvm::BasicBlock *LoopBB = llvm::BasicBlock::Create(TheContext, "loop", ParentBlock);
+    llvm::Value* EndCond = node->GetCond()->accept(this);
+    EndCond = Builder.CreateICmpNE(EndCond,
+        llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
+    llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(TheContext, "afterloop", ParentBlock);
+    Builder.CreateCondBr(EndCond, LoopBB, AfterBB);
+    Builder.SetInsertPoint(LoopBB);
+    node->GetBody()->accept(this);
+    EndCond = node->GetCond()->accept(this);
+    EndCond = Builder.CreateICmpNE(EndCond,
+        llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
+    Builder.CreateCondBr(EndCond, LoopBB, AfterBB);
+    Builder.SetInsertPoint(AfterBB);
+    return nullptr;
+}
+
+llvm::Value* CodeGenVisitor::visit(IfNode *node) 
+{
+    return nullptr;
+}
+
+llvm::Value* CodeGenVisitor::visit(AssignmentNode *node) 
+{
     std::cout << "Assignment Var: " << node->GetID() <<  std::endl;
     llvm::Value * tmpval = node->GetExpr()->accept(this);
     auto Variable = NamedValues.at(node->GetID());
@@ -149,12 +178,15 @@ llvm::Value* CodeGenVisitor::visit(AssignmentNode *node) {
     return tmpval;
 }
 
-llvm::Value* CodeGenVisitor::visit(ReturnNode *node) {
-    llvm::Value * tmpval = node->GetExpr()->accept(this);
-    return tmpval;
+llvm::Value* CodeGenVisitor::visit(ReturnNode *node) 
+{
+    llvm::Value * retval = node->GetExpr()->accept(this);
+    Builder.CreateRet(retval);
+    return retval;
 }
 
-llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node) {
+llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node) 
+{
   llvm::Value *L = node->GetLHS()->accept(this);
   llvm::Value *R = node->GetRHS()->accept(this);
   if (!L || !R)
@@ -172,7 +204,8 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node) {
   }
 }
 
-llvm::Value* CodeGenVisitor::visit(SymbolNode *node) {
+llvm::Value* CodeGenVisitor::visit(SymbolNode *node) 
+{
     std::string symbol = node->GetSymbol();
     std::cout << "Use Of Var: " << symbol <<  std::endl;
     if (!NamedValues.count(symbol)) {
@@ -182,7 +215,8 @@ llvm::Value* CodeGenVisitor::visit(SymbolNode *node) {
     return Builder.CreateLoad(Val, symbol);
 }
 
-llvm::Value* CodeGenVisitor::visit(ValueNode *node) {
+llvm::Value* CodeGenVisitor::visit(ValueNode *node)
+{
     //llvm::Value* tmp = ConstantFP::get(TheContext, APFloat(static_cast<float>(node->GetVal())));
     llvm::Value* tmp = llvm::ConstantInt::get(TheContext, llvm::APInt(32, node->GetVal(), false));
     //tmp->dump();

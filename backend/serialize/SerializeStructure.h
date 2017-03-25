@@ -145,6 +145,28 @@ struct ReturnStmt
     uint8_t expr[0];
 }__attribute__((packed)) ;
 
+struct WhileStmt
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t condSize;
+    uint32_t bodySize;
+    Expr cond;
+    Expr body;
+}__attribute__((packed)) ;
+
+struct IfStmt
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t condSize;
+    uint32_t thenSize;
+    uint32_t elseSize;
+    Expr cond;
+    Expr then;
+    Expr _else;
+}__attribute__((packed)) ;
+
 struct BreakStmt
 {
     uint32_t type;
