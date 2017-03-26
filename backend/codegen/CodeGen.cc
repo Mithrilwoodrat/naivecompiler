@@ -136,10 +136,23 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
     }
     for (ASTNode * node : stmtlist->GetChildren() ) {
         Statement* stmt = static_cast<Statement *>(node);
-        if (stmt->GetNodeType() == serialize::TypeReturnStmt) {
-            return stmt->accept(this);
-        } else {
-            stmt->accept(this);
+        serialize::NodeType type = stmt->GetNodeType();
+        jumpTable tb;
+        switch(type) {
+            case serialize::TypeReturnStmt:
+                return stmt->accept(this);
+                break;
+            case serialize::TypeBreakStmt:
+                tb = BlockStack.top();
+                Builder.CreateBr(tb.end);
+                break;
+            case serialize::TypeContinueStmt:
+                tb = BlockStack.top();
+                Builder.CreateBr(tb.start);
+                break;
+            default:
+                stmt->accept(this);
+                break;
         }
     }
     return retval;
@@ -153,6 +166,10 @@ llvm::Value* CodeGenVisitor::visit(WhileNode *node)
     EndCond = Builder.CreateICmpNE(EndCond,
         llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
     llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(TheContext, "afterloop", ParentBlock);
+    jumpTable tb;
+    tb.start = LoopBB;
+    tb.end = AfterBB;
+    BlockStack.push(tb);
     Builder.CreateCondBr(EndCond, LoopBB, AfterBB);
     Builder.SetInsertPoint(LoopBB);
     node->GetBody()->accept(this);
@@ -161,11 +178,41 @@ llvm::Value* CodeGenVisitor::visit(WhileNode *node)
         llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
     Builder.CreateCondBr(EndCond, LoopBB, AfterBB);
     Builder.SetInsertPoint(AfterBB);
+    BlockStack.pop();
     return nullptr;
 }
 
 llvm::Value* CodeGenVisitor::visit(IfNode *node) 
 {
+    auto ParentBlock = Builder.GetInsertBlock()->getParent();
+    llvm::Value* Cond = node->GetCond()->accept(this);
+    auto zero = llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false));
+    printf("%d, %d\n", Cond->getType()->isIntegerTy(), zero->getType()->isIntegerTy());
+    Cond = Builder.CreateICmpNE(Cond,
+        llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
+    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(TheContext, "then", ParentBlock);
+    llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(TheContext, "else");
+    llvm::BasicBlock *IfBB = llvm::BasicBlock::Create(TheContext, "if");
+    
+    Builder.CreateCondBr(Cond, ThenBB, ElseBB);
+    Builder.SetInsertPoint(ThenBB);
+    node->GetThen()->accept(this);
+    Builder.CreateBr(IfBB);
+    ThenBB = Builder.GetInsertBlock();
+    ParentBlock->getBasicBlockList().push_back(ElseBB);
+    Builder.SetInsertPoint(ElseBB);
+    if (node->GetElse()) {
+        node->GetElse()->accept(this);
+    }
+    Builder.CreateBr(IfBB);
+    ElseBB = Builder.GetInsertBlock();
+    ParentBlock->getBasicBlockList().push_back(IfBB);
+    Builder.SetInsertPoint(IfBB);
+    //llvm::PHINode *PN = Builder.CreatePHI(llvm::Type::getInt32PtrTy(TheContext), 2, "iftmp");
+    //if (ThenV)
+    //    PN->addIncoming(ThenV, ThenBB);
+    //if (ElseV)
+    //    PN->addIncoming(ElseV, ElseBB);
     return nullptr;
 }
 
@@ -199,6 +246,16 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node)
     return Builder.CreateSub(L, R, "subtmp");
   case '*':
     return Builder.CreateMul(L, R, "multmp");
+  case '>':
+    L = Builder.CreateICmpUGT(L, R, "cmptmp");
+    printf("=== cmpval ===");
+    L->dump();
+    return L;
+  case '<':
+    L = Builder.CreateICmpULT(L, R, "cmptmp");
+    printf("=== cmpval ===");
+    L->dump();
+    return L;
   default:
     return LogErrorV("invalid binary operator");
   }
