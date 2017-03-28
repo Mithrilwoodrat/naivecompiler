@@ -130,7 +130,7 @@ llvm::Value* CodeGenVisitor::visit(CodeBlock *node)
 }
 
 llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
-    llvm::Value* retval = nullptr;
+    llvm::Value* retval = llvm::Constant::getNullValue(llvm::Type::getInt32Ty(TheContext));
     if ( ! stmtlist->GetChildren().size() ) {
         return LogErrorV("Empty StmtList");
     }
@@ -145,10 +145,12 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
             case serialize::TypeBreakStmt:
                 tb = BlockStack.top();
                 Builder.CreateBr(tb.end);
+                return retval;
                 break;
             case serialize::TypeContinueStmt:
                 tb = BlockStack.top();
                 Builder.CreateBr(tb.start);
+                return retval;
                 break;
             default:
                 stmt->accept(this);
@@ -186,33 +188,47 @@ llvm::Value* CodeGenVisitor::visit(IfNode *node)
 {
     auto ParentBlock = Builder.GetInsertBlock()->getParent();
     llvm::Value* Cond = node->GetCond()->accept(this);
-    auto zero = llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false));
-    printf("%d, %d\n", Cond->getType()->isIntegerTy(), zero->getType()->isIntegerTy());
+    //auto zero = llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false));
+    //printf("%d, %d\n", Cond->getType()->isIntegerTy(), zero->getType()->isIntegerTy());
+    Cond = Builder.CreateIntCast(Cond, llvm::Type::getInt32Ty(TheContext), false);
     Cond = Builder.CreateICmpNE(Cond,
         llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
     llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(TheContext, "then", ParentBlock);
     llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(TheContext, "else");
     llvm::BasicBlock *IfBB = llvm::BasicBlock::Create(TheContext, "if");
-    
+    llvm::Value *ThenV, *ElseV=llvm::Constant::getNullValue(llvm::Type::getInt32Ty(TheContext));
     Builder.CreateCondBr(Cond, ThenBB, ElseBB);
     Builder.SetInsertPoint(ThenBB);
-    node->GetThen()->accept(this);
-    Builder.CreateBr(IfBB);
+    ThenV = node->GetThen()->accept(this);
+    bool hasJmp = false;
+    for (ASTNode * n : node->GetThen()->GetChildren()) {
+        Statement* stmt = static_cast<Statement *>(n);
+        serialize::NodeType type = stmt->GetNodeType();
+        if (type == serialize::TypeReturnStmt || 
+            type == serialize::TypeBreakStmt ||
+            type == serialize::TypeContinueStmt) {
+                hasJmp = true;
+            }
+
+    }
+    if (!hasJmp) {
+        Builder.CreateBr(IfBB);
+    }
     ThenBB = Builder.GetInsertBlock();
     ParentBlock->getBasicBlockList().push_back(ElseBB);
     Builder.SetInsertPoint(ElseBB);
     if (node->GetElse()) {
-        node->GetElse()->accept(this);
+        ElseV = node->GetElse()->accept(this);
     }
     Builder.CreateBr(IfBB);
     ElseBB = Builder.GetInsertBlock();
     ParentBlock->getBasicBlockList().push_back(IfBB);
     Builder.SetInsertPoint(IfBB);
-    //llvm::PHINode *PN = Builder.CreatePHI(llvm::Type::getInt32PtrTy(TheContext), 2, "iftmp");
-    //if (ThenV)
-    //    PN->addIncoming(ThenV, ThenBB);
-    //if (ElseV)
-    //    PN->addIncoming(ElseV, ElseBB);
+    // llvm::PHINode *PN = Builder.CreatePHI(llvm::Type::getInt32Ty(TheContext), 2, "iftmp");
+    // if (ThenV)
+    //     PN->addIncoming(ThenV, ThenBB);
+    // if (ElseV)
+    //     PN->addIncoming(ElseV, ElseBB);
     return nullptr;
 }
 
@@ -248,12 +264,10 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node)
     return Builder.CreateMul(L, R, "multmp");
   case '>':
     L = Builder.CreateICmpUGT(L, R, "cmptmp");
-    printf("=== cmpval ===");
     L->dump();
     return L;
   case '<':
     L = Builder.CreateICmpULT(L, R, "cmptmp");
-    printf("=== cmpval ===");
     L->dump();
     return L;
   default:
