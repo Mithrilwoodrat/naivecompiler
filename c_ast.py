@@ -246,12 +246,6 @@ class BinaryOp(ASTNode):
     def children(self):
         return [self.lhs, self.rhs]
 
-    def serialize(self, env):
-        binary_op = S_BinaryOp()
-        binary_op['op'] = self.op
-        binary_op['exp1'] = str(self.lhs.serialize(env))
-        binary_op['exp2'] = str(self.lhs.serialize(env))
-        return binary_op
 
 class BreakStmt(Statement):
     pass

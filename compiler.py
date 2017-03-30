@@ -9,6 +9,8 @@ from c_ast import *
 from serialize_structure import FileFormat
 from analysis_handler import AnalysisVisitor
 from serialize_handler import SerializeHandler
+from irgen import IRGenVisitor
+
 
 logger = logging.getLogger(__file__)
 
@@ -69,7 +71,6 @@ class Compiler(object):
     def minify_ast(self, ast):
         ''' 
         minify for codegen. 
-        remove declarations.
         '''
         assert ast.__class__.__name__ == 'AST'
         return ast.root
@@ -102,7 +103,7 @@ class Compiler(object):
     def compile(self):
         obj = FileFormat()
         self.ast = self.minify_ast(self.ast)
-        self.ast.show()
+        #self.ast.show()
         body = self.dump_body()
         stringtable = self.dump_stringtable()
         logger.info("StringTable: %s ,len: %d" % (stringtable, len(stringtable)))
@@ -111,6 +112,9 @@ class Compiler(object):
         obj[ "bodyMD5" ] = hashlib.md5( str(body) ).digest()
         with open('ns.data','wb') as fout:
             fout.write(str(obj))
+
+        irgen = IRGenVisitor()
+        irgen.visit(self.ast)
     
 if __name__ == "__main__":
     logging.basicConfig(format='[%(asctime)s] (%(module)s:%(funcName)s:%(lineno)s): <%(levelname)s> %(message)s', level=logging.INFO)
