@@ -9,7 +9,7 @@ from c_ast import *
 from serialize_structure import FileFormat
 from analysis_handler import AnalysisVisitor
 from serialize_handler import SerializeHandler
-from irgen import IRGenVisitor
+from ast_rewrite import ReWriteVisitor
 
 
 logger = logging.getLogger(__file__)
@@ -98,11 +98,11 @@ class Compiler(object):
 
     def dump_body(self):
         sh = SerializeHandler(self.env)
-        return sh.serialize(self.ast)
+        return sh.serialize(self.ast.root)
     
     def compile(self):
         obj = FileFormat()
-        self.ast = self.minify_ast(self.ast)
+        #self.ast = self.minify_ast(self.ast)
         #self.ast.show()
         body = self.dump_body()
         stringtable = self.dump_stringtable()
@@ -113,8 +113,12 @@ class Compiler(object):
         with open('ns.data','wb') as fout:
             fout.write(str(obj))
 
-        irgen = IRGenVisitor()
-        irgen.visit(self.ast)
+        #from ast_rewrite import searchAST
+        #searchAST(self.ast)
+        #self.ast.show()
+        rewriter = ReWriteVisitor()
+        rewriter.visit(self.ast.root, self.ast)
+        self.ast.show()
     
 if __name__ == "__main__":
     logging.basicConfig(format='[%(asctime)s] (%(module)s:%(funcName)s:%(lineno)s): <%(levelname)s> %(message)s', level=logging.INFO)
