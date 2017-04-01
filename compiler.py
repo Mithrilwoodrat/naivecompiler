@@ -113,9 +113,6 @@ class Compiler(object):
         with open('ns.data','wb') as fout:
             fout.write(str(obj))
 
-        #from ast_rewrite import searchAST
-        #searchAST(self.ast)
-        #self.ast.show()
         rewriter = ReWriteVisitor()
         rewriter.visit(self.ast.root, self.ast)
         self.ast.show()

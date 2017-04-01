@@ -292,3 +292,31 @@ class Const(ASTNode):
         
     def children(self):
         return []
+
+
+class Label(ASTNode):
+    attr_names = ('name', )
+    def __init__(self, _id):
+        self._id = _id
+        self.name = 'L' + str(_id)
+
+    def children(self):
+        return []
+
+class ABSJMP(ASTNode):
+    attr_names = ('_id', )
+    def __init__(self, _id):
+        self._id = _id
+
+    def children(self):
+        return []
+
+class CMPJMP(ASTNode):
+    attr_names = ('id1', 'id2')
+    def __init__(self, expr, id1, id2):
+        self.expr = expr
+        self.id1 = id1
+        self.id2 = id2
+
+    def children(self):
+        return [self.expr]

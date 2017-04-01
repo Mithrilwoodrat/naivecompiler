@@ -3,50 +3,17 @@ import logging
 import sys
 
 from visitor import NodeVisitor
-from c_ast import ASTNode, Const
-
+from c_ast import Label, CMPJMP, ABSJMP
 
 logger = logging.getLogger(__file__)
-
-
-class Label(ASTNode):
-    attr_names = ('name', )
-    def __init__(self, _id):
-        self._id = _id
-        self.name = 'L' + str(_id)
-
-    def children(self):
-        return []
-
-class ABSJMP(ASTNode):
-    attr_names = ('_id', )
-    def __init__(self, _id):
-        self._id = _id
-
-    def children(self):
-        return []
-
-class CMPJMP(ASTNode):
-    attr_names = ('id1', 'id2')
-    def __init__(self, expr, id1, id2):
-        self.expr = expr
-        self.id1 = id1
-        self.id2 = id2
-
-    def children(self):
-        return [self.expr]
-
 LabelId = 0
+
 
 def LabelIDGen():
     global LabelId
     LabelId += 1
     return LabelId
 
-class LoopBlock(object):
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
 
 class SpecialVisitor(object):
     def visit(self, node, parent):
@@ -54,6 +21,9 @@ class SpecialVisitor(object):
         """
         method = 'visit_' + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
+        # deep first
+        for c in node.children():
+            self.visit(c, node)
         return visitor(node, parent)
 
     def generic_visit(self, node, parent):
@@ -62,7 +32,6 @@ class SpecialVisitor(object):
         """
         parent = node
         for c in node.children():
-            #print c.__class__.__name__
             self.visit(c, parent)
 
 
@@ -83,39 +52,11 @@ class LoopHelper(SpecialVisitor):
         index = parent.l.index(node)
         parent.l[index] = jmpstmt
 
-    def visit_StmtList(self, node, parent):
-        helper = StmtsHelper()
-        helper.visit(node, parent)
-
-
-    # def visit_IfStmt(self, node, parent):
-    #     print 'If'
-    #     L1ID = LabelIDGen()
-    #     L1 = Label(L1ID)  # iftrue
-    #     L2ID = LabelIDGen()
-    #     L2 = Label(L2ID)  # iffalse
-    #     L3ID = LabelIDGen()
-    #     L3 = Label(L3ID)  # endif
-    #     index = parent.l.index(node)
-    #     beforestmts = parent.l[:index]
-    #     afterstmts = parent.l[index+1:]
-    #     newstmts = []
-    #     cmpstmt = CMPJMP(node.cond, L1ID, L2ID)
-    #     beforestmts.append(cmpstmt)
-    #     newstmts.extend(node.iftrue.l)
-    #     jmp = ABSJMP(L3ID)
-    #     newstmts.append(jmp)
-    #     newstmts.append(L2)
-    #     if node.iffalse:
-    #         newstmts.extend(node.iffalse.l)
-    #     newstmts.append(jmp)
-    #     newstmts.append(L3)
-    #     parent.l = beforestmts + newstmts + afterstmts
     
 class StmtsHelper(SpecialVisitor):
     def __init__(self):
-        self.block_stack = []
-
+        pass
+    
     def visit_WhileStmt(self, node, parent):
         helper = LoopHelper()
         helper.visit(node, parent)
@@ -130,9 +71,10 @@ class StmtsHelper(SpecialVisitor):
         newstmts.append(cmpstmt)
         newstmts.append(helper.L2)
         parent.l = beforestmts + newstmts + afterstmts
+        parent = node
+
 
     def visit_IfStmt(self, node, parent):
-        print 'If'
         L1ID = LabelIDGen()
         L1 = Label(L1ID)  # iftrue
         L2ID = LabelIDGen()
@@ -145,6 +87,7 @@ class StmtsHelper(SpecialVisitor):
         newstmts = []
         cmpstmt = CMPJMP(node.cond, L1ID, L2ID)
         beforestmts.append(cmpstmt)
+        newstmts.append(L1)
         newstmts.extend(node.iftrue.l)
         jmp = ABSJMP(L3ID)
         newstmts.append(jmp)
@@ -154,8 +97,8 @@ class StmtsHelper(SpecialVisitor):
         newstmts.append(jmp)
         newstmts.append(L3)
         parent.l = beforestmts + newstmts + afterstmts
+        parent = node
             
-
 
 class ReWriteVisitor(SpecialVisitor):
     def __init__(self):

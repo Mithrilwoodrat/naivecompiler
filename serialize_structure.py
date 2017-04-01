@@ -200,3 +200,16 @@ class S_Const(Structure):
         ("_type", "<I"),
         ("val", "<I"),
     )
+
+# class S_Label(Structure):
+#     structure = (
+#         ("type", "<I=%d" % Type_Label),
+#         ("size", "<I=4*2"),
+#         ("_id", "<I"), # id in StringTable
+#     )
+
+# class S_CMPJMP(Structure):
+#     structure = (
+#         ("type", "<I=%d" % Type_Label),
+#         ("_id", "<I"), # id in StringTable
+#     )
