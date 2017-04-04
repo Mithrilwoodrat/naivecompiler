@@ -16,30 +16,23 @@ bool StmtList::Parse( struct serialize::StmtList * stmt_list, size_t size )
              break;
         uint32_t type = util::getStructType(data);
         //std::cout <<  "TypeId: " << type << std::endl;
-        ASTNode* node;
         switch (type) {
             default:
                 return false;
             case serialize::TypeFuncCall:
                 node_size = util::getVarStructSize(data);
                 break;
-            case serialize::TypeIfStmt:
+            case serialize::TypeLabel:
                 node_size = util::getVarStructSize(data);
-                children.push_back(NodeFactory::CreateIfNode(data, node_size));
+                children.push_back(NodeFactory::CreateLabelNode(data, node_size));
                 break;
-            case serialize::TypeWhileStmt:
+            case serialize::TypeABSJMP:
                 node_size = util::getVarStructSize(data);
-                children.push_back(NodeFactory::CreateWhileNode(data, node_size));
+                children.push_back(NodeFactory::CreateABSJMPNode(data, node_size));
                 break;
-            case serialize::TypeBreakStmt:
+            case serialize::TypeCMPJMP:
                 node_size = util::getVarStructSize(data);
-                node = new BreakNode();
-                children.push_back(node);
-                break;
-            case serialize::TypeContinueStmt:
-                node_size = util::getVarStructSize(data);
-                node = new ContinueNode();
-                children.push_back(node);
+                children.push_back(NodeFactory::CreateCMPJMPNode(data, node_size));
                 break;
             case serialize::TypeAssignmentExpr:
                 node_size = util::getVarStructSize(data);

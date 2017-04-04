@@ -1,8 +1,11 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
+#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "SerializeStructure.h"
+#include "NodeFactory.h"
+#include "Util.h"
 
 namespace naivescript{
 
@@ -20,42 +23,103 @@ public:
 
 };
 
-class BreakNode : public Statement
+class LabelNode : public Statement 
 {
 public:
-    BreakNode() : Statement(serialize::TypeBreakStmt) {}
+    LabelNode() : Statement(serialize::TypeLabel), id(0) {}
+    virtual bool Parse( struct serialize::Label * label, size_t size ) ;
+
+    virtual void show( void ) {
+        std::cout <<  "Label: " << "id=" << id << std::endl;
+    }
+
     virtual const std::vector<ASTNode *> GetChildren( void ) 
     {
         return children;
     }
     
-    virtual llvm::Value* accept(Visitor* v)
-    {
-       return nullptr;
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline uint32_t GetID( void )  {
+        return id;
     }
-    virtual void show( void ) {
-        std::cout <<  "Break" << std::endl;
-    }
+
 private:
+    uint32_t id;
     std::vector<ASTNode *> children;
 };
 
-class ContinueNode : public Statement
+class ABSJMPNode : public Statement 
 {
 public:
-    ContinueNode() : Statement(serialize::TypeContinueStmt) {}
+    ABSJMPNode() : Statement(serialize::TypeABSJMP), id(0) {}
+    virtual bool Parse( struct serialize::ABSJMP * jmp, size_t size ) ;
+
+    virtual void show( void ) {
+        std::cout <<  "ABSJMP: " << "id=" << id << std::endl;
+    }
+
     virtual const std::vector<ASTNode *> GetChildren( void ) 
     {
         return children;
     }
-    virtual llvm::Value* accept(Visitor* v)
-    {
-       return nullptr;
+    
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline uint32_t GetID( void )  {
+        return id;
     }
-    virtual void show( void ) {
-        std::cout << "Continue" << std::endl;
-    }
+
 private:
+    uint32_t id;
+    std::vector<ASTNode *> children;
+};
+
+class CMPJMPNode : public Statement 
+{
+public:
+    CMPJMPNode() : Statement(serialize::TypeCMPJMP), id1(0), id2(0), expr(nullptr) {}
+    virtual bool Parse( struct serialize::CMPJMP * jmp, size_t size ) ;
+
+    virtual void show( void ) 
+    {
+        std::cout <<  "CMP: " << "id1=" << id1 << "id2=" << id2 << std::endl;
+        expr->show();
+    }
+
+    virtual const std::vector<ASTNode *> GetChildren( void ) 
+    {
+        return children;
+    }
+    
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline uint32_t GetID1( void )  
+    {
+        return id1;
+    }
+
+    inline uint32_t GetID2( void )  
+    {
+        return id2;
+    }
+
+    inline ASTNode* GetExpr( void )  
+    {
+        return expr;
+    }
+
+    ~CMPJMPNode()
+    {
+        if (expr) {
+            free(expr);
+        }
+    }
+
+private:
+    uint32_t id1;
+    uint32_t id2;
+    ASTNode* expr;
     std::vector<ASTNode *> children;
 };
 

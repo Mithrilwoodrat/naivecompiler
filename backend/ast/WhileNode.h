@@ -55,9 +55,9 @@ public:
             free(body);
     }
 private:
-    std::vector<ASTNode *> children;
     ASTNode* cond;
     ASTNode* body;
+    std::vector<ASTNode *> children;
 };
 
 }

@@ -103,7 +103,10 @@ class Compiler(object):
     def compile(self):
         obj = FileFormat()
         #self.ast = self.minify_ast(self.ast)
-        #self.ast.show()
+        self.ast.show()
+        rewriter = ReWriteVisitor()
+        rewriter.visit(self.ast.root, self.ast)
+        self.ast.show()
         body = self.dump_body()
         stringtable = self.dump_stringtable()
         logger.info("StringTable: %s ,len: %d" % (stringtable, len(stringtable)))
@@ -113,9 +116,9 @@ class Compiler(object):
         with open('ns.data','wb') as fout:
             fout.write(str(obj))
 
-        rewriter = ReWriteVisitor()
-        rewriter.visit(self.ast.root, self.ast)
-        self.ast.show()
+        # rewriter = ReWriteVisitor()
+        # rewriter.visit(self.ast.root, self.ast)
+        # self.ast.show()
     
 if __name__ == "__main__":
     logging.basicConfig(format='[%(asctime)s] (%(module)s:%(funcName)s:%(lineno)s): <%(levelname)s> %(message)s', level=logging.INFO)

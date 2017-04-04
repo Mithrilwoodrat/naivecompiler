@@ -32,6 +32,9 @@ Type_ContinueStmt = 13
 Type_BinaryOp =  14
 Type_Symbol = 15
 Type_Const = 16
+Type_Label = 17
+Type_ABSJMP = 18
+Type_CMPJMP = 19
 
 ## File
   # -------
@@ -201,15 +204,26 @@ class S_Const(Structure):
         ("val", "<I"),
     )
 
-# class S_Label(Structure):
-#     structure = (
-#         ("type", "<I=%d" % Type_Label),
-#         ("size", "<I=4*2"),
-#         ("_id", "<I"), # id in StringTable
-#     )
+class S_Label(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_Label),
+        ("size", "<I=4*3"),
+        ("_id", "<I"),
+    )
 
-# class S_CMPJMP(Structure):
-#     structure = (
-#         ("type", "<I=%d" % Type_Label),
-#         ("_id", "<I"), # id in StringTable
-#     )
+class S_ABSJMP(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_ABSJMP),
+        ("size", "<I=4*3"),
+        ("_id", "<I"),
+    )
+
+class S_CMPJMP(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_CMPJMP),
+        ("size", "<I=4*5 + len(expr)"),
+        ("exprSize", "<I=len(expr)"),
+        ("id1", "<I"),
+        ("id2", "<I"),
+        ("expr", ":"),
+    )

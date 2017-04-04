@@ -65,10 +65,10 @@ public:
             free(_else);
     }
 private:
-    std::vector<ASTNode *> children;
     ASTNode* cond;
     ASTNode* then;
     ASTNode* _else;
+    std::vector<ASTNode *> children;
 };
 
 }

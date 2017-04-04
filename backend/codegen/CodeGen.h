@@ -64,13 +64,14 @@ public:
     virtual llvm::Value* visit(DeclarationList *node);
     virtual llvm::Value* visit(CodeBlock *node);
     virtual llvm::Value* visit(StmtList *node);
-    virtual llvm::Value* visit(IfNode *node);
-    virtual llvm::Value* visit(WhileNode *node);
     virtual llvm::Value* visit(AssignmentNode *node);
     virtual llvm::Value* visit(ReturnNode *node);
     virtual llvm::Value* visit(BinaryOpNode *node);
     virtual llvm::Value* visit(SymbolNode *node);
     virtual llvm::Value* visit(ValueNode *node);
+    virtual llvm::Value* visit(LabelNode *node){return nullptr;}
+    virtual llvm::Value* visit(ABSJMPNode *node){return nullptr;}
+    virtual llvm::Value* visit(CMPJMPNode *node){return nullptr;}
 private:
     std::map<std::string, llvm::AllocaInst*> NamedValues;
     std::stack<jumpTable> BlockStack;

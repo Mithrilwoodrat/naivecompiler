@@ -42,8 +42,8 @@ public:
         free(expr);
     }
 private:
-    std::vector<ASTNode *> children;
     ASTNode* expr;
+    std::vector<ASTNode *> children;
 };
 
 }

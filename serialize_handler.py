@@ -138,3 +138,19 @@ class SerializeHandler(object):
         func_call['argument_list'] = self.serialize(node.argument_list)
         return func_call
 
+    def serialize_Label(self, node):
+        label = S_Label()
+        label['_id'] = node._id
+        return label
+
+    def serialize_ABSJMP(self, node):
+        jmp = S_ABSJMP()
+        jmp['_id'] = node._id
+        return jmp
+
+    def serialize_CMPJMP(self, node):
+        jmp = S_CMPJMP()
+        jmp['id1'] = node.id1
+        jmp['id2'] = node.id2
+        jmp['expr']  = self.serialize(node.expr)
+        return jmp

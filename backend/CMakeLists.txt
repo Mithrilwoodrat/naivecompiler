@@ -42,10 +42,9 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/CodeBlock.cc
     ${NSWorkingPath}/ast/Declaration.cc
     ${NSWorkingPath}/ast/DeclarationList.cc
+    ${NSWorkingPath}/ast/Statement.cc
     ${NSWorkingPath}/ast/StmtList.cc
     ${NSWorkingPath}/ast/AssignmentNode.cc
-    ${NSWorkingPath}/ast/IfNode.cc
-    ${NSWorkingPath}/ast/WhileNode.cc
     ${NSWorkingPath}/ast/ReturnNode.cc
     ${NSWorkingPath}/ast/ValueNode.cc
     ${NSWorkingPath}/ast/SymbolNode.cc

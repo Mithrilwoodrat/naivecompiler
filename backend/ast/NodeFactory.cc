@@ -9,9 +9,8 @@
 #include "Declaration.h"
 #include "DeclarationList.h"
 #include "CodeBlock.h"
+#include "Statement.h"
 #include "StmtList.h"
-#include "IfNode.h"
-#include "WhileNode.h"
 
 
 namespace naivescript{
@@ -28,15 +27,21 @@ ASTNode * NodeFactory::CreateAssignment(uint8_t *data, uint32_t size) {
     return node;
 }
 
-ASTNode * NodeFactory::CreateWhileNode(uint8_t *data, uint32_t size) {
-    WhileNode *node = new WhileNode();
-    node->Parse(reinterpret_cast<struct serialize::WhileStmt*>(data), size);
+ASTNode * NodeFactory::CreateLabelNode(uint8_t *data, uint32_t size) {
+    LabelNode *node = new LabelNode();
+    node->Parse(reinterpret_cast<struct serialize::Label*>(data), size);
     return node;
 }
 
-ASTNode * NodeFactory::CreateIfNode(uint8_t *data, uint32_t size) {
-    IfNode *node = new IfNode();
-    node->Parse(reinterpret_cast<struct serialize::IfStmt*>(data), size);
+ASTNode * NodeFactory::CreateABSJMPNode(uint8_t *data, uint32_t size) {
+    ABSJMPNode *node = new ABSJMPNode();
+    node->Parse(reinterpret_cast<struct serialize::ABSJMP*>(data), size);
+    return node;
+}
+
+ASTNode * NodeFactory::CreateCMPJMPNode(uint8_t *data, uint32_t size) {
+    CMPJMPNode *node = new CMPJMPNode();
+    node->Parse(reinterpret_cast<struct serialize::CMPJMP*>(data), size);
     return node;
 }
 

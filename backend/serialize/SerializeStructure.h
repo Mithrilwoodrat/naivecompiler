@@ -28,6 +28,9 @@ enum NodeType
     TypeBinaryOp =  14,
     TypeSymbol = 15,
     TypeValue = 16,
+    TypeLabel = 17,
+    TypeABSJMP = 18,
+    TypeCMPJMP = 19,
 };
 
 enum ValueType
@@ -202,6 +205,30 @@ struct Value {
     uint32_t type;
     uint32_t valuetype;
     uint32_t val;
+}__attribute__((packed)) ;
+
+struct Label
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t id;
+}__attribute__((packed)) ;
+
+struct ABSJMP
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t id;
+}__attribute__((packed)) ;
+
+struct CMPJMP
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t exprSize;
+    uint32_t id1;
+    uint32_t id2;
+    uint8_t expr[0];
 }__attribute__((packed)) ;
 
 

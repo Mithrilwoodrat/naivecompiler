@@ -1,0 +1,126 @@
+woodrat:build/ (master✗) $ ./testNS                                  
+StringTableEntry: 36
+Bodyentry: 71
+bodySize: 653
+StringTableSize: 35
+Symbols : fuck x y ret main abc i write exit 
+Parsing FunctionList Count: 2
+Parsing Function Parsing DeclarationList Count: 2
+Parsing Declaration: ID: 1:x
+Parsing Declaration: ID: 2:y
+Parsing CodeBlock Parsing DeclarationList Count: 1
+Parsing Declaration: ID: 3:ret
+Parsing StmtList Count: 2
+Parsing Assignment: ID: ret
+Parsing BinaryOP: OP: +
+Parsing Symbol: ID: x
+Parsing Symbol: ID: y
+Parsing ReturnStmt: Parsing Symbol: ID: ret
+Parsing Function Parsing DeclarationList Count: 0
+Parsing CodeBlock Parsing DeclarationList Count: 2
+Parsing Declaration: ID: 5:abc
+Parsing Declaration: ID: 6:i
+Parsing StmtList Count: 5
+Parsing Assignment: ID: i
+Parsing ValueNode: Type: 0Val: 2
+Parsing WhileStmt: Parsing ValueNode: Type: 0Val: 1
+Parsing StmtList Count: 2
+Parsing Assignment: ID: abc
+Parsing BinaryOP: OP: +
+Parsing Symbol: ID: abc
+Parsing BinaryOP: OP: *
+Parsing ValueNode: Type: 0Val: 4
+Parsing BinaryOP: OP: +
+Parsing Symbol: ID: i
+Parsing ValueNode: Type: 0Val: 1
+Parsing IfStmt: Parsing BinaryOP: OP: >
+Parsing Symbol: ID: abc
+Parsing ValueNode: Type: 0Val: 10
+Parsing StmtList Count: 1
+Parsing ReturnStmt: 1000000001000
+Parsing ValueNode: Type: 0Val: 1
+FunctionList	Node Count: 2
+Function	fuck
+DeclarationList	Node Count: 2
+Declaration: ID: x	type: 0
+Declaration: ID: y	type: 0
+CodeBlock	DeclarationList	Node Count: 1
+Declaration: ID: ret	type: 0
+StmtList	Node Count: 2
+Assignment: ID: ret = BinaryOp: ID: x	 OP: +	ID: y
+Return: ID: ret
+Function	main
+DeclarationList	Node Count: 0
+CodeBlock	DeclarationList	Node Count: 2
+Declaration: ID: abc	type: 0
+Declaration: ID: i	type: 0
+StmtList	Node Count: 5
+Assignment: ID: i = ConstValue: 2
+While: ConstValue: 1
+StmtList	Node Count: 2
+Assignment: ID: abc = BinaryOp: ID: abc	 OP: +	BinaryOp: ConstValue: 4	 OP: *	BinaryOp: ID: i	 OP: +	ConstValue: 1
+If: BinaryOp: ID: abc	 OP: >	ConstValue: 10
+StmtList	Node Count: 1
+Break
+
+
+Return: ConstValue: 1
+Assignment Var: ret
+Use Of Var: x
+Use Of Var: y
+Use Of Var: ret
+Assignment Var: i
+Assignment Var: abc
+Use Of Var: abc
+Use Of Var: i
+Use Of Var: abc
+  %cmptmp = icmp ugt i32 %abc4, 10
+; ModuleID = 'naivescript'
+
+define i32 @fuck(i32 %x, i32 %y) {
+entry:
+  %ret = alloca i32
+  %y2 = alloca i32
+  %x1 = alloca i32
+  store i32 %x, i32* %x1
+  store i32 %y, i32* %y2
+  %x3 = load i32, i32* %x1
+  %y4 = load i32, i32* %y2
+  %addtmp = add i32 %x3, %y4
+  store i32 %addtmp, i32* %ret
+  %ret5 = load i32, i32* %ret
+  ret i32 %ret5
+}
+
+define i32 @main() {
+entry:
+  %i = alloca i32
+  %abc = alloca i32
+  store i32 2, i32* %i
+  br i1 true, label %loop, label %afterloop
+
+loop:                                             ; preds = %if, %entry
+  %abc1 = load i32, i32* %abc
+  %i2 = load i32, i32* %i
+  %addtmp = add i32 %i2, 1
+  %multmp = mul i32 4, %addtmp
+  %addtmp3 = add i32 %abc1, %multmp
+  store i32 %addtmp3, i32* %abc
+  %abc4 = load i32, i32* %abc
+  %cmptmp = icmp ugt i32 %abc4, 10
+  %0 = zext i1 %cmptmp to i32
+  %1 = icmp ne i32 %0, 0
+  br i1 %1, label %then, label %else
+
+afterloop:                                        ; preds = %if, %then, %entry
+  ret i32 1
+
+then:                                             ; preds = %loop
+  br label %afterloop
+
+else:                                             ; preds = %loop
+  br label %if
+
+if:                                               ; preds = %else
+  br i1 true, label %loop, label %afterloop
+}
