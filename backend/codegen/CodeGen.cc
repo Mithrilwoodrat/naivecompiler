@@ -15,7 +15,37 @@
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
 
+#include "llvm/ADT/APInt.h"
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/GenericValue.h>
+#include <llvm/ExecutionEngine/MCJIT.h>
+#include <llvm/Support/TargetSelect.h>
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include "llvm/IR/LegacyPassManager.h"
+
+
 namespace naivescript{
+
+static  llvm::LLVMContext TheContext;
+static  llvm::IRBuilder<> Builder(TheContext);
+static  std::unique_ptr<llvm::Module> owner = llvm::make_unique<llvm::Module>("naivescript", TheContext);
+static  llvm::Module *TheModule = owner.get();
 
 llvm::Value *LogErrorV(const char *Str) {
   std::cerr << Str << std::endl;
@@ -23,12 +53,59 @@ llvm::Value *LogErrorV(const char *Str) {
 }
 
 void CodeGenVisitor::dump( FunctionList *node) {
-    for (FunctionNode * f : node->GetChildren() ) {
-        llvm::Function * func = f->accept(this);
-        if (func) {
-            func->dump();
-        }
+    auto funcs = node->accept(this);
+    TheModule->dump();
+}
+
+void CodeGenVisitor::GenObj() {
+    llvm::InitializeAllTargetInfos();
+    llvm::InitializeAllTargets();
+    llvm::InitializeAllTargetMCs();
+    llvm::InitializeAllAsmParsers();
+    llvm::InitializeAllAsmPrinters();
+    auto TargetTriple = llvm::sys::getDefaultTargetTriple();
+    TheModule->setTargetTriple(TargetTriple);
+
+    std::string Error;
+    auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
+
+    if (!Target) {
+        std::cout << Error << std::endl;
+        return;
     }
+
+  auto CPU = "generic";
+  auto Features = "";
+
+  llvm::TargetOptions opt;
+  //auto RM = llvm::Optional<llvm::Reloc::Model>();
+  auto RM = llvm::Reloc::Model();
+  auto TheTargetMachine =
+      Target->createTargetMachine(TargetTriple, CPU, Features, opt, RM);
+
+  TheModule->setDataLayout(TheTargetMachine->createDataLayout());
+
+  auto Filename = "output.o";
+  std::error_code EC;
+  llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::F_None);
+
+  if (EC) {
+    std::cout << "Could not open file: " << EC.message() << std::endl;;
+    return;
+  }
+
+  llvm::legacy::PassManager pass;
+  auto FileType = llvm::TargetMachine::CGFT_ObjectFile;
+
+  if (TheTargetMachine->addPassesToEmitFile(pass, dest, FileType)) {
+    std::cout << "TheTargetMachine can't emit a file of this type" << std::endl;
+    return;
+  }
+
+  pass.run(*TheModule);
+  dest.flush();
+
+  std::cout << "Wrote " << Filename << "\n";
 }
 
 void CodeGenVisitor::run(FunctionList *node)

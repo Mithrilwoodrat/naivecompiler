@@ -1,16 +1,6 @@
+int fuck(int x, int y)
 {
-/*This a test program.*/
-    int abc;
-    int A;
-    int i;
-    int n;
-    int b;
-    int a2;
-    read n;
-	i=2;
-    for (i=1;i<=n; i= i+1)
-    { 
-        abc=abc+(i+1);
-    }
-    write abc;
+   int ret;
+   ret = x + y;
+   return ret;
 }

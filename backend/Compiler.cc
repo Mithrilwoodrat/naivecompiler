@@ -10,7 +10,8 @@ void Compiler::Compile( void )
     func_list.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
     file.GetBodySize() );
     func_list.show();
-    genVisitor.run(&func_list);
+    genVisitor.dump(&func_list);
+    genVisitor.GenObj();
 }
 
 }
