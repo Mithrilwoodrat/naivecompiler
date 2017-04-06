@@ -35,24 +35,6 @@ static  std::unique_ptr<llvm::Module> owner = llvm::make_unique<llvm::Module>("n
 static  llvm::Module *TheModule = owner.get();
 //static    llvm::Module TheModule("naivescript", TheContext);
 
-class FunctionList;
-class FunctionNode;
-class Declaration;
-class DeclarationList;
-class CodeBlock;
-class StmtList;
-class AssignmentNode;
-class ReturnNode;
-class BinaryOpNode;
-class SymbolNode;
-class ValueNode;
-
-typedef struct jumpTable
-{
-    llvm::BasicBlock* start;
-    llvm::BasicBlock* end;
-}jumpTable;
-
 class CodeGenVisitor : public Visitor
 {
 public:
@@ -69,12 +51,12 @@ public:
     virtual llvm::Value* visit(BinaryOpNode *node);
     virtual llvm::Value* visit(SymbolNode *node);
     virtual llvm::Value* visit(ValueNode *node);
-    virtual llvm::Value* visit(LabelNode *node){return nullptr;}
-    virtual llvm::Value* visit(ABSJMPNode *node){return nullptr;}
-    virtual llvm::Value* visit(CMPJMPNode *node){return nullptr;}
+    virtual llvm::Value* visit(LabelNode *node);
+    virtual llvm::Value* visit(ABSJMPNode *node);
+    virtual llvm::Value* visit(CMPJMPNode *node);
 private:
     std::map<std::string, llvm::AllocaInst*> NamedValues;
-    std::stack<jumpTable> BlockStack;
+    std::map<uint32_t, llvm::BasicBlock*> BlockMap;
 };
 }
 #endif

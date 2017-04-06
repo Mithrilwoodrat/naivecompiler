@@ -72,8 +72,8 @@ class StmtsHelper(SpecialVisitor):
         newstmts.append(helper.L2)
         parent.l = beforestmts + newstmts + afterstmts
         parent = node
-
-
+        
+    ENDSTMTS = ["BreakStmt", "ContinueStmt", "ReturnStmt"]
     def visit_IfStmt(self, node, parent):
         L1ID = LabelIDGen()
         L1 = Label(L1ID)  # iftrue
@@ -90,11 +90,19 @@ class StmtsHelper(SpecialVisitor):
         newstmts.append(L1)
         newstmts.extend(node.iftrue.l)
         jmp = ABSJMP(L3ID)
-        newstmts.append(jmp)
+        if not filter(lambda x: x.__class__.__name__ in self.ENDSTMTS,
+                  node.iftrue.l
+        ):
+            newstmts.append(jmp)
         newstmts.append(L2)
         if node.iffalse:
             newstmts.extend(node.iffalse.l)
-        newstmts.append(jmp)
+            if not filter(lambda x: x.__class__.__name__ in self.ENDSTMTS,
+                          node.iffalse.l
+            ):
+                newstmts.append(jmp)
+        else:
+            newstmts.append(jmp)
         newstmts.append(L3)
         parent.l = beforestmts + newstmts + afterstmts
         parent = node

@@ -137,20 +137,18 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
     for (ASTNode * node : stmtlist->GetChildren() ) {
         Statement* stmt = static_cast<Statement *>(node);
         serialize::NodeType type = stmt->GetNodeType();
-        jumpTable tb;
         switch(type) {
             case serialize::TypeReturnStmt:
                 return stmt->accept(this);
                 break;
-            case serialize::TypeBreakStmt:
-                tb = BlockStack.top();
-                Builder.CreateBr(tb.end);
-                return retval;
+            case serialize::TypeABSJMP:
+                stmt->accept(this);
                 break;
-            case serialize::TypeContinueStmt:
-                tb = BlockStack.top();
-                Builder.CreateBr(tb.start);
-                return retval;
+            case serialize::TypeCMPJMP:
+                stmt->accept(this);
+                break;
+            case serialize::TypeLabel:
+                stmt->accept(this);
                 break;
             default:
                 stmt->accept(this);
@@ -158,6 +156,75 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
         }
     }
     return retval;
+}
+
+llvm::Value* CodeGenVisitor::visit(CMPJMPNode *node)
+{
+    //auto ParentBlock = Builder.GetInsertBlock()->getParent();
+    uint32_t id1 = node->GetID1();
+    uint32_t id2 = node->GetID2();
+
+    llvm::BasicBlock *L1,*L2;
+    if (BlockMap.count(id1)) {
+        L1 = BlockMap.at(id1);
+    } else {
+        std::string name1 = "L" + std::to_string(id1);
+        L1 = llvm::BasicBlock::Create(TheContext, name1);
+        //ParentBlock->getBasicBlockList().push_back(L1);
+        BlockMap[id1] = L1;
+    }
+
+    if (BlockMap.count(id2)) {
+        L2 = BlockMap.at(id2);
+    } else {
+        std::string name2 = "L" + std::to_string(id2);
+        L2 = llvm::BasicBlock::Create(TheContext, name2);
+        //ParentBlock->getBasicBlockList().push_back(L2);
+        BlockMap[id2] = L2;
+    }
+
+    llvm::Value* cond = node->GetExpr()->accept(this);
+    cond = Builder.CreateIntCast(cond, llvm::Type::getInt32Ty(TheContext), false);
+    cond = Builder.CreateICmpNE(cond,
+         llvm::ConstantInt::get(TheContext, llvm::APInt(32, 0, false)));
+
+    Builder.CreateCondBr(cond, L1, L2);
+    
+    return nullptr;
+}
+
+llvm::Value* CodeGenVisitor::visit(LabelNode *node)
+{
+    auto ParentBlock = Builder.GetInsertBlock()->getParent();
+    uint32_t id = node->GetID();
+    llvm::BasicBlock * L;
+    std::string name = "L" + std::to_string(id);
+    if (BlockMap.count(id)) {
+        L = BlockMap.at(id);
+    } else {
+        L = llvm::BasicBlock::Create(TheContext, name);
+        BlockMap[id] = L;
+    }
+    ParentBlock->getBasicBlockList().push_back(L);
+    Builder.SetInsertPoint(L);
+    return nullptr;
+}
+
+llvm::Value* CodeGenVisitor::visit(ABSJMPNode *node)
+{
+    //auto ParentBlock = Builder.GetInsertBlock()->getParent();
+    uint32_t id = node->GetID();
+    llvm::BasicBlock * L;
+    std::string name = "L" + std::to_string(id);
+    if (BlockMap.count(id)) {
+        L = BlockMap.at(id);
+    } else {
+        L = llvm::BasicBlock::Create(TheContext, name);
+        //ParentBlock->getBasicBlockList().push_back(L);
+        BlockMap[id] = L;
+    }
+    Builder.CreateBr(L);
+    return nullptr;
 }
 
 // llvm::Value* CodeGenVisitor::visit(WhileNode *node) 
