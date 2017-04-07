@@ -166,8 +166,13 @@ class Parser(object):
         
     def p_code_block(self, p):
         '''code_block : LBRACE declaration_list statement_list RBRACE
+                      | LBRACE statement_list RBRACE
         '''
-        p[0] = CodeBlock(p[2], p[3])
+        if len(p) == 4:
+            decls = DeclarationList()
+            p[0] = CodeBlock(decls, p[2])
+        else:
+            p[0] = CodeBlock(p[2], p[3])
     
     def p_declaration_list(self, p):
         """ declaration_list    : declaration
