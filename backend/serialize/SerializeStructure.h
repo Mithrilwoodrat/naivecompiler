@@ -126,7 +126,7 @@ struct FuncCall
     uint32_t type;
     uint32_t size;
     uint32_t id;
-    uint32_t args_size;
+    uint32_t argsSize;
     Expr args;
 }__attribute__((packed)) ;
 
