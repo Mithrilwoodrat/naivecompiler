@@ -4,3 +4,5 @@ parsetab.py
 build/
 *.data
 .vscode/
+*.o
+*.so

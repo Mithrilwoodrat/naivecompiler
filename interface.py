@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import ctypes
+
+
 class LibNaiveScript(object):
     def __init__(self, libpath):
         self.libpath = libpath

@@ -58,7 +58,7 @@ void CodeGenVisitor::dump( FunctionList *node) {
     TheModule->dump();
 }
 
-void CodeGenVisitor::GenObj() {
+void CodeGenVisitor::GenObj(const std::string &Filename) {
     llvm::InitializeAllTargetInfos();
     llvm::InitializeAllTargets();
     llvm::InitializeAllTargetMCs();
@@ -86,7 +86,6 @@ void CodeGenVisitor::GenObj() {
 
   TheModule->setDataLayout(TheTargetMachine->createDataLayout());
 
-  auto Filename = "output.o";
   std::error_code EC;
   llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::F_None);
 

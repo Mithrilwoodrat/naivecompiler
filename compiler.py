@@ -10,6 +10,7 @@ from serialize_structure import FileFormat
 from analysis_handler import AnalysisVisitor
 from serialize_handler import SerializeHandler
 from ast_rewrite import ReWriteVisitor
+from interface import LibNaiveScript
 
 
 logger = logging.getLogger(__file__)
@@ -59,6 +60,7 @@ class Compiler(object):
         self.source = source
         self.parser = Parser()
         self.env = Env()
+        self.lib = LibNaiveScript('./libNaiveScript.so')
 
     def ast_gen(self):
         self.ast = self.parser.parse(self.source)
@@ -100,7 +102,7 @@ class Compiler(object):
         sh = SerializeHandler(self.env)
         return sh.serialize(self.ast.root)
     
-    def compile(self):
+    def compile(self, pout):
         obj = FileFormat()
         #self.ast = self.minify_ast(self.ast)
         self.ast.show()
@@ -116,9 +118,10 @@ class Compiler(object):
         with open('ns.data','wb') as fout:
             fout.write(str(obj))
 
-        # rewriter = ReWriteVisitor()
-        # rewriter.visit(self.ast.root, self.ast)
-        # self.ast.show()
+        self.lib.LoadData('./ns.data')
+        self.lib.Compile(pout)
+
+        
     
 if __name__ == "__main__":
     logging.basicConfig(format='[%(asctime)s] (%(module)s:%(funcName)s:%(lineno)s): <%(levelname)s> %(message)s', level=logging.INFO)
@@ -127,4 +130,4 @@ if __name__ == "__main__":
     compiler = Compiler(source)
     compiler.ast_gen()
     compiler.analysis()
-    compiler.compile()
+    compiler.compile(sys.argv[2])

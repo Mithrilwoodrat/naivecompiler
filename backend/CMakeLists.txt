@@ -19,7 +19,6 @@ Add_Definitions( -Wall -Werror -fPIC -std=c++11 -pthread  -g
 #find_package(LLVM 3.8 CONFIG)
 
 Set( NSWorkingPath ${CMAKE_CURRENT_SOURCE_DIR} )
-Set( NSOutputDir   ${CMAKE_CURRENT_BINARY_DIR} )
 
 Set( NSIncludeDir ${NSWorkingPath} 
     ${NSWorkingPath}/serialize
@@ -61,9 +60,6 @@ link_directories(/usr/local/lib/)
 
 add_library(NaiveScript  SHARED ${NSSrcFiles})
 Target_Include_Directories( NaiveScript PUBLIC ${NSIncludeDir} )
-Set_Target_Properties( NaiveScript PROPERTIES 
-    #COMPILE_FLAGS "-export-dynamicc -fPIC"
-    OUTPUT_NAME naivescript )
 
 target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVMLTO -lLLVMObjCARCOpts -lLLVMSymbolize
  -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF -lLLVMXCoreDisassembler
@@ -98,5 +94,3 @@ target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -l
  -lLLVMExecutionEngine -lLLVMTarget -lLLVMAnalysis -lLLVMRuntimeDyld
  -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMMC -lLLVMCore
  -lLLVMSupport)
-
- Add_Subdirectory( test )

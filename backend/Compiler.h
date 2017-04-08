@@ -33,7 +33,7 @@ public:
         return GetCompiler()->symbol_table->ResolveSymbol(id);
     }
 
-    void Compile( void );
+    void Compile( char * filename );
     
     static Compiler* instance;
 private:

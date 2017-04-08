@@ -4,14 +4,15 @@ namespace naivescript
 {
 Compiler* Compiler::instance = 0;
 
-void Compiler::Compile( void ) 
+void Compiler::Compile( char * filename ) 
 {
     u_int8_t *body = const_cast<u_int8_t *>(file.GetBody());
     func_list.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
     file.GetBodySize() );
     func_list.show();
     genVisitor.dump(&func_list);
-    genVisitor.GenObj();
+    std::string Filename(filename);
+    genVisitor.GenObj(Filename);
 }
 
 }
@@ -29,9 +30,9 @@ void LoadData(char * path)
     naivescript::Compiler::GetCompiler()->LoadData(path);
 }
 
-void Compile( void )
+void Compile(  char * filename )
 {
-    naivescript::Compiler::GetCompiler()->Compile();
+    naivescript::Compiler::GetCompiler()->Compile(filename);
 }
 
 #ifdef __cplusplus
