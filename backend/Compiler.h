@@ -23,8 +23,9 @@ public:
         return instance;
     }
 
-    void LoadData(const std::string& path) {
-        file.Load(path);
+    void LoadData(char *path) {
+        std::string spath(path);
+        file.Load(spath);
         symbol_table = file.GetSymbolTable();
     };
 

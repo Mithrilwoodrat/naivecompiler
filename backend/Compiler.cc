@@ -15,3 +15,25 @@ void Compiler::Compile( void )
 }
 
 }
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void InitCompiler( void ) 
+{
+    naivescript::Compiler::GetCompiler();
+}
+
+void LoadData(char * path)
+{
+    naivescript::Compiler::GetCompiler()->LoadData(path);
+}
+
+void Compile( void )
+{
+    naivescript::Compiler::GetCompiler()->Compile();
+}
+
+#ifdef __cplusplus
+}
+#endif
