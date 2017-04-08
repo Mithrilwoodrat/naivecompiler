@@ -1,13 +1,13 @@
 #ifndef CODEGEN_H
 #define CODEGEN_H
 
-#include "NaiveScript.h"
 #include "NodeVisitor.h"
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <map>
 #include <memory>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <stack>
@@ -34,6 +34,8 @@ public:
     virtual llvm::Value* visit(StmtList *node);
     virtual llvm::Value* visit(AssignmentNode *node);
     virtual llvm::Value* visit(ReturnNode *node);
+    virtual llvm::Value* visit(FuncCallNode *node);
+    virtual llvm::Value* visit(ArgumentList *node) {return nullptr;}
     virtual llvm::Value* visit(BinaryOpNode *node);
     virtual llvm::Value* visit(SymbolNode *node);
     virtual llvm::Value* visit(ValueNode *node);

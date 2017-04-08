@@ -21,6 +21,9 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
             case serialize::TypeBinaryOp:
                 lhs = NodeFactory::CreateBinaryOp(p_lhs, binaryop->lhsSize);
                 break;
+            case serialize::TypeFuncCall:
+                lhs = NodeFactory::CreateFuncCallNode(p_lhs, binaryop->lhsSize);
+                break;
             default:
                 return false;
         }
@@ -36,6 +39,9 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
                 break;
             case serialize::TypeBinaryOp:
                 rhs = NodeFactory::CreateBinaryOp(p_rhs, binaryop->rhsSize);
+                break;
+            case serialize::TypeFuncCall:
+                rhs = NodeFactory::CreateFuncCallNode(p_rhs, binaryop->rhsSize);
                 break;
             default:
                 std::cout << "Unknown Type" << std::endl;

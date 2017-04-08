@@ -1,7 +1,6 @@
 #ifndef FUNCCALLNODE_H
 #define FUNCCALLNODE_H
 
-#include "NaiveScript.h"
 #include "Statement.h"
 #include "Util.h"
 
@@ -32,6 +31,11 @@ public:
 
     inline ASTNode* GetArgs( void )  {
         return args;
+    }
+
+    inline std::string GetFuncName()
+    {
+        return func_name;
     }
 
     ~FuncCallNode()

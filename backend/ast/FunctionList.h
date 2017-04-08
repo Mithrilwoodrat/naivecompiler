@@ -1,11 +1,11 @@
 #ifndef FUNTIONLIST_H
 #define FUNTIONLIST_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "NodeFactory.h"
 #include "FunctionNode.h"
 #include "Util.h"
+#include <map>
 
 
 namespace naivescript{

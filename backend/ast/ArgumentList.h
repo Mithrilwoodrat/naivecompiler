@@ -1,16 +1,17 @@
-#ifndef STMTLIST_H
-#define STMTLIST_H
+#ifndef ARGUMENTLIST_H
+#define ARGUMENTLIST_H
 
+#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "Util.h"
 
 
 namespace naivescript{
 
-class StmtList : public ASTNode
+class ArgumentList : public ASTNode
 {
 public:
-    virtual bool Parse( struct serialize::StmtList * stmt_list, size_t size );
+    virtual bool Parse( struct serialize::ArgumentList * args, size_t size );
 
     virtual const std::vector<ASTNode *> GetChildren( void ) override
     {
@@ -19,7 +20,7 @@ public:
 
     virtual void show( void ) override
     {
-        std::cout <<  "StmtList\t";
+        std::cout <<  "ArgumentList\t";
         std::cout <<  "Node Count: " << count << std::endl;
         for (ASTNode * node : children) {
             node->show();
@@ -28,7 +29,7 @@ public:
 
     virtual llvm::Value* accept(Visitor* v) override;
 
-    ~StmtList() {
+    ~ArgumentList() {
         for (ASTNode * node : children) {
             free(node);
         }

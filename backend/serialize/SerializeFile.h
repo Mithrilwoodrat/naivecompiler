@@ -1,7 +1,12 @@
 #ifndef SERIALIZEFILE_H
 #define SERIALIZEFILE_H
 
-#include "NaiveScript.h"
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include <map>
+#include <iostream>
+#include <fstream>
 #include "SerializeStructure.h"
 #include "SymbolTable.h"
 

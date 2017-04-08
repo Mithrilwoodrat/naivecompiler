@@ -1,7 +1,7 @@
 #ifndef FUNCTIONNODE_H
 #define FUNCTIONNODE_H
 
-#include "NaiveScript.h"
+
 #include "ASTNode.h"
 #include "DeclarationList.h"
 #include "CodeBlock.h"

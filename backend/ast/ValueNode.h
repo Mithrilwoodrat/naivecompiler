@@ -1,7 +1,6 @@
 #ifndef VALUENODE_H
 #define VALUENODE_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "Util.h"
 

@@ -1,7 +1,6 @@
 #ifndef WHILENODE_H
 #define WHILENODE_H
 
-#include "NaiveScript.h"
 #include "Statement.h"
 #include "Util.h"
 

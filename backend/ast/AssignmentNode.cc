@@ -1,5 +1,7 @@
 #include "AssignmentNode.h"
 #include "Compiler.h"
+#include "ValueNode.h"
+#include "BinaryOpNode.h"
 #include "NodeFactory.h"
 
 namespace naivescript
@@ -20,7 +22,9 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
             break;
         case serialize::TypeBinaryOp:
             expr = NodeFactory::CreateBinaryOp(assignment->expr, assignment->exprSize);
-            //std::cout << "BinaryOp" << std::endl;
+            break;
+        case serialize::TypeFuncCall:
+            expr = NodeFactory::CreateFuncCallNode(assignment->expr, assignment->exprSize);
             break;
         default:
             return false;

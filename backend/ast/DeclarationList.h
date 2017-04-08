@@ -1,7 +1,6 @@
 #ifndef DECLARACTIONLIST_H
 #define DECLARACTIONLIST_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "NodeFactory.h"
 #include "Declaration.h"

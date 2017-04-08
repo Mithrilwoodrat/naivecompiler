@@ -203,7 +203,7 @@ class Parser(object):
     def p_statement(self, p):
         ''' statement : assignment_statement 
                   | while_statement
-                  | funccall
+                  | funccall_stmt
                   | jump_statement
                   | selection_statement
         '''
@@ -259,7 +259,8 @@ class Parser(object):
         p[0] = AssignmentExpr(var, p[3])
     
     def p_expression(self, p):
-        ''' expression : binary_expr '''
+        ''' expression : binary_expr
+        '''
         p[0] = p[1]
 
     def p_binary_expr(self, p):
@@ -275,6 +276,7 @@ class Parser(object):
                   | binary_expr AND binary_expr
                   | binary_expr OR binary_expr
                   | LPAREN binary_expr RPAREN
+                  | funccall_expr
                   | varsymbol
                   | constant '''
         if len(p) == 2:
@@ -315,7 +317,7 @@ class Parser(object):
         if len(p) == 2:
             p[0] = ArgumentList(p[1])
         elif len(p) == 4:
-            p[3].l.append(p[1])
+            p[3].l.insert(0, p[1])
             p[0] = p[3]
         else:
             logging.error("wrong argument_list")
@@ -333,20 +335,25 @@ class Parser(object):
             logging.error("wrong funcdef")
             print len(p)
             print [i for i in p]
-    
-    def p_funccall(self, p):
-        ''' funccall : methodsymbol LPAREN argument_list RPAREN SEMI
-                     | methodsymbol LPAREN RPAREN SEMI
+
+    def p_funcall_expr(self, p):
+        ''' funccall_expr : methodsymbol LPAREN argument_list RPAREN
+                     | methodsymbol LPAREN RPAREN
         '''
-        if len(p) == 6:
+        if len(p) == 5:
             p[0] = FuncCall(p[1], p[3])
-        elif len(p) == 5:
+        elif len(p) == 4:
             argument_list = ArgumentList()
             p[0] = FuncCall(p[1], argument_list)
         else:
             logging.error("wrong FuncCall")
             print len(p)
             print [i for i in p]
+        
+    def p_funccall_stmt(self, p):
+        ''' funccall_stmt : funccall_expr SEMI
+        '''
+        p[0] = p[1]
             
     def p_type(self, p):
         ''' type : INT '''

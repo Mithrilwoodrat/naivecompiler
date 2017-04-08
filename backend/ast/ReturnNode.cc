@@ -19,7 +19,9 @@ bool ReturnNode::Parse( struct serialize::ReturnStmt * return_stmt, size_t size 
             break;
         case serialize::TypeBinaryOp:
             expr = NodeFactory::CreateBinaryOp(return_stmt->expr, return_stmt->exprSize);
-            //std::cout << "BinaryOp" << std::endl;
+            break;
+        case serialize::TypeFuncCall:
+            expr = NodeFactory::CreateFuncCallNode(return_stmt->expr, return_stmt->exprSize);
             break;
         default:
             return false;

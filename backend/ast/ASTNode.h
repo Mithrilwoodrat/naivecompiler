@@ -2,6 +2,8 @@
 #define ASTNODE_H
 
 #include "vector"
+#include "string"
+#include "iostream"
 #include "SerializeStructure.h"
 
 namespace llvm{

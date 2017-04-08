@@ -1,7 +1,6 @@
 #ifndef DECLARACTION_H
 #define DECLARACTION_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "Util.h"
 

@@ -1,7 +1,10 @@
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
-#include "NaiveScript.h"
+#include <string>
+#include <vector>
+#include <map>
+#include <iostream>
 
 namespace naivescript{
 namespace serialize {

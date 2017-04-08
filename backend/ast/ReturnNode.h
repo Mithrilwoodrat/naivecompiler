@@ -1,13 +1,8 @@
 #ifndef RETURNNODE_H
 #define RETURNNODE_H
 
-#include "NaiveScript.h"
 #include "Statement.h"
 #include "Util.h"
-
-#include "ValueNode.h"
-#include "BinaryOpNode.h"
-
 
 namespace naivescript{
 

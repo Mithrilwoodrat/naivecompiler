@@ -1,7 +1,6 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "SerializeStructure.h"
 #include "NodeFactory.h"

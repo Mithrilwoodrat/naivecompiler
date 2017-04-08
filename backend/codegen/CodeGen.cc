@@ -3,6 +3,7 @@
 #include "Statement.h"
 #include "FunctionList.h"
 #include "FunctionNode.h"
+#include "FuncCallNode.h"
 #include "Declaration.h"
 #include "DeclarationList.h"
 #include "CodeBlock.h"
@@ -178,6 +179,25 @@ llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
     return TheFunction;
 }
 
+llvm::Value* CodeGenVisitor::visit(FuncCallNode *node)
+{
+    llvm::Function *CalleeF = TheModule->getFunction(node->GetFuncName());
+    if (!CalleeF)
+        return LogErrorV("Unknown function referenced");
+
+    auto Args = node->GetArgs()->GetChildren();
+    // If argument mismatch error.
+    if (CalleeF->arg_size() != Args.size())
+        return LogErrorV("Incorrect # arguments passed");
+
+    std::vector<llvm::Value *> ArgsV;
+    for (ASTNode * n : Args) {
+        ArgsV.push_back(n->accept(this));
+    }
+
+    return Builder.CreateCall(CalleeF, ArgsV, "calltmp");
+}
+
 llvm::Value* CodeGenVisitor::visit(Declaration *node)
 {
     llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
@@ -225,6 +245,9 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
                 stmt->accept(this);
                 break;
             case serialize::TypeLabel:
+                stmt->accept(this);
+                break;
+            case serialize::TypeFuncCall:
                 stmt->accept(this);
                 break;
             default:

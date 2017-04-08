@@ -1,4 +1,6 @@
 #include "StmtList.h"
+#include "NodeFactory.h"
+#include "AssignmentNode.h"
 #include "Compiler.h"
 
 namespace naivescript{
@@ -22,6 +24,7 @@ bool StmtList::Parse( struct serialize::StmtList * stmt_list, size_t size )
                 return false;
             case serialize::TypeFuncCall:
                 node_size = util::getVarStructSize(data);
+                children.push_back(NodeFactory::CreateFuncCallNode(data, node_size));
                 break;
             case serialize::TypeLabel:
                 node_size = util::getVarStructSize(data);

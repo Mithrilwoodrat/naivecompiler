@@ -1,7 +1,12 @@
 #ifndef NODEVISITOR_H
 #define NODEVISITOR_H
 
-#include "NaiveScript.h"
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include <map>
+#include <iostream>
+#include <fstream>
 
 namespace llvm{
 class Value;
@@ -18,6 +23,8 @@ class CodeBlock;
 class StmtList;
 class AssignmentNode;
 class ReturnNode;
+class ArgumentList;
+class FuncCallNode;
 class BinaryOpNode;
 class SymbolNode;
 class ValueNode;
@@ -37,6 +44,8 @@ class Visitor
     virtual llvm::Value* visit(StmtList *node) = 0;
     virtual llvm::Value* visit(AssignmentNode *node) = 0;
     virtual llvm::Value* visit(ReturnNode *node) = 0;
+    virtual llvm::Value* visit(FuncCallNode *node) = 0;
+    virtual llvm::Value* visit(ArgumentList *node) = 0;
     virtual llvm::Value* visit(BinaryOpNode *node) = 0;
     virtual llvm::Value* visit(SymbolNode *node) = 0;
     virtual llvm::Value* visit(ValueNode *node) = 0;

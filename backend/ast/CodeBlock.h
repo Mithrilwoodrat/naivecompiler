@@ -1,7 +1,6 @@
 #ifndef CODEBLOCK_H
 #define CODEBLOCK_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "NodeFactory.h"
 #include "DeclarationList.h"

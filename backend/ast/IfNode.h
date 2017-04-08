@@ -1,7 +1,6 @@
 #ifndef IFNODE_H
 #define IFNODE_H
 
-#include "NaiveScript.h"
 #include "Statement.h"
 #include "Util.h"
 

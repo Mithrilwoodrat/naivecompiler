@@ -1,7 +1,6 @@
 #ifndef SYMBOLNODE_H
 #define SYMBOLNODE_H
 
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "Util.h"
 

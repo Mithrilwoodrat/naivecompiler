@@ -1,12 +1,8 @@
 #ifndef ASSIGNMENT_H
 #define ASSIGNMENT_H
 
-#include "NaiveScript.h"
 #include "Statement.h"
 #include "Util.h"
-
-#include "ValueNode.h"
-#include "BinaryOpNode.h"
 
 
 namespace naivescript{

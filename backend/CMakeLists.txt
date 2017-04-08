@@ -1,4 +1,4 @@
-project(naivescript)
+project(naivescript  C CXX ASM )
 cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_C_COMPILER clang)
 SET(CMAKE_CXX_COMPILER clang++)
@@ -39,6 +39,8 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/NodeFactory.cc
     ${NSWorkingPath}/ast/FunctionNode.cc
     ${NSWorkingPath}/ast/FunctionList.cc
+    ${NSWorkingPath}/ast/FuncCallNode.cc
+    ${NSWorkingPath}/ast/ArgumentList.cc
     ${NSWorkingPath}/ast/CodeBlock.cc
     ${NSWorkingPath}/ast/Declaration.cc
     ${NSWorkingPath}/ast/DeclarationList.cc

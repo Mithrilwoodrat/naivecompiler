@@ -1,8 +1,6 @@
 #ifndef BINARYOPNODE_H
 #define BINARYOPNODE_H
 
-
-#include "NaiveScript.h"
 #include "ASTNode.h"
 #include "Util.h"
 
