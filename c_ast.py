@@ -36,10 +36,13 @@ class AST(ASTNode):
     
 class ArgumentList(ASTNode):
     def __init__(self, argument=None):
-        if argument:
+        if argument is None:
+            self.l = []
+        elif type(argument) in frozenset([VariableSymbol, Const]):
             self.l = [argument]
         else:
-            self.l = []
+            logger.error('Initial with error type')
+
 
     def children(self):
         return self.l

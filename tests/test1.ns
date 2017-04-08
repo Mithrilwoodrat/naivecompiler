@@ -1,8 +1,6 @@
 int fuck(int x, int y)
 {
-    int ret;
-    ret = x+y;
-	return ret;
+	return x + y;
 }
 
 int main()
@@ -17,7 +15,6 @@ int main()
             break;
         }
 	}
-    write(abc);
-    exit();
+	fuck(1, 2);
 	return 1;
 }

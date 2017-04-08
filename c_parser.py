@@ -314,8 +314,11 @@ class Parser(object):
         '''
         if len(p) == 2:
             p[0] = ArgumentList(p[1])
+        elif len(p) == 4:
+            p[3].l.append(p[1])
+            p[0] = p[3]
         else:
-            p[0] = p[3].l.append(p[1])
+            logging.error("wrong argument_list")
         
     def p_funcdef(self, p):
         ''' funcdef : type methodsymbol LPAREN param_list RPAREN code_block
