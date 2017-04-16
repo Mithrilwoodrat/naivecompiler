@@ -41,7 +41,6 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/FunctionList.cc
     ${NSWorkingPath}/ast/FuncCallNode.cc
     ${NSWorkingPath}/ast/ArgumentList.cc
-    ${NSWorkingPath}/ast/CodeBlock.cc
     ${NSWorkingPath}/ast/Declaration.cc
     ${NSWorkingPath}/ast/DeclarationList.cc
     ${NSWorkingPath}/ast/Statement.cc

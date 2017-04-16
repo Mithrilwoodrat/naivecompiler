@@ -83,21 +83,21 @@ class FuncList(ASTNode):
     def children(self):
         return self.l
         
-class CodeBlock(ASTNode):
-    def __init__(self, declaration_list, statement_list):
-        self.node_name = "CodeBlock"
-        super(CodeBlock, self).__init__()
-        self.decl_list = declaration_list
-        self.stmt_list = statement_list
+# class CodeBlock(ASTNode):
+#     def __init__(self, declaration_list, statement_list):
+#         self.node_name = "CodeBlock"
+#         super(CodeBlock, self).__init__()
+#         self.decl_list = declaration_list
+#         self.stmt_list = statement_list
 
-    def children(self):
-        return [self.decl_list, self.stmt_list]
+#     def children(self):
+#         return [self.decl_list, self.stmt_list]
 
-    def serialize(self, env):
-        codeblock = S_CodeBlock()
-        codeblock['declaration_list'] = self.declaration_list.serialize(env)
-        codeblock['statement_list'] = self.statement_list.serialize(env)
-        return codeblock
+#     def serialize(self, env):
+#         codeblock = S_CodeBlock()
+#         codeblock['declaration_list'] = self.declaration_list.serialize(env)
+#         codeblock['statement_list'] = self.statement_list.serialize(env)
+#         return codeblock
 
 class DeclarationList(ASTNode):
     def __init__(self, declaration=None):
@@ -172,6 +172,16 @@ class Statement(ASTNode):
 
     def children(self):
         return []
+
+class DeclStmt(Statement):
+    '''Declaration: Type ID SEIM'''
+    attr_names = ('_type', )
+    def __init__(self, ID, Type):
+        self._id = ID
+        self._type = Type
+
+    def children(self):
+        return [self._id]
 
 class FuncCall(Statement):
     def __init__(self, func_name, argument_list):

@@ -19,7 +19,6 @@ class FunctionList;
 class FunctionNode;
 class Declaration;
 class DeclarationList;
-class CodeBlock;
 class StmtList;
 class AssignmentNode;
 class ReturnNode;
@@ -40,7 +39,6 @@ class Visitor
     virtual llvm::Function* visit(FunctionNode *node) = 0;
     virtual llvm::Value* visit(Declaration *node) = 0;
     virtual llvm::Value* visit(DeclarationList *node) = 0;
-    virtual llvm::Value* visit(CodeBlock *node) = 0;
     virtual llvm::Value* visit(StmtList *node) = 0;
     virtual llvm::Value* visit(AssignmentNode *node) = 0;
     virtual llvm::Value* visit(ReturnNode *node) = 0;

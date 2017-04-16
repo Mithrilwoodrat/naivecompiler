@@ -10,7 +10,6 @@
 #include "ArgumentList.h"
 #include "Declaration.h"
 #include "DeclarationList.h"
-#include "CodeBlock.h"
 #include "Statement.h"
 #include "StmtList.h"
 
@@ -72,7 +71,7 @@ ASTNode* NodeFactory::CreateSymbol(uint8_t *data, uint32_t size) {
     return node;
 }
 
-FunctionNode* NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
+FunctionNode * NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
 {
     auto *node = new FunctionNode();
     node->Parse(reinterpret_cast<struct serialize::Function*>(data), size);
@@ -90,13 +89,6 @@ ASTNode* NodeFactory::CreateArgumentList(uint8_t *data, uint32_t size)
 {
     auto *node = new ArgumentList();
     node->Parse(reinterpret_cast<struct serialize::ArgumentList*>(data), size);
-    return node;
-}
-
-ASTNode* NodeFactory::CreateCodeBlock(uint8_t *data, uint32_t size)
-{
-    auto *node = new CodeBlock();
-    node->Parse(reinterpret_cast<struct serialize::CodeBlock*>(data), size);
     return node;
 }
 

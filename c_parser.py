@@ -164,32 +164,24 @@ class Parser(object):
         else:
             p[0] = p[1] + p[2]
         
-    def p_code_block(self, p):
-        '''code_block : LBRACE declaration_list statement_list RBRACE
-                      | LBRACE statement_list RBRACE
-        '''
-        if len(p) == 4:
-            decls = DeclarationList()
-            p[0] = CodeBlock(decls, p[2])
-        else:
-            p[0] = CodeBlock(p[2], p[3])
+    # def p_code_block(self, p):
+    #     '''code_block : LBRACE declaration_list statement_list RBRACE
+    #                   | LBRACE statement_list RBRACE
+    #     '''
+    #     if len(p) == 4:
+    #         decls = DeclarationList()
+    #         p[0] = CodeBlock(decls, p[2])
+    #     else:
+    #         p[0] = CodeBlock(p[2], p[3])
     
-    def p_declaration_list(self, p):
-        """ declaration_list    : declaration
-                        |  declaration declaration_list 
-        """
-        if len(p) == 2:
-            p[0] = DeclarationList(p[1])
-        else:
-            p[0] = p[1] + p[2]
-
-    def p_declaration(self, p):
-        """ declaration  : type varsymbol SEMI
-        """
-        # declaration(ID, TYPE)
-        #var = VariableSymbol(p[2])
-        #p[0] = Declaration(var, p[1])
-        p[0] = Declaration(p[2], p[1])
+    # def p_declaration_list(self, p):
+    #     """ declaration_list    : declaration
+    #                     |  declaration declaration_list 
+    #     """
+    #     if len(p) == 2:
+    #         p[0] = DeclarationList(p[1])
+    #     else:
+    #         p[0] = p[1] + p[2]
     
     def p_statement_list(self, p):
         ''' statement_list : statement
@@ -202,13 +194,19 @@ class Parser(object):
 
     def p_statement(self, p):
         ''' statement : assignment_statement 
+                  | declstmt
                   | while_statement
                   | funccall_stmt
                   | jump_statement
                   | selection_statement
         '''
         p[0] = p[1]
-    
+
+    def p_declstmt(self, p):
+        """ declstmt  : type varsymbol SEMI
+        """
+        p[0] = DeclStmt(p[2], p[1])
+
     def p_compound_statement(self, p):
         ''' compound_statement : LBRACE statement_list RBRACE'''
         p[0] = p[2]
@@ -323,8 +321,8 @@ class Parser(object):
             logging.error("wrong argument_list")
         
     def p_funcdef(self, p):
-        ''' funcdef : type methodsymbol LPAREN param_list RPAREN code_block
-                    | type methodsymbol LPAREN RPAREN code_block
+        ''' funcdef : type methodsymbol LPAREN param_list RPAREN compound_statement
+                    | type methodsymbol LPAREN RPAREN compound_statement
         '''
         if len(p) == 7:
             p[0] = Function(p[1], p[2], p[4], p[6])

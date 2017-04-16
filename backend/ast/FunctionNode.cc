@@ -13,7 +13,7 @@ bool FunctionNode::Parse( struct serialize::Function * func, size_t size )
     uint8_t *p_params_list = (uint8_t *)(func->param_list.data);
     uint8_t *p_body = p_params_list + func->params_size;
     params_list = NodeFactory::CreateDeclarationList(p_params_list, func->params_size);
-    body = NodeFactory::CreateCodeBlock(p_body, func->body_size);
+    body = NodeFactory::CreateStmtList(p_body, func->body_size);
     children.push_back(params_list);
     children.push_back(body);
     return true;

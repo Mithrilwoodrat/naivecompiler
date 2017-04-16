@@ -60,32 +60,36 @@ struct FileFormat
 struct FunctionList
 {
     uint32_t type;
-    uint32_t count;
     uint32_t size;
+    uint32_t count;
+    uint32_t datasize;
     uint8_t data[0];
 }__attribute__((packed)) ;
 
 struct ArgumentList
 {
     uint32_t type;
-    uint32_t count;
     uint32_t size;
+    uint32_t count;
+    uint32_t datasize;
     uint8_t data[0];
 }__attribute__((packed)) ;
 
 struct StmtList
 {
     uint32_t type;
-    uint32_t count;
     uint32_t size;
+    uint32_t count;
+    uint32_t datasize;
     uint8_t data[0];
 }__attribute__((packed)) ;
 
 struct DeclarationList
 {
     uint32_t type;
-    uint32_t count;
     uint32_t size;
+    uint32_t count;
+    uint32_t datasize;
     uint8_t data[0];
 }__attribute__((packed)) ;
 
@@ -93,18 +97,10 @@ struct Expr {
     uint8_t data[0];
 }__attribute__((packed)) ;
 
-struct CodeBlock
-{
-    uint32_t type;
-    uint32_t decls_size;
-    uint32_t stmts_size;
-    Expr decls;
-    Expr stmts;
-}__attribute__((packed)) ;
-
 struct Declaration
 {
     uint32_t type;
+    uint32_t size;
     uint32_t symboltype;
     uint32_t id;
 }__attribute__((packed)) ;

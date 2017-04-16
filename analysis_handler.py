@@ -61,6 +61,9 @@ class FuncHelper(NodeVisitor):
     
     def visit_Declaration(self, node):
         self.scope.define_symbol(node._id.name, node._type)
+
+    def visit_DeclStmt(self, node):
+        self.scope.define_symbol(node._id.name, node._type)
         
     def visit_VariableSymbol(self, node):
         self.scope.resolve_symbol(node.name)

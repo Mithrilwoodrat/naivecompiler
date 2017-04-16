@@ -22,6 +22,10 @@ bool StmtList::Parse( struct serialize::StmtList * stmt_list, size_t size )
             default:
                 std::cout << "Error Unknown stmt type" << std::endl;
                 return false;
+            case serialize::TypeDeclaration:
+                node_size = util::getVarStructSize(data);
+                children.push_back(NodeFactory::CreateDeclaration(data, node_size));
+                break;
             case serialize::TypeFuncCall:
                 node_size = util::getVarStructSize(data);
                 children.push_back(NodeFactory::CreateFuncCallNode(data, node_size));

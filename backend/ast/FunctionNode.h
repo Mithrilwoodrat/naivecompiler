@@ -3,8 +3,6 @@
 
 
 #include "ASTNode.h"
-#include "DeclarationList.h"
-#include "CodeBlock.h"
 #include "Util.h"
 
 
@@ -25,14 +23,14 @@ public:
         return func_name;
     }
 
-    DeclarationList * GetParams(void) 
+    ASTNode * GetParams(void) 
     {
-        return static_cast<DeclarationList*>(params_list);
+        return params_list;
     }
 
-    CodeBlock* GetBody(void)
+    ASTNode* GetBody(void)
     {
-        return static_cast<CodeBlock*>(body);
+        return body;
     }
 
     void show( void )

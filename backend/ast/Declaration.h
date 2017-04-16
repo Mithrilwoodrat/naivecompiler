@@ -1,15 +1,15 @@
 #ifndef DECLARACTION_H
 #define DECLARACTION_H
 
-#include "ASTNode.h"
+#include "Statement.h"
 #include "Util.h"
 
 namespace naivescript{
 
-class Declaration : public ASTNode
+class Declaration : public Statement
 {
 public:
-    Declaration() : symboltype(0) {}
+    Declaration() : Statement(serialize::TypeDeclaration) {}
     virtual bool Parse( struct serialize::Declaration * decl, size_t size );
 
     virtual void show(void) override

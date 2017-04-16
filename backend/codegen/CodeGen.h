@@ -30,7 +30,6 @@ public:
     virtual llvm::Function* visit(FunctionNode *node);
     virtual llvm::Value* visit(Declaration *node);
     virtual llvm::Value* visit(DeclarationList *node);
-    virtual llvm::Value* visit(CodeBlock *node);
     virtual llvm::Value* visit(StmtList *node);
     virtual llvm::Value* visit(AssignmentNode *node);
     virtual llvm::Value* visit(ReturnNode *node);

@@ -34,11 +34,11 @@ class SerializeHandler(object):
         func['body'] = self.serialize(node.body)
         return func
 
-    def serialize_CodeBlock(self, node):
-        code_block = S_CodeBlock()
-        code_block['decl_list'] = str(self.serialize(node.decl_list))
-        code_block['stmt_list'] = str(self.serialize(node.stmt_list))
-        return code_block
+    # def serialize_CodeBlock(self, node):
+    #     code_block = S_CodeBlock()
+    #     code_block['decl_list'] = str(self.serialize(node.decl_list))
+    #     code_block['stmt_list'] = str(self.serialize(node.stmt_list))
+    #     return code_block
 
     def serialize_DeclarationList(self, node):
         decl_list = S_DeclarationList()
@@ -56,13 +56,18 @@ class SerializeHandler(object):
         decl_expr['id'] = self.env.add_string(node._id.name)
         decl_expr['_type'] = 0
         return decl_expr
+
+    def serialize_DeclStmt(self, node):
+        decl_expr =  S_Declaration()
+        decl_expr['id'] = self.env.add_string(node._id.name)
+        decl_expr['_type'] = 0
+        return decl_expr
     
     def serialize_StmtList(self, node):
         stmt_list = S_StatementList()
         stmt_list['count'] = len(node.l)
         data = ''
         for stmt in node.l:
-            # print stmt.__class__.__name__, len(str(self.serialize(stmt)))
             data += str(self.serialize(stmt))
         stmt_list['data'] = data
         return stmt_list

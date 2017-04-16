@@ -2,7 +2,6 @@
 #define FUNTIONLIST_H
 
 #include "ASTNode.h"
-#include "NodeFactory.h"
 #include "FunctionNode.h"
 #include "Util.h"
 #include <map>
@@ -13,20 +12,7 @@ namespace naivescript{
 class FunctionList
 {
 public:
-    bool Parse( struct serialize::FunctionList * func_list, size_t size )
-    {
-        std::cout << "Parsing FunctionList ";
-        count =  func_list->count;
-        std::cout << "Count: " << count << std::endl;
-        uint8_t * data = func_list->data;
-        size_t node_size;
-        for (size_t i=0; i<count; i++) {
-            node_size = util::getVarStructSize(data);
-            children.push_back(NodeFactory::CreateFunction(data, node_size));
-            data += node_size;
-        }
-        return true;
-    }
+    bool Parse( struct serialize::FunctionList * func_list, size_t size );
 
     const std::vector<FunctionNode *> GetChildren( void ) 
     {

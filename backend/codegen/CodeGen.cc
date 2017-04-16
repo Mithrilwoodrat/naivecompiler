@@ -6,12 +6,9 @@
 #include "FuncCallNode.h"
 #include "Declaration.h"
 #include "DeclarationList.h"
-#include "CodeBlock.h"
 #include "StmtList.h"
 #include "AssignmentNode.h"
 #include "ReturnNode.h"
-#include "WhileNode.h"
-#include "IfNode.h"
 #include "ValueNode.h"
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
@@ -203,6 +200,7 @@ llvm::Value* CodeGenVisitor::visit(Declaration *node)
     llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
                    TheFunction->getEntryBlock().begin());
     llvm::AllocaInst *Alloca =  TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr, node->GetID());
+    std::cout << "Alloca " << node->GetID() << std::endl;
     NamedValues[node->GetID()] = Alloca;
     return nullptr;
 }
@@ -215,13 +213,6 @@ llvm::Value* CodeGenVisitor::visit(DeclarationList *node)
     for (auto decl : node->GetChildren()) {
         decl->accept(this);
     }
-    return nullptr;
-}
-
-llvm::Value* CodeGenVisitor::visit(CodeBlock *node) 
-{
-    node->GetDecls()->accept(this);
-    node->GetStmts()->accept(this);
     return nullptr;
 }
 
@@ -247,6 +238,9 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
                 stmt->accept(this);
                 break;
             case serialize::TypeFuncCall:
+                stmt->accept(this);
+                break;
+            case serialize::TypeDeclaration:
                 stmt->accept(this);
                 break;
             default:

@@ -61,6 +61,7 @@ class FileFormat(Structure):
 class S_Declaration(Structure):
     structure = (
         ( "type", "<I=%d" % Type_Declaration),
+        ( "size", "<I=4*4" ),
         ( "_type", "<I"), # int : 0, double : 1
         ( "id", "<I"),
     )
@@ -68,16 +69,18 @@ class S_Declaration(Structure):
 class S_DeclarationList(Structure):
     structure = (
         ( "type", "<I=%d" % Type_DeclarationList),
+        ( "size", "<I=4*4 + len(data)" ),
         ( "count", "<I"),
-        ( "size", "<I=len(data)"),
+        ( "datasize", "<I=len(data)"),
         ( "data", ":"), # for declaration in DeclarationList: data+=str(declaration)
     )
 
 class S_StatementList(Structure):
     structure = (
         ( "type", "<I=%d" % Type_StatementList),
+        ( "size", "<I=4*4 + len(data)" ),
         ( "count", "<I"),
-        ( "size", "<I=len(data)"),
+        ( "datasize", "<I=len(data)"),
         ( "data", ":"), # for stmt in StatementList: data+=str(stmt)
     )
 
@@ -114,16 +117,18 @@ class S_FuncCall(Structure):
 class S_FuncList(Structure):
     structure = (
         ( "type", "<I=%d" % Type_FuncList),
+        ( "size", "<I=4*4 + len(data)" ),
         ( "count", "<I"),
-        ( "size", "<I=len(data)"),
+        ( "datasize", "<I=len(data)"),
         ( "data", ":"),
     )
 
 class S_ArgumentList(Structure):
     structure = (
         ( "type", "<I=%d" % Type_ArgumentList),
+        ( "size", "<I=4*4 + len(data)" ),
         ( "count", "<I"),
-        ( "size", "<I=len(data)"),
+        ( "datasize", "<I=len(data)"),
         ( "data", ":"),
     )
 
