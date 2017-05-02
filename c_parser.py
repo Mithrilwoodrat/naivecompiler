@@ -174,14 +174,14 @@ class Parser(object):
     #     else:
     #         p[0] = CodeBlock(p[2], p[3])
     
-    # def p_declaration_list(self, p):
-    #     """ declaration_list    : declaration
-    #                     |  declaration declaration_list 
-    #     """
-    #     if len(p) == 2:
-    #         p[0] = DeclarationList(p[1])
-    #     else:
-    #         p[0] = p[1] + p[2]
+    def p_declaration_list(self, p):
+        """ declaration_list : declaration
+                             | declaration COMMA declaration_list
+        """
+        if len(p) == 2:
+            p[0] = DeclarationList(p[1])
+        else:
+            p[0] = p[1] + p[2]
     
     def p_statement_list(self, p):
         ''' statement_list : statement
@@ -201,11 +201,22 @@ class Parser(object):
                   | selection_statement
         '''
         p[0] = p[1]
+        
+    def p_typedecl(self, p):
+        '''typedecl : type varsymbol'''
+        p[0] = TypeDeclaration(p[1], p[2])
 
+    def p_arraydecl(self, p):
+        '''arraydecl : '''
+
+    def p_declaration(self, p):
+        ''' declaration : typedecl '''
+        p[0] = p[1]
+    
     def p_declstmt(self, p):
-        """ declstmt  : type varsymbol SEMI
+        """ declstmt : declaration_list SEMI
         """
-        p[0] = DeclStmt(p[2], p[1])
+        p[0] = DeclStmt(p[1])
 
     def p_compound_statement(self, p):
         ''' compound_statement : LBRACE statement_list RBRACE'''
@@ -285,13 +296,13 @@ class Parser(object):
             else:
                 p[0] = BinaryOp(p[1], p[2], p[3])
                 
-    def p_param(self, p):
-        ''' param : type varsymbol '''
-        p[0] = Declaration(p[2], p[1])
+    # def p_param(self, p):
+    #    ''' param : type varsymbol '''
+    #    p[0] = Declaration(p[2], p[1])
 
     def p_param_list(self, p):
-        ''' param_list : param
-                       | param COMMA param_list
+        ''' param_list : declaration
+                       | declaration COMMA param_list
                        | VOID
         '''
         if len(p) == 2:

@@ -59,11 +59,11 @@ class FuncHelper(NodeVisitor):
     def has_error(self):
         return self.scope.has_error
     
-    def visit_Declaration(self, node):
+    def visit_TypeDeclaration(self, node):
         self.scope.define_symbol(node._id.name, node._type)
 
     def visit_DeclStmt(self, node):
-        self.scope.define_symbol(node._id.name, node._type)
+        self.generic_visit(node.decls)
         
     def visit_VariableSymbol(self, node):
         self.scope.resolve_symbol(node.name)

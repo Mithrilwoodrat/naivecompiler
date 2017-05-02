@@ -51,17 +51,14 @@ class SerializeHandler(object):
         # decl_list['size'] = len(data)
         return decl_list
 
-    def serialize_Declaration(self, node):
+    def serialize_TypeDeclaration(self, node):
         decl_expr =  S_Declaration()
         decl_expr['id'] = self.env.add_string(node._id.name)
         decl_expr['_type'] = 0
         return decl_expr
 
     def serialize_DeclStmt(self, node):
-        decl_expr =  S_Declaration()
-        decl_expr['id'] = self.env.add_string(node._id.name)
-        decl_expr['_type'] = 0
-        return decl_expr
+        return self.serialize_DeclarationList(node.decls)
     
     def serialize_StmtList(self, node):
         stmt_list = S_StatementList()

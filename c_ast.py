@@ -104,7 +104,7 @@ class DeclarationList(ASTNode):
         self.node_name = "DeclarationList"
         if declaration is None:
             self.l = []
-        elif type(declaration) is Declaration:
+        elif type(declaration) is TypeDeclaration:
             self.l = [declaration]
         else:
             logger.error('Initial with error type')
@@ -113,7 +113,7 @@ class DeclarationList(ASTNode):
         self.l.append(d)
 
     def __add__(self, rhs):
-        if type(rhs) is Declaration:
+        if type(rhs) is TypeDeclaration:
             self.add_declaration(rhs)
         elif type(rhs) is DeclarationList:
             self.l += rhs.l
@@ -147,10 +147,10 @@ class StmtList(ASTNode):
         return self.l
 
     
-class Declaration(ASTNode):
-    '''Declaration: Type ID SEIM'''
+class TypeDeclaration(ASTNode):
+    '''Declaration: Type ID'''
     attr_names = ('_type', )
-    def __init__(self, ID, Type):
+    def __init__(self, Type, ID):
         self._id = ID
         self._type = Type
 
@@ -174,14 +174,12 @@ class Statement(ASTNode):
         return []
 
 class DeclStmt(Statement):
-    '''Declaration: Type ID SEIM'''
-    attr_names = ('_type', )
-    def __init__(self, ID, Type):
-        self._id = ID
-        self._type = Type
+    ''' DeclStmt: DeclExpr SEIM '''
+    def __init__(self, decls):
+        self.decls = decls
 
     def children(self):
-        return [self._id]
+        return [self.decls]
 
 class FuncCall(Statement):
     def __init__(self, func_name, argument_list):

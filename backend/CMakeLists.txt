@@ -10,7 +10,7 @@ if(ENABLE_DEBUG)
     Add_Definitions( -O0 -g -DNSDEBUG )
     Message(STATUS  "Enable debug") 
 else() 
-Add_Definitions( -O4 ) 
+Add_Definitions( -O3 ) 
 endif()
 
 Add_Definitions( -Wall -Werror -fPIC -std=c++11 -pthread  -g
