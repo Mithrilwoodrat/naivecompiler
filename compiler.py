@@ -121,7 +121,6 @@ class Compiler(object):
         self.lib.LoadData('./ns.data')
         self.lib.Compile(pout)
 
-        
     
 if __name__ == "__main__":
     logging.basicConfig(format='[%(asctime)s] (%(module)s:%(funcName)s:%(lineno)s): <%(levelname)s> %(message)s', level=logging.INFO)
