@@ -100,12 +100,13 @@ class FuncList(ASTNode):
 #         return codeblock
 
 class DeclarationList(ASTNode):
-    def __init__(self, declaration=None):
+    decl_types = ["TypeDecl", "ArrayDecl"]
+    def __init__(self, decl=None):
         self.node_name = "DeclarationList"
-        if declaration is None:
+        if decl is None:
             self.l = []
-        elif type(declaration) is TypeDeclaration:
-            self.l = [declaration]
+        elif decl.__class__.__name__ in self.decl_types:
+            self.l = [decl]
         else:
             logger.error('Initial with error type')
         
@@ -113,7 +114,7 @@ class DeclarationList(ASTNode):
         self.l.append(d)
 
     def __add__(self, rhs):
-        if type(rhs) is TypeDeclaration:
+        if rhs.__class__.__name__ in self.decl_types:
             self.add_declaration(rhs)
         elif type(rhs) is DeclarationList:
             self.l += rhs.l
@@ -146,21 +147,53 @@ class StmtList(ASTNode):
     def children(self):
         return self.l
 
+# Decl:
+# name: the variable being declared
+# quals: list of qualifiers (const, volatile)
+# funcspec: list function specifiers (i.e. inline in C99)
+# storage: list of storage specifiers (extern, register, etc.)
+# type: declaration type (probably nested with all the modifiers)
+# init: initialization value, or None
+# bitsize: bit field size, or None
     
-class TypeDeclaration(ASTNode):
-    '''Declaration: Type ID'''
+class TypeDecl(ASTNode):
+    '''Declaration: storage type name init
+    '''
     attr_names = ('_type', )
-    def __init__(self, Type, ID):
-        self._id = ID
-        self._type = Type
+    def __init__(self, _type, _id, init=None, storage='local'):
+        self.storage = storage
+        self._id = _id
+        self._type = _type
+        self.init = init
 
     def children(self):
+        if self.init:
+            return [self._id, self.init]
         return [self._id]
 
     def __add__(self, rhs):
         decls = DeclarationList(self)
         return decls + rhs
-        
+
+
+class ArrayDecl(ASTNode):
+    attr_names = ('_type', 'length')
+    def __init__(self, _type, _id, length, init=None, storage='local'):
+        self.storage = storage
+        self._id = _id
+        self._type = _type
+        self.length = length
+        self.init = init
+
+    def children(self):
+        if self.init:
+            return [self._id, self.init]
+        return [self._id]
+
+    def __add__(self, rhs):
+        decls = DeclarationList(self)
+        return decls + rhs
+
 
 class Statement(ASTNode):
     def __init__(self):
@@ -295,11 +328,11 @@ class VariableSymbol(Symbol):
         self.node_name = "VariableSymbol"
 
 class Const(ASTNode):
-    attr_names = ('val',)
-    def __init__(self, val):
+    attr_names = ('_type', 'val',)
+    def __init__(self, _type, val):
         self.node_name = "const"
         self.val = val
-        self._type = 0
+        self._type = _type
         
     def children(self):
         return []

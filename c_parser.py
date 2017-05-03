@@ -41,6 +41,8 @@ class Lexer(object):
         "if":'IF',
         "else":"ELSE",
         "int":"INT",
+        "char":"CHAR",
+        "float": "FLOAT",
         "return":"RETURN",
         "while": "WHILE",
         "break": "BREAK",
@@ -53,12 +55,12 @@ class Lexer(object):
     # comment = ('/*', '*/'
     #)
     tokens = (
-        "ID", "INT_CONST", "NORMSTRING",
+        "ID", "INT_CONST", "FLOAT_CONST", "NORMSTRING",
         "IF", "ELSE", 'WHILE', 'RETURN', 'BREAK', 'CONTINUE',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
-        'INT',
+        'INT','CHAR', 'FLOAT',
         "GE", 'LE', 'NE',
-        "LBRACE", "RBRACE", "LPAREN","RPAREN","SEMI","COMMA","VOID",
+        "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "LPAREN","RPAREN","SEMI","COMMA","VOID",
         "COMMENTS"
     )
     
@@ -69,8 +71,8 @@ class Lexer(object):
     t_BREAK = r'break'
     t_CONTINUE = r'continue'
     t_INT = r'int'
-    #t_READ = r'read'
-    #t_WRITE = r'write'
+    t_CHAR = r'char'
+    t_FLOAT = r'float'
     t_INT_CONST = r'[0-9]+'
     t_NORMSTRING    = r'"([^"\n]|(\\"))*"'
     t_PLUS = r'\+'
@@ -85,6 +87,8 @@ class Lexer(object):
     t_NE = r'!='
     t_LBRACE = r'\{'
     t_RBRACE = r'\}'
+    t_LBRACKET = r'\['
+    t_RBRACKET = r'\]'
     t_LPAREN  = r'\('
     t_RPAREN  = r'\)'
     t_SEMI = r';'
@@ -105,6 +109,14 @@ class Lexer(object):
             t.type =  self.keywords[t.value]
         return t
 
+    exponent_part = r"""([eE][-+]?[0-9]+)"""
+    fractional_constant = r"""([0-9]*\.[0-9]+)|([0-9]+\.)"""
+    floating_constant = '(((('+fractional_constant+')'+exponent_part+'?)|([0-9]+'+exponent_part+'))[FfLl]?)'
+    
+    @TOKEN(floating_constant)
+    def t_FLOAT_CONST(self, t):
+        return t
+    
     def t_COMMENTS(self, t):
         r'\/\*(.*\n)*.*\*\/'
         pass
@@ -163,35 +175,15 @@ class Parser(object):
             p[0] = FuncList(p[1])
         else:
             p[0] = p[1] + p[2]
-        
-    # def p_code_block(self, p):
-    #     '''code_block : LBRACE declaration_list statement_list RBRACE
-    #                   | LBRACE statement_list RBRACE
-    #     '''
-    #     if len(p) == 4:
-    #         decls = DeclarationList()
-    #         p[0] = CodeBlock(decls, p[2])
+                    
+    # def p_declaration_list(self, p):
+    #     """ declaration_list : declaration
+    #                          | declaration COMMA declaration_list
+    #     """
+    #     if len(p) == 2:
+    #         p[0] = DeclarationList(p[1])
     #     else:
-    #         p[0] = CodeBlock(p[2], p[3])
-
-    def p_identifier_list(self, p):
-        """ identifier_list : ID
-                             | ID COMMA identifier_list
-        
-        """
-        if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[0] = p[1] + p[3]
-            
-    def p_declaration_list(self, p):
-        """ declaration_list : declaration
-                             | declaration COMMA declaration_list
-        """
-        if len(p) == 2:
-            p[0] = DeclarationList(p[1])
-        else:
-            p[0] = p[1] + p[3]
+    #         p[0] = p[1] + p[3]
     
     def p_statement_list(self, p):
         ''' statement_list : statement
@@ -213,20 +205,27 @@ class Parser(object):
         p[0] = p[1]
         
     def p_typedecl(self, p):
-        '''typedecl : type varsymbol'''
-        p[0] = TypeDeclaration(p[1], p[2])
+        '''typedecl : type varsymbol 
+                    | type varsymbol EQUALS expression'''
+        if len(p) == 5:
+            p[0] = TypeDeclaration(p[1], p[2], p[4])
+        elif len(p) == 3:
+            p[0] = TypeDeclaration(p[1], p[2])
 
     def p_arraydecl(self, p):
-        '''arraydecl : '''
+        '''arraydecl : type varsymbol LBRACKET INT_CONST RBRACKET'''
+        p[0] = ArrayDecl(p[1], p[2], p[4])
 
     def p_declaration(self, p):
-        ''' declaration : typedecl '''
+        ''' declaration : typedecl 
+                        | arraydecl'''
         p[0] = p[1]
     
     def p_declstmt(self, p):
-        """ declstmt : declaration_list SEMI
+        """ declstmt : declaration SEMI
         """
-        p[0] = DeclStmt(p[1])
+        decls = DeclarationList(p[1])
+        p[0] = DeclStmt(decls)
 
     def p_compound_statement(self, p):
         ''' compound_statement : LBRACE statement_list RBRACE'''
@@ -375,7 +374,9 @@ class Parser(object):
         p[0] = p[1]
             
     def p_type(self, p):
-        ''' type : INT '''
+        ''' type : INT 
+                 | CHAR
+                 | FLOAT'''
         p[0] = p[1]
         
     def p_methodsymbol(self, p):
@@ -386,9 +387,18 @@ class Parser(object):
         ''' varsymbol : ID '''
         p[0] = VariableSymbol(p[1])
 
-    def p_constant(self, p):
+    def p_constant1(self, p):
         ''' constant : INT_CONST '''
-        p[0] = Const(p[1])
+        p[0] = Const('int', p[1])
+
+    # def p_constant2(self, p):
+    #     ''' constant : CHAR_CONST '''
+    #     p[0] = Const('char', p[1])
+
+    def p_constant3(self, p):
+        ''' constant : FLOAT_CONST '''
+        p[0] = Const('float', p[1])
+
 
 # import sys
 # yacc.yacc()
