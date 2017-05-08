@@ -208,9 +208,9 @@ class Parser(object):
         '''typedecl : type varsymbol 
                     | type varsymbol EQUALS expression'''
         if len(p) == 5:
-            p[0] = TypeDeclaration(p[1], p[2], p[4])
+            p[0] = TypeDecl(p[1], p[2], p[4])
         elif len(p) == 3:
-            p[0] = TypeDeclaration(p[1], p[2])
+            p[0] = TypeDecl(p[1], p[2])
 
     def p_arraydecl(self, p):
         '''arraydecl : type varsymbol LBRACKET INT_CONST RBRACKET'''
@@ -307,7 +307,7 @@ class Parser(object):
                 
     def p_param(self, p):
        ''' param : type varsymbol '''
-       p[0] = TypeDeclaration(p[1], p[2])
+       p[0] = TypeDecl(p[1], p[2])
 
     def p_param_list(self, p):
         ''' param_list : param
