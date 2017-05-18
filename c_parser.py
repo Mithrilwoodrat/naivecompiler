@@ -55,7 +55,7 @@ class Lexer(object):
     # comment = ('/*', '*/'
     #)
     tokens = (
-        "ID", "INT_CONST", "FLOAT_CONST", "NORMSTRING",
+        "ID", "INT_CONST", "FLOAT_CONST", "CHAR_CONST", "NORMALSTRING",
         "IF", "ELSE", 'WHILE', 'RETURN', 'BREAK', 'CONTINUE',
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "LAND", "LOR",
         "BAND",
@@ -75,7 +75,6 @@ class Lexer(object):
     t_CHAR = r'char'
     t_FLOAT = r'float'
     t_INT_CONST = r'[0-9]+'
-    t_NORMSTRING    = r'"([^"\n]|(\\"))*"'
     t_PLUS = r'\+'
     t_MINUS = r'-'
     t_TIMES = r'\*'
@@ -117,6 +116,39 @@ class Lexer(object):
     
     @TOKEN(floating_constant)
     def t_FLOAT_CONST(self, t):
+        return t
+
+    # character constants (K&R2: A.2.5.2)
+    # Note: a-zA-Z and '.-~^_!=&;,' are allowed as escape chars to support #line
+    # directives with Windows paths as filenames (..\..\dir\file)
+    # For the same reason, decimal_escape allows all digit sequences. We want to
+    # parse all correct code, even if it means to sometimes parse incorrect
+    # code.
+    #
+    simple_escape = r"""([a-zA-Z._~!=&\^\-\\?'"])"""
+    decimal_escape = r"""(\d+)"""
+    hex_escape = r"""(x[0-9a-fA-F]+)"""
+    bad_escape = r"""([\\][^a-zA-Z._~^!=&\^\-\\?'"x0-7])"""
+
+    escape_sequence = r"""(\\("""+simple_escape+'|'+decimal_escape+'|'+hex_escape+'))'
+    cconst_char = r"""([^'\\\n]|"""+escape_sequence+')'
+    char_const = "'"+cconst_char+"'"
+    wchar_const = 'L'+char_const
+    unmatched_quote = "('"+cconst_char+"*\\n)|('"+cconst_char+"*$)"
+    bad_char_const = r"""('"""+cconst_char+"""[^'\n]+')|('')|('"""+bad_escape+r"""[^'\n]*')"""
+
+    # string literals (K&R2: A.2.6)
+    string_char = r"""([^"\\\n]|"""+escape_sequence+')'
+    string_literal = '"'+string_char+'*"'
+    wstring_literal = 'L'+string_literal
+    bad_string_literal = '"'+string_char+'*?'+bad_escape+string_char+'*"'
+
+    @TOKEN(char_const)
+    def t_CHAR_CONST(self, t):
+        return t
+
+    @TOKEN(string_literal)
+    def t_NORMALSTRING(self, t):
         return t
     
     def t_COMMENTS(self, t):
@@ -207,8 +239,8 @@ class Parser(object):
         p[0] = p[1]
         
     def p_typedecl(self, p):
-        '''typedecl : type varsymbol 
-                    | type varsymbol EQUALS expression'''
+        '''typedecl : type cast_expr 
+                    | type cast_expr EQUALS expression'''
         if len(p) == 5:
             p[0] = TypeDecl(p[1], p[2], p[4])
         elif len(p) == 3:
@@ -274,7 +306,7 @@ class Parser(object):
         p[0] = AssignmentStmt(p[1])
 
     def p_assignment_expr(self, p):
-        '''assignment_expr : ID EQUALS expression'''
+        '''assignment_expr : cast_expr EQUALS expression'''
         var = VariableSymbol(p[1])
         p[0] = AssignmentExpr(var, p[3])
     
@@ -284,20 +316,29 @@ class Parser(object):
         '''
         p[0] = p[1]
 
-    def p_cast_expression(self, p):
-        ''' cast_expression : unary_op '''
+    def p_cast_expr(self, p):
+        ''' cast_expr : unary_expr
+                      | primary_expr
+        '''
         p[0] = p[1]
 
-    def primary_expr_1(self, p):
+    def p_primary_expr(self, p):
         ''' primary_expr : varsymbol
                          | constant
         '''
         # | string_literal
         p[0] = p[1]
 
-    def primary_expr_2(self, p):
-        ''' primary_expr : LPAREN expression RPAREN '''
-        p[0] = p[2]
+    # 一元操作符
+    def p_unary_op(self, p):
+        """ unary_op : BAND
+                     | TIMES
+        """
+        p[0] = p[1]
+
+    def p_unary_expr(self, p):
+        """ unary_expr : unary_op primary_expr """
+        p[0] = UnaryOp(p[1], p[2])
 
     def p_binary_expr(self, p):
         ''' binary_expr : binary_expr PLUS binary_expr
@@ -311,23 +352,16 @@ class Parser(object):
                   | binary_expr NE binary_expr
                   | binary_expr LAND binary_expr
                   | binary_expr LOR binary_expr
-                  | primary_expr
+                  | LPAREN binary_expr RPAREN
+                  | cast_expr
         '''
         if len(p) == 2:
             p[0] = p[1]
         else:
-            p[0] = BinaryOp(p[1], p[2], p[3])
-
-    # 一元操作符
-    def p_unary_op(self, p):
-        """ unary_op : BAND
-                     | TIMES
-        """
-        p[0] = p[1]
-
-    def p_unary_expr(self, p):
-        """ unary_expr : unary_op primary_expr """
-        p[0] = UnaryOp(p[1], p[2])
+            if p[1] == '(':
+                p[0] = p[2]
+            else:
+                p[0] = BinaryOp(p[1], p[2], p[3])
                 
     def p_param(self, p):
        ''' param : type varsymbol '''
@@ -415,13 +449,17 @@ class Parser(object):
         ''' constant : INT_CONST '''
         p[0] = Const('int', p[1])
 
-    # def p_constant2(self, p):
-    #     ''' constant : CHAR_CONST '''
-    #     p[0] = Const('char', p[1])
+    def p_constant2(self, p):
+        ''' constant : CHAR_CONST '''
+        p[0] = Const('char', p[1])
 
     def p_constant3(self, p):
         ''' constant : FLOAT_CONST '''
         p[0] = Const('float', p[1])
+
+    def p_constant4(self, p):
+        ''' constant : NORMALSTRING '''
+        p[0] = Const('string', p[1])
 
 
 # import sys

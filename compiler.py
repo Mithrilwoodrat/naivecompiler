@@ -128,7 +128,7 @@ if __name__ == "__main__":
         source = f.read()
     compiler = Compiler(source)
     compiler.ast_gen()
-    compiler.analysis()
+    #compiler.analysis()
     if len(sys.argv) == 3:
         compiler.compile(sys.argv[2])
     elif len(sys.argv) == 2:

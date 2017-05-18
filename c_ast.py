@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import logging
-from serialize_structure import *
 
-logger = logging.getLogger(__file__)
 
 class ASTNode(object):
     attr_names = ()
@@ -41,7 +39,7 @@ class ArgumentList(ASTNode):
         elif type(argument) in frozenset([VariableSymbol, Const]):
             self.l = [argument]
         else:
-            logger.error('Initial with error type')
+            logging.error('Initial with error type')
 
 
     def children(self):
@@ -68,7 +66,7 @@ class FuncList(ASTNode):
         if type(funcdef) is Function:
             self.l = [funcdef]
         else:
-            logger.error('Initial with error type: {0}'.format(funcdef))
+            logging.error('Initial with error type: {0}'.format(funcdef))
         
     def add_funcdef(self, f):
         self.l.append(f)
@@ -108,7 +106,7 @@ class DeclarationList(ASTNode):
         elif decl.__class__.__name__ in self.decl_types:
             self.l = [decl]
         else:
-            logger.error('Initial with error type')
+            logging.error('Initial with error type')
         
     def add_declaration(self, d):
         self.l.append(d)
@@ -132,7 +130,7 @@ class StmtList(ASTNode):
         elif  issubclass(stmt.__class__, Statement):
             self.l = [stmt]
         else:
-            logger.error('Initial with error type: {0}'.format(stmt.__class__))
+            logging.error('Initial with error type: {0}'.format(stmt.__class__))
 
     def add_stmt(self, s):
         self.l.append(s)
@@ -273,11 +271,6 @@ class AssignmentExpr(ASTNode):
     def children(self):
         return [self._id, self.rhs]
 
-    def serialize(self, env):
-        assigment_expr =  S_AssignmentExpr()
-        assigment_expr['id'] = env.add_string(self._id.name)
-        assigment_expr['exp'] = self.rhs.serialize(env)
-        return assigment_expr
 
 class BinaryOp(ASTNode):
     attr_names = ('op',)
@@ -316,13 +309,8 @@ class Symbol(ASTNode):
         self._type = 0
 
     def children(self):
-        return []
-    
-    def serialize(self, env):
-        symbol = S_Symbol()
-        symbol['_id'] = env.add_string(self.name)
-        symbol['_type'] = self._type
-        return symbol
+        return []    
+
 
 class MethodSymbol(Symbol):
     attr_names = ('name',)
