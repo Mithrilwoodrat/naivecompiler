@@ -290,6 +290,16 @@ class BinaryOp(ASTNode):
     def children(self):
         return [self.lhs, self.rhs]
 
+class UnaryOp(ASTNode):
+    attr_names = ('op',)
+    def __init__(self, op, expr):
+        self.node_name = "UnaryOp"
+        self.op = op
+        self.expr = expr
+
+    def children(self):
+        return [self.expr]
+
 
 class BreakStmt(Statement):
     pass

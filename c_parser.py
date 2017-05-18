@@ -57,7 +57,8 @@ class Lexer(object):
     tokens = (
         "ID", "INT_CONST", "FLOAT_CONST", "NORMSTRING",
         "IF", "ELSE", 'WHILE', 'RETURN', 'BREAK', 'CONTINUE',
-        "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "AND", "OR",
+        "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "LAND", "LOR",
+        "BAND",
         'INT','CHAR', 'FLOAT',
         "GE", 'LE', 'NE',
         "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "LPAREN","RPAREN","SEMI","COMMA","VOID",
@@ -78,6 +79,7 @@ class Lexer(object):
     t_PLUS = r'\+'
     t_MINUS = r'-'
     t_TIMES = r'\*'
+    t_BAND = r'&'
     t_DIVIDES = r'/'
     t_EQUALS  = r'='
     t_GT = r'>'
@@ -94,8 +96,8 @@ class Lexer(object):
     t_SEMI = r';'
     t_COMMA = r','
     t_VOID = r'void'
-    t_AND     = r'&&'
-    t_OR      = r'\|\|'
+    t_LAND     = r'&&'
+    t_LOR      = r'\|\|'
     
 
     
@@ -151,8 +153,8 @@ class Parser(object):
         
         
     precedence = (
-        ('left', 'OR'),
-        ('left', 'AND'),
+        ('left', 'LOR'),
+        ('left', 'LAND'),
         ('left', 'EQUALS', 'NE'),
         ('left', 'GT', 'GE', 'LT', 'LE'),
         ('left', 'PLUS', 'MINUS'),
@@ -278,8 +280,24 @@ class Parser(object):
     
     def p_expression(self, p):
         ''' expression : binary_expr
+                       | funccall_expr
         '''
         p[0] = p[1]
+
+    def p_cast_expression(self, p):
+        ''' cast_expression : unary_op '''
+        p[0] = p[1]
+
+    def primary_expr_1(self, p):
+        ''' primary_expr : varsymbol
+                         | constant
+        '''
+        # | string_literal
+        p[0] = p[1]
+
+    def primary_expr_2(self, p):
+        ''' primary_expr : LPAREN expression RPAREN '''
+        p[0] = p[2]
 
     def p_binary_expr(self, p):
         ''' binary_expr : binary_expr PLUS binary_expr
@@ -291,19 +309,25 @@ class Parser(object):
                   | binary_expr LE binary_expr
                   | binary_expr GE binary_expr
                   | binary_expr NE binary_expr
-                  | binary_expr AND binary_expr
-                  | binary_expr OR binary_expr
-                  | LPAREN binary_expr RPAREN
-                  | funccall_expr
-                  | varsymbol
-                  | constant '''
+                  | binary_expr LAND binary_expr
+                  | binary_expr LOR binary_expr
+                  | primary_expr
+        '''
         if len(p) == 2:
             p[0] = p[1]
         else:
-            if p[1] == '(':
-                p[0] = p[2]
-            else:
-                p[0] = BinaryOp(p[1], p[2], p[3])
+            p[0] = BinaryOp(p[1], p[2], p[3])
+
+    # 一元操作符
+    def p_unary_op(self, p):
+        """ unary_op : BAND
+                     | TIMES
+        """
+        p[0] = p[1]
+
+    def p_unary_expr(self, p):
+        """ unary_expr : unary_op primary_expr """
+        p[0] = UnaryOp(p[1], p[2])
                 
     def p_param(self, p):
        ''' param : type varsymbol '''
