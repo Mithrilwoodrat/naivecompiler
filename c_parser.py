@@ -250,6 +250,17 @@ class Parser(object):
         '''arraydecl : type varsymbol LBRACKET INT_CONST RBRACKET'''
         p[0] = ArrayDecl(p[1], p[2], p[4])
 
+    def p_pointer(self, p):
+        ''' pointer : TIMES 
+                    | pointer TIMES'''
+        p[0] = p[1] if len(p) == 2 else p[1] + p[2]
+
+    def p_type(self, p):
+        ''' type : basetype pointer
+                 | basetype
+        '''
+        p[0] = p[1] if len(p) == 2 else p[1] + p[2]
+        
     def p_declaration(self, p):
         ''' declaration : typedecl 
                         | arraydecl'''
@@ -431,8 +442,8 @@ class Parser(object):
         '''
         p[0] = p[1]
             
-    def p_type(self, p):
-        ''' type : INT 
+    def p_basetype(self, p):
+        ''' basetype : INT 
                  | CHAR
                  | FLOAT'''
         p[0] = p[1]

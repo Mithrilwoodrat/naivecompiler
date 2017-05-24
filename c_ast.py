@@ -149,16 +149,16 @@ class StmtList(ASTNode):
 # name: the variable being declared
 # quals: list of qualifiers (const, volatile)
 # funcspec: list function specifiers (i.e. inline in C99)
-# storage: list of storage specifiers (extern, register, etc.)
+# storage: list of storage specifiers (static, auto, extern, register, etc.)
 # type: declaration type (probably nested with all the modifiers)
 # init: initialization value, or None
 # bitsize: bit field size, or None
-    
+
 class TypeDecl(ASTNode):
     '''Declaration: storage type name init
     '''
     attr_names = ('_type', )
-    def __init__(self, _type, _id, init=None, storage='local'):
+    def __init__(self, _type, _id, init=None, storage='auto'):
         self.storage = storage
         self._id = _id
         self._type = _type
@@ -176,7 +176,7 @@ class TypeDecl(ASTNode):
 
 class ArrayDecl(ASTNode):
     attr_names = ('_type', 'length')
-    def __init__(self, _type, _id, length, init=None, storage='local'):
+    def __init__(self, _type, _id, length, init=None, storage='auto'):
         self.storage = storage
         self._id = _id
         self._type = _type
