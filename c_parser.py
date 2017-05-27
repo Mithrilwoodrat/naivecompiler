@@ -197,9 +197,27 @@ class Parser(object):
     def p_error(self, p):
         print("Syntax error at '%s', '%s'" % (p.value, p.lineno))
 
-    def p_root(self, p):
-        ''' root : funcdeflist '''
-        p[0] = AST(p[1])
+    #def p_root(self, p):
+    #    ''' root : funcdeflist '''
+    #    p[0] = p[1]
+
+    def p_translation_unit(self, p):
+        ''' translation_unit : external_decl
+                             | translation_unit external_decl
+        '''
+        if len(p) == 2:
+            p[0] = AST(p[1])
+        elif len(p) == 3:
+            p[1].l.append(p[2])
+            p[0] = p[1]
+        else:
+            logging.error("empty ast")
+
+    def p_external_decl(self, p):
+        ''' external_decl : funcdef
+                          | declstmt
+        '''
+        p[0] = p[1]
             
     def p_funcdeflist(self, p):
         ''' funcdeflist : funcdef
@@ -314,12 +332,11 @@ class Parser(object):
     
     def p_assignment_statment(self, p):
         '''assignment_statement : assignment_expr SEMI'''
-        p[0] = AssignmentStmt(p[1])
+        p[0] = p[1]
 
     def p_assignment_expr(self, p):
         '''assignment_expr : cast_expr EQUALS expression'''
-        var = VariableSymbol(p[1])
-        p[0] = AssignmentExpr(var, p[3])
+        p[0] = Assignment(p[1], p[3])
     
     def p_expression(self, p):
         ''' expression : binary_expr

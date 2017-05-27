@@ -16,7 +16,7 @@ class ASTNode(object):
             attrstr = ', '.join('%s=%s' % nv for nv in nvlist)
             buf.write(attrstr)
         buf.write('\n')
-
+        
         for  child in self.children():
             child.show(offset = offset + 2)
 
@@ -25,11 +25,11 @@ class ASTNode(object):
 
 
 class AST(ASTNode):
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, trans_unit):
+        self.l = [trans_unit]
 
     def children(self):
-        return [self.root]
+        return self.l
     
     
 class ArgumentList(ASTNode):
@@ -251,25 +251,14 @@ class ReturnStmt(Statement):
         return [self.expr]
 
     
-class AssignmentStmt(Statement):
-    def __init__(self, AssignmentExpr):
-        self.node_name = "AssigmentStmt"
-        self.expr = AssignmentExpr
-
-    def children(self):
-        return [self.expr]
-
-    def serialize(self, env):
-        return self.expr.serialize(env)
-
-class AssignmentExpr(ASTNode):
-    def __init__(self, _id, rhs):
+class Assignment(Statement):
+    def __init__(self, cast_expr, rhs):
         self.node_name = "AssignmentExpr"
-        self._id = _id
+        self.cast_expr = cast_expr
         self.rhs = rhs
 
     def children(self):
-        return [self._id, self.rhs]
+        return [self.cast_expr, self.rhs]
 
 
 class BinaryOp(ASTNode):
