@@ -81,21 +81,6 @@ class FuncList(ASTNode):
     def children(self):
         return self.l
         
-# class CodeBlock(ASTNode):
-#     def __init__(self, declaration_list, statement_list):
-#         self.node_name = "CodeBlock"
-#         super(CodeBlock, self).__init__()
-#         self.decl_list = declaration_list
-#         self.stmt_list = statement_list
-
-#     def children(self):
-#         return [self.decl_list, self.stmt_list]
-
-#     def serialize(self, env):
-#         codeblock = S_CodeBlock()
-#         codeblock['declaration_list'] = self.declaration_list.serialize(env)
-#         codeblock['statement_list'] = self.statement_list.serialize(env)
-#         return codeblock
 
 class DeclarationList(ASTNode):
     decl_types = ["TypeDecl", "ArrayDecl"]

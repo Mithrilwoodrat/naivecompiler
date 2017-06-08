@@ -47,6 +47,8 @@ class Lexer(object):
         "while": "WHILE",
         "break": "BREAK",
         "continue": "CONTINUE",
+        "extern": "EXTERN",
+        "static": "STATIC",
         "void": "VOID"}
 
     # singlewords = ('{', '}', '(', ')' , ';')
@@ -62,7 +64,8 @@ class Lexer(object):
         'INT','CHAR', 'FLOAT',
         "GE", 'LE', 'NE',
         "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "LPAREN","RPAREN","SEMI","COMMA","VOID",
-        "COMMENTS"
+        "COMMENTS",
+        "EXTERN", "STATIC"
     )
     
     identifier       = r'[a-zA-Z_][0-9a-zA-Z_]*'
@@ -94,6 +97,8 @@ class Lexer(object):
     t_RPAREN  = r'\)'
     t_SEMI = r';'
     t_COMMA = r','
+    t_EXTERN = r'extern'
+    t_STATIC = r'static'
     t_VOID = r'void'
     t_LAND     = r'&&'
     t_LOR      = r'\|\|'
@@ -219,14 +224,14 @@ class Parser(object):
         '''
         p[0] = p[1]
             
-    def p_funcdeflist(self, p):
-        ''' funcdeflist : funcdef
-                   | funcdeflist funcdef
-        '''
-        if len(p) == 2:
-            p[0] = FuncList(p[1])
-        else:
-            p[0] = p[1] + p[2]
+    # def p_funcdeflist(self, p):
+    #     ''' funcdeflist : funcdef
+    #                | funcdeflist funcdef
+    #     '''
+    #     if len(p) == 2:
+    #         p[0] = FuncList(p[1])
+    #     else:
+    #         p[0] = p[1] + p[2]
                     
     # def p_declaration_list(self, p):
     #     """ declaration_list : declaration
@@ -265,14 +270,35 @@ class Parser(object):
             p[0] = TypeDecl(p[1], p[2])
 
     def p_arraydecl(self, p):
+        '''arraydecl : type varsymbol LBRACKET INT_CONST RBRACKET EQUALS expression'''
+        p[0] = ArrayDecl(p[1], p[2], p[4], p[7])
+
+    def p_arraydecl_2(self, p):
         '''arraydecl : type varsymbol LBRACKET INT_CONST RBRACKET'''
         p[0] = ArrayDecl(p[1], p[2], p[4])
+        
+    def p_funcdecl(self, p):
+        ''' funcdecl : storage type methodsymbol LPAREN param_list RPAREN'''
+        pass
+
+    def p_funcdecl_2(self, p):
+        ''' funcdecl : type methodsymbol LPAREN param_list RPAREN'''
+        pass
+
+    # def p_funcdef_2(self, p):
+    #     ''' funcdecl : storage VOID methodsymbol LPAREN param_list RPAREN SEMI'''
+    #     print '======'
+    #     pass
 
     def p_pointer(self, p):
         ''' pointer : TIMES 
                     | pointer TIMES'''
         p[0] = p[1] if len(p) == 2 else p[1] + p[2]
 
+    def p_storage(self, p):
+        ''' storage : EXTERN
+                    | STATIC'''
+        p[0] = p[1]
     def p_type(self, p):
         ''' type : basetype pointer
                  | basetype
@@ -281,7 +307,8 @@ class Parser(object):
         
     def p_declaration(self, p):
         ''' declaration : typedecl 
-                        | arraydecl'''
+                        | arraydecl
+                        | funcdecl'''
         p[0] = p[1]
     
     def p_declstmt(self, p):
