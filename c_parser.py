@@ -279,11 +279,11 @@ class Parser(object):
         
     def p_funcdecl(self, p):
         ''' funcdecl : storage type methodsymbol LPAREN param_list RPAREN'''
-        pass
+        p[0] = FuncDecl(p[2], p[3], p[5], p[1])
 
     def p_funcdecl_2(self, p):
         ''' funcdecl : type methodsymbol LPAREN param_list RPAREN'''
-        pass
+        p[0] = FuncDecl(p[1], p[2], p[4])
 
     # def p_funcdef_2(self, p):
     #     ''' funcdecl : storage VOID methodsymbol LPAREN param_list RPAREN SEMI'''
@@ -314,8 +314,8 @@ class Parser(object):
     def p_declstmt(self, p):
         """ declstmt : declaration SEMI
         """
-        decls = DeclarationList(p[1])
-        p[0] = DeclStmt(decls)
+        #decls = DeclarationList(p[1])
+        p[0] = DeclStmt(p[1])
 
     def p_compound_statement(self, p):
         ''' compound_statement : LBRACE statement_list RBRACE'''

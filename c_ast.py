@@ -45,6 +45,19 @@ class ArgumentList(ASTNode):
     def children(self):
         return self.l
 
+
+class FuncDecl(ASTNode):
+    attr_names = ('return_type', )
+    def __init__(self, return_type, function_name, param_list, storage='extern'):
+        super(FuncDecl, self).__init__()
+        self.storage = storage
+        self.return_type = return_type
+        self.function_name = function_name
+        self.param_list = param_list
+
+    def children(self):
+        return [self.function_name, self.param_list]
+
     
 class Function(ASTNode):
     attr_names = ('return_type', )
@@ -83,7 +96,7 @@ class FuncList(ASTNode):
         
 
 class DeclarationList(ASTNode):
-    decl_types = ["TypeDecl", "ArrayDecl"]
+    decl_types = ["TypeDecl", "ArrayDecl", "FuncDecl"]
     def __init__(self, decl=None):
         self.node_name = "DeclarationList"
         if decl is None:
@@ -91,7 +104,7 @@ class DeclarationList(ASTNode):
         elif decl.__class__.__name__ in self.decl_types:
             self.l = [decl]
         else:
-            logging.error('Initial with error type')
+            logging.error('Initial with error type,decl: {}'.format(decl))
         
     def add_declaration(self, d):
         self.l.append(d)
