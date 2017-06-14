@@ -7,7 +7,7 @@ int main()
 {
     int abc;
     int i;
-    abc = 1;
+    *abc = 1;
 	i=2;
 	while (1) {
         abc = abc + 4*(i+1);

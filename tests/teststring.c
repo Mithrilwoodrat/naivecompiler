@@ -1,6 +1,5 @@
 int main()
 {
-    char *c = "Hello";
-    puts(c);
+    puts("Hello\n");
     return 0;
 }

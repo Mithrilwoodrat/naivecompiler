@@ -100,14 +100,14 @@ class Compiler(object):
 
     def dump_body(self):
         sh = SerializeHandler(self.env)
-        return sh.serialize(self.ast.root)
+        return sh.serialize(self.ast)
     
     def compile(self, pout):
         obj = FileFormat()
         #self.ast = self.minify_ast(self.ast)
         self.ast.show()
         rewriter = ReWriteVisitor()
-        rewriter.visit(self.ast.root, self.ast)
+        rewriter.visit(self.ast, self.ast)
         self.ast.show()
         body = self.dump_body()
         stringtable = self.dump_stringtable()

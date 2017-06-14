@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from visitor import NodeVisitor
 from serialize_structure import *
+import logging
 
 class SerializeHandler(object):
     def __init__(self, env):
@@ -16,15 +17,34 @@ class SerializeHandler(object):
         print node.__class__.__name__
         raise NotImplementedError
 
-    def serialize_FuncList(self, node):
-        func_list = S_FuncList()
-        func_list['count'] = len(node.l)
+    def serialize_AST(self, node):
+        ast = S_AST()
+        ast['count'] = len(node.l)
         data = ''
-        for func in node.l:
+        for n in node.l:
             # print func.__class__.__name__, len(str(self.serialize(func)))
-            data += str(self.serialize(func))
-            func_list['data'] = data
-        return func_list
+            data += str(self.serialize(n))
+        ast['data'] = data
+        return ast
+
+    def unaryop_op_to_int(self, op):
+        op_map = {
+            '*': 0,
+            '&': 1
+        }
+        if op in op_map:
+            return op_map.get(op)
+        logging.error('unsupported unary op')
+
+    def type_to_int(self, _type):
+        type_map = {
+            'int': 0,
+            'double': 1,
+            'char': 2
+        }
+        if _type in type_map:
+            return type_map.get(_type)
+        logging.error('unsupported _type')
 
     def serialize_Function(self, node):
         func = S_Function()
@@ -34,12 +54,6 @@ class SerializeHandler(object):
         func['body'] = self.serialize(node.body)
         return func
 
-    # def serialize_CodeBlock(self, node):
-    #     code_block = S_CodeBlock()
-    #     code_block['decl_list'] = str(self.serialize(node.decl_list))
-    #     code_block['stmt_list'] = str(self.serialize(node.stmt_list))
-    #     return code_block
-
     def serialize_DeclarationList(self, node):
         decl_list = S_DeclarationList()
         decl_list['count'] = len(node.l)
@@ -48,17 +62,16 @@ class SerializeHandler(object):
             # print decl.__class__.__name__, len(str(self.serialize(decl)))
             data += str(self.serialize(decl))
         decl_list['data'] = data
-        # decl_list['size'] = len(data)
         return decl_list
 
-    def serialize_TypeDeclaration(self, node):
+    def serialize_TypeDecl(self, node):
         decl_expr =  S_Declaration()
         decl_expr['id'] = self.env.add_string(node._id.name)
         decl_expr['_type'] = 0
         return decl_expr
 
     def serialize_DeclStmt(self, node):
-        return self.serialize_DeclarationList(node.decls)
+        return self.serialize(node.decl)
     
     def serialize_StmtList(self, node):
         stmt_list = S_StatementList()
@@ -93,14 +106,18 @@ class SerializeHandler(object):
             data += str(self.serialize(arg))
         arg_list['data'] = data
         return arg_list
-        
 
-    def serialize_AssignmentStmt(self, node):
-        return self.serialize(node.expr)
+    def serialize_UnaryOp(self, node):
+        unaryop = S_UnaryOp()
+        op = self.unaryop_op_to_int(node.op)
+        unaryop['op'] = op
+        unaryop['expr'] = self.serialize(node.expr)
+        return unaryop
 
-    def serialize_AssignmentExpr(self, node):
-        assigment_expr =  S_AssignmentExpr()
-        assigment_expr['id'] = self.env.add_string(node._id.name)
+    def serialize_Assignment(self, node):
+        assigment_expr =  S_Assignment()
+        print node.cast_expr
+        assigment_expr['castexpr'] = self.serialize(node.cast_expr)
         assigment_expr['expr'] = self.serialize(node.rhs)
         return assigment_expr
 
@@ -131,7 +148,7 @@ class SerializeHandler(object):
     def serialize_Const(self, node):
         const = S_Const()
         const['val'] = int(node.val)
-        const['_type'] = node._type
+        const['_type'] = self.type_to_int(node._type)
         return const
 
     def serialize_FuncCall(self, node):

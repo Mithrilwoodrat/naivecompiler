@@ -71,28 +71,6 @@ class Function(ASTNode):
 
     def children(self):
         return [self.function_name, self.param_list, self.body]
-
-    
-class FuncList(ASTNode):
-    def __init__(self, funcdef):
-        self.node_name = "FuncList"
-        if type(funcdef) is Function:
-            self.l = [funcdef]
-        else:
-            logging.error('Initial with error type: {0}'.format(funcdef))
-        
-    def add_funcdef(self, f):
-        self.l.append(f)
-
-    def __add__(self, rhs):
-        if type(rhs) is Function:
-            self.add_funcdef(rhs)
-        elif type(rhs) is FuncList:
-            self.l += rhs.l
-        return self
-
-    def children(self):
-        return self.l
         
 
 class DeclarationList(ASTNode):
@@ -203,12 +181,12 @@ class Statement(ASTNode):
         return []
 
 class DeclStmt(Statement):
-    ''' DeclStmt: DeclExpr SEIM '''
-    def __init__(self, decls):
-        self.decls = decls
+    ''' DeclStmt: Decl SEIM '''
+    def __init__(self, decl):
+        self.decl = decl
 
     def children(self):
-        return [self.decls]
+        return [self.decl]
 
 class FuncCall(Statement):
     def __init__(self, func_name, argument_list):
@@ -251,7 +229,6 @@ class ReturnStmt(Statement):
     
 class Assignment(Statement):
     def __init__(self, cast_expr, rhs):
-        self.node_name = "AssignmentExpr"
         self.cast_expr = cast_expr
         self.rhs = rhs
 
