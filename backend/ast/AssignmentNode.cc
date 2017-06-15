@@ -12,11 +12,13 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
 {
     std::cout << "Parsing Assignment: ";
     uint32_t type = util::getStructType(assignment->castexpr.data);
-
+    uint8_t *p_castexpr = (uint8_t *)assignment->castexpr.data;
+    ASTNode* castexpr;
+    SymbolNode * symbol;
     switch(type) {
         case serialize::TypeSymbol:
-            ASTNode* castexpr = NodeFactory::CreateSymbol(assignment->castexpr.data, assignment->castexprSize);
-            SymbolNode * symbol = static_cast<SymbolNode *>(castexpr);
+            castexpr = NodeFactory::CreateSymbol(p_castexpr, assignment->castexprSize);
+            symbol = static_cast<SymbolNode *>(castexpr);
             id = symbol->GetSymbol();
             break;
         default:
@@ -25,7 +27,7 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
     }
 
     std::cout << "ID: " << id << std::endl;
-    uint8_t * data = assignment->expr.data;
+    uint8_t * data = p_castexpr + assignment->castexprSize;
     type = util::getStructType(data);
     switch(type) {
         case serialize::TypeValue:

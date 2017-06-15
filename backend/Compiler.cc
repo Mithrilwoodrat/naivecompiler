@@ -7,7 +7,7 @@ Compiler* Compiler::instance = 0;
 void Compiler::Compile( char * filename ) 
 {
     u_int8_t *body = const_cast<u_int8_t *>(file.GetBody());
-    ast.Parse(reinterpret_cast<struct serialize::FunctionList*>(body),
+    ast.Parse(reinterpret_cast<struct serialize::AST*>(body),
               file.GetBodySize() );
     ast.show();
     genVisitor.dump(&ast);

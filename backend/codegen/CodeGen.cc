@@ -114,11 +114,14 @@ void CodeGenVisitor::run(AST *node)
     LLVMInitializeNativeAsmParser();
     //std::unique_ptr<llvm::Module> mod = llvm::make_unique<llvm::Module>(TheModule);
     llvm::ExecutionEngine *engine = llvm::EngineBuilder(std::move(owner)).create();
+    llvm::Function * func;
     engine->finalizeObject(); // memory for generated code marked executable:
     for (const auto &f : funcs ) {
         if (f.first == "main") {
-            if (f.second)
-                engine->runFunction(f.second, std::vector<llvm::GenericValue>());
+            if (f.second){
+                func = static_cast<llvm::Function*>(f.second);
+                engine->runFunction(func, std::vector<llvm::GenericValue>());
+            }
         }
     }
 }
@@ -129,8 +132,8 @@ std::map<std::string, llvm::Value*> CodeGenVisitor::visit(AST *node)
     for (ASTNode * f : node->GetChildren() ) {
         auto * func = f->accept(this);
         if (func) {
-            f = static_cast<FunctionNode *>(f);
-            funcs[f->GetFuncName()] = func;
+            FunctionNode * fnode = static_cast<FunctionNode *>(f);
+            funcs[fnode->GetFuncName()] = func;
         }
     }
     return funcs;
