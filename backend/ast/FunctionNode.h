@@ -8,7 +8,7 @@
 
 namespace naivescript{
 
-class FunctionNode
+class FunctionNode : public ASTNode
 {
 public:
     bool Parse( struct serialize::Function * func, size_t size );
@@ -42,7 +42,7 @@ public:
         }
     }
 
-    llvm::Function* accept(Visitor* v);
+    llvm::Value* accept(Visitor* v);
 
     ~FunctionNode() {
         for (ASTNode * node : children) {

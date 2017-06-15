@@ -15,7 +15,7 @@ class Function;
 
 namespace naivescript{
 
-class FunctionList;
+class AST;
 class FunctionNode;
 class Declaration;
 class DeclarationList;
@@ -35,8 +35,8 @@ class CMPJMPNode;
 class Visitor
 {
   public:
-    virtual std::map<std::string, llvm::Function*> visit(FunctionList *node) = 0;
-    virtual llvm::Function* visit(FunctionNode *node) = 0;
+    virtual std::map<std::string, llvm::Value*> visit(AST *node) = 0;
+    virtual llvm::Value* visit(FunctionNode *node) = 0;
     virtual llvm::Value* visit(Declaration *node) = 0;
     virtual llvm::Value* visit(DeclarationList *node) = 0;
     virtual llvm::Value* visit(StmtList *node) = 0;

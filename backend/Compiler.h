@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include "SerializeFile.h"
-#include "FunctionList.h"
+#include "AST.h"
 #include "NodeVisitor.h"
 #include "CodeGen.h"
 
@@ -38,7 +38,7 @@ public:
     static Compiler* instance;
 private:
     const serialize::SymbolTable* symbol_table;
-    FunctionList func_list;
+    AST ast;
     serialize::SerializeFile file;
     CodeGenVisitor genVisitor;
 };

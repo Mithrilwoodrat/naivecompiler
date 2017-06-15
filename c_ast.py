@@ -47,7 +47,7 @@ class ArgumentList(ASTNode):
 
 
 class FuncDecl(ASTNode):
-    attr_names = ('return_type', )
+    attr_names = ('return_type', 'storage')
     def __init__(self, return_type, function_name, param_list, storage='extern'):
         super(FuncDecl, self).__init__()
         self.storage = storage
@@ -60,14 +60,15 @@ class FuncDecl(ASTNode):
 
     
 class Function(ASTNode):
-    attr_names = ('return_type', )
-    def __init__(self, return_type, function_name, param_list, body):
+    attr_names = ('return_type', 'storage')
+    def __init__(self, return_type, function_name, param_list, body, storage='extern'):
         self.node_name = "FuncDef"
         super(Function, self).__init__()
         self.return_type = return_type
         self.function_name = function_name
         self.param_list = param_list
         self.body = body
+        self.storage = storage
 
     def children(self):
         return [self.function_name, self.param_list, self.body]
@@ -133,7 +134,7 @@ class StmtList(ASTNode):
 class TypeDecl(ASTNode):
     '''Declaration: storage type name init
     '''
-    attr_names = ('_type', )
+    attr_names = ('_type', 'storage')
     def __init__(self, _type, _id, init=None, storage='auto'):
         self.storage = storage
         self._id = _id

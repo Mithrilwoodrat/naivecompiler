@@ -1,7 +1,7 @@
 #include "CodeGen.h"
 #include "ASTNode.h"
 #include "Statement.h"
-#include "FunctionList.h"
+#include "AST.h"
 #include "FunctionNode.h"
 #include "FuncCallNode.h"
 #include "Declaration.h"
@@ -50,7 +50,7 @@ llvm::Value *LogErrorV(const char *Str) {
   return nullptr;
 }
 
-void CodeGenVisitor::dump( FunctionList *node) {
+void CodeGenVisitor::dump( AST *node) {
     auto funcs = node->accept(this);
     TheModule->dump();
 }
@@ -105,7 +105,7 @@ void CodeGenVisitor::GenObj(const std::string &Filename) {
   std::cout << "Wrote " << Filename << "\n";
 }
 
-void CodeGenVisitor::run(FunctionList *node)
+void CodeGenVisitor::run(AST *node)
 {
     auto funcs = node->accept(this);
     TheModule->dump();
@@ -123,19 +123,20 @@ void CodeGenVisitor::run(FunctionList *node)
     }
 }
 
-std::map<std::string, llvm::Function*> CodeGenVisitor::visit(FunctionList *node)
+std::map<std::string, llvm::Value*> CodeGenVisitor::visit(AST *node)
 {
-    std::map<std::string, llvm::Function*> funcs;
-    for (FunctionNode * f : node->GetChildren() ) {
+    std::map<std::string, llvm::Value*> funcs;
+    for (ASTNode * f : node->GetChildren() ) {
         auto * func = f->accept(this);
         if (func) {
+            f = static_cast<FunctionNode *>(f);
             funcs[f->GetFuncName()] = func;
         }
     }
     return funcs;
 }
 
-llvm::Function* CodeGenVisitor::visit(FunctionNode *func)
+llvm::Value* CodeGenVisitor::visit(FunctionNode *func)
 {
     auto decls = func->GetParams()->GetChildren();
     std::vector<std::string> params_names;

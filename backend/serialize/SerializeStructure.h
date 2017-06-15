@@ -11,9 +11,9 @@ namespace serialize
 
 enum NodeType
 {
-    TypeFuncList = 0,
+    TypeAST = 0,
     TypeFunction = 1,
-    TypeCodeBlock = 2,
+    TypeArrayDecl = 2,
     TypeDeclarationList = 3,
     TypeStatementList = 4,
     TypeArgumentList = 5,
@@ -31,11 +31,14 @@ enum NodeType
     TypeLabel = 17,
     TypeABSJMP = 18,
     TypeCMPJMP = 19,
+    TypeUnaryOp = 20
 };
 
 enum ValueType
 {
     CONSTINT = 0,
+    CONSTFLOAT = 1,
+    CONSTCHAR = 2,
 };
 
 const uint32_t FileMD5Size = 16 ;
@@ -57,7 +60,7 @@ struct FileFormat
 } __attribute__((packed)) ;
 
 
-struct FunctionList
+struct AST
 {
     uint32_t type;
     uint32_t size;
@@ -111,6 +114,7 @@ struct Function
     uint32_t size;
     uint32_t id;
     uint32_t return_type;
+    uint32_t storage_type;
     uint32_t params_size;
     uint32_t body_size;
     Expr param_list;
@@ -126,14 +130,23 @@ struct FuncCall
     Expr args;
 }__attribute__((packed)) ;
 
+struct UnaryOp
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t op;
+    uint32_t exprSize;
+    Expr expr;
+}__attribute__((packed)) ;
 
 struct Assignment
 {
     uint32_t type;
     uint32_t size;  //变长的结构都带有大小
-    uint32_t id;
+    uint32_t castexprSize;
     uint32_t exprSize;
-    uint8_t expr[0];
+    Expr castexpr;
+    Expr expr;
 }__attribute__((packed)) ;
 
 struct ReturnStmt

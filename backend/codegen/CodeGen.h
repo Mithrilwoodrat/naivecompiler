@@ -23,11 +23,11 @@ namespace naivescript{
 class CodeGenVisitor : public Visitor
 {
 public:
-    void dump( FunctionList *node);
-    void run( FunctionList *node );
+    void dump( AST *node);
+    void run( AST *node );
     void GenObj(const std::string & Filename);
-    virtual std::map<std::string, llvm::Function*> visit(FunctionList *node);
-    virtual llvm::Function* visit(FunctionNode *node);
+    virtual std::map<std::string, llvm::Value*> visit(AST *node);
+    virtual llvm::Value* visit(FunctionNode *node);
     virtual llvm::Value* visit(Declaration *node);
     virtual llvm::Value* visit(DeclarationList *node);
     virtual llvm::Value* visit(StmtList *node);

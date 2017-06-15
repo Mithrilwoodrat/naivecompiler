@@ -118,8 +118,8 @@ class Compiler(object):
         with open('ns.data','wb') as fout:
             fout.write(str(obj))
 
-        self.lib.LoadData('./ns.data')
-        self.lib.Compile(pout)
+        #self.lib.LoadData('./ns.data')
+        #self.lib.Compile(pout)
 
     
 if __name__ == "__main__":

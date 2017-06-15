@@ -2,6 +2,7 @@
 from visitor import NodeVisitor
 from serialize_structure import *
 import logging
+import sys
 
 class SerializeHandler(object):
     def __init__(self, env):
@@ -39,17 +40,28 @@ class SerializeHandler(object):
     def type_to_int(self, _type):
         type_map = {
             'int': 0,
-            'double': 1,
+            'float': 1,
             'char': 2
         }
         if _type in type_map:
             return type_map.get(_type)
         logging.error('unsupported _type')
 
+    def storage_type_to_int(self, _type):
+        type_map = {
+            'auto': 0,
+            'extern': 1,
+            'static': 2
+        }
+        if _type in type_map:
+            return type_map.get(_type)
+        logging.error('unsupported storage _type')
+
     def serialize_Function(self, node):
         func = S_Function()
         func['id'] = self.env.add_string(node.function_name.name)
-        func['return_type'] = 0
+        func['return_type'] = self.type_to_int(node.return_type)
+        func['storage_type'] = self.storage_type_to_int(node.storage)
         func['param_list'] = self.serialize(node.param_list)
         func['body'] = self.serialize(node.body)
         return func
@@ -69,6 +81,16 @@ class SerializeHandler(object):
         decl_expr['id'] = self.env.add_string(node._id.name)
         decl_expr['_type'] = 0
         return decl_expr
+
+    def serialize_FuncDecl(self, node):
+        func = S_Function()
+        func = S_Function()
+        func['id'] = self.env.add_string(node.function_name.name)
+        func['return_type'] = self.type_to_int(node.return_type)
+        func['storage_type'] = self.storage_type_to_int(node.storage)
+        func['param_list'] = self.serialize(node.param_list)
+        func['body'] = ''
+        return func
 
     def serialize_DeclStmt(self, node):
         return self.serialize(node.decl)
@@ -108,6 +130,8 @@ class SerializeHandler(object):
         return arg_list
 
     def serialize_UnaryOp(self, node):
+        logging.error("unaryop not supported now!")
+        sys.exit(0)
         unaryop = S_UnaryOp()
         op = self.unaryop_op_to_int(node.op)
         unaryop['op'] = op
@@ -116,7 +140,9 @@ class SerializeHandler(object):
 
     def serialize_Assignment(self, node):
         assigment_expr =  S_Assignment()
-        print node.cast_expr
+        if node.cast_expr.__class__.__name__ == 'UnaryOp':
+            logging.error("Assignment not support UnaryOp now!")
+            sys.exit(0)
         assigment_expr['castexpr'] = self.serialize(node.cast_expr)
         assigment_expr['expr'] = self.serialize(node.rhs)
         return assigment_expr

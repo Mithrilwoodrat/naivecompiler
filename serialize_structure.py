@@ -13,7 +13,12 @@ FileMD5Size = 16
 
 #types
 # int 0
-# double 1
+# float 1
+# char  2
+
+#unaryop
+# * 0
+# & 1
 
 Type_AST = 0
 Type_Function = 1
@@ -73,7 +78,7 @@ class S_Declaration(Structure):
     structure = (
         ( "type", "<I=%d" % Type_Declaration),
         ( "size", "<I=4*4" ),
-        ( "_type", "<I"), # int : 0, double : 1, char: 2
+        ( "_type", "<I"), # int : 0, float : 1, char: 2
         ( "id", "<I"),
     )
 
@@ -98,9 +103,10 @@ class S_StatementList(Structure):
 class S_Function(Structure):
     structure = (
         ("type", "<I=%d" % Type_Function),
-        ("size", "<I=4*6 + len(param_list) + len(body)"),
+        ("size", "<I=4*7 + len(param_list) + len(body)"),
         ("id", "<I"),
         ("return_type", "<I"),
+        ("storage_type", "<I"),
         ("paramsSize", "<I=len(param_list)"),
         ("bodySize", "<I=len(body)"),
         ("param_list", ":"),
