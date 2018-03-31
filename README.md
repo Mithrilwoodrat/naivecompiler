@@ -1,3 +1,7 @@
+# NaiveCompiler
+
+### A hobby C compiler created in Python and LLVM
+
 ## 使用方法
 
 使用 `python2 compiler.py <input>` 显示 AST
