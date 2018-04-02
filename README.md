@@ -2,6 +2,19 @@
 
 ### A hobby C compiler created in Python and LLVM
 
+## Docker
+
+### Build
+
+```
+cd Docker
+docker build -t naivescript .
+```
+
+### Run
+
+`docker run -i -t naivescript:latest /opt/naivecompiler/test.sh`
+
 ## 使用方法
 
 使用 `python2 compiler.py <input>` 显示 AST
