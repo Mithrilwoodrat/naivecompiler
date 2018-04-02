@@ -1,6 +1,8 @@
 #!/bin/bash
 
 cd backend
-cmake .
+mkdir build
+cd build
+cmake ..
 make
-cp build/libNaiveScript.so ../
+cp ./libNaiveScript.so ../../
