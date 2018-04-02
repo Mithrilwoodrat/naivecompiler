@@ -26,6 +26,7 @@ Set( NSIncludeDir ${NSWorkingPath}
     ${NSWorkingPath}/codegen 
     /usr/include 
     /usr/local/include
+	/usr/lib/llvm-3.8/include
 )
 
 Set( NSSrcFiles
