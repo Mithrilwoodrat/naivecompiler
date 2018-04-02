@@ -274,8 +274,7 @@ class Symbol(ASTNode):
         self._type = 0
 
     def children(self):
-        return []    
-
+        return []
 
 class MethodSymbol(Symbol):
     attr_names = ('name',)
