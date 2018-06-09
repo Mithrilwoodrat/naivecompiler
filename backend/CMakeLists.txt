@@ -26,7 +26,7 @@ Set( NSIncludeDir ${NSWorkingPath}
     ${NSWorkingPath}/codegen 
     /usr/include 
     /usr/local/include
-	/usr/lib/llvm-3.8/include
+	#/usr/lib/llvm-3.8/include
 )
 
 Set( NSSrcFiles
@@ -61,4 +61,4 @@ link_directories(/usr/local/lib/)
 add_library(NaiveScript  SHARED ${NSSrcFiles})
 Target_Include_Directories( NaiveScript PUBLIC ${NSIncludeDir} )
 
-target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVM)
+target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVM-6.0)

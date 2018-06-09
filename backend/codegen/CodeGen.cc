@@ -52,7 +52,12 @@ llvm::Value *LogErrorV(const char *Str) {
 
 void CodeGenVisitor::dump( AST *node) {
     auto funcs = node->accept(this);
-    TheModule->dump();
+    //TheModule->dump();
+    std::string out;
+    llvm::raw_ostream* stream;
+    stream = new llvm::raw_string_ostream(out);
+    TheModule->print(*stream, nullptr);
+    std::cout << out << std::endl;
 }
 
 void CodeGenVisitor::GenObj(const std::string &Filename) {
@@ -108,7 +113,7 @@ void CodeGenVisitor::GenObj(const std::string &Filename) {
 void CodeGenVisitor::run(AST *node)
 {
     auto funcs = node->accept(this);
-    TheModule->dump();
+    //TheModule->dump();
     LLVMInitializeNativeTarget();
     LLVMInitializeNativeAsmPrinter();
     LLVMInitializeNativeAsmParser();
@@ -356,11 +361,11 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node)
     return Builder.CreateMul(L, R, "multmp");
   case '>':
     L = Builder.CreateICmpUGT(L, R, "cmptmp");
-    L->dump();
+    //L->dump();
     return L;
   case '<':
     L = Builder.CreateICmpULT(L, R, "cmptmp");
-    L->dump();
+    //L->dump();
     return L;
   default:
     return LogErrorV("invalid binary operator");
