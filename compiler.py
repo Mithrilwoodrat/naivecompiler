@@ -109,6 +109,7 @@ class Compiler(object):
         self.ast.show()
         rewriter = ReWriteVisitor()
         rewriter.visit(self.ast, self.ast)
+        print 'After ReWrite'
         self.ast.show()
         body = self.dump_body()
         stringtable = self.dump_stringtable()

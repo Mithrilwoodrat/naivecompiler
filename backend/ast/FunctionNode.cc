@@ -7,9 +7,9 @@ namespace naivescript
 
 bool FunctionNode::Parse( struct serialize::Function * func, size_t size )
 {
-    std::cout << "Parsing Function ";
+    std::cout << "Parsing Function: ";
     func_name = Compiler::GetCompiler()->ResolveSymbol(func->id);
-    std::cout << func_name;
+    std::cout << "Name:" << func_name << "\t";
     return_type = func->return_type;
     uint8_t *p_params_list = (uint8_t *)(func->param_list.data);
     uint8_t *p_body = p_params_list + func->params_size;

@@ -39,6 +39,7 @@ enum ValueType
     CONSTINT = 0,
     CONSTFLOAT = 1,
     CONSTCHAR = 2,
+	CONSTSTRING = 3
 };
 
 const uint32_t FileMD5Size = 16 ;

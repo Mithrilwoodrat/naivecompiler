@@ -3,7 +3,7 @@ import logging
 import sys
 
 from visitor import NodeVisitor
-from c_ast import Label, CMPJMP, ABSJMP
+from c_ast import Label, CMPJMP, ABSJMP, TypeDecl
 
 logger = logging.getLogger(__file__)
 LabelId = 0
@@ -110,7 +110,14 @@ class StmtsHelper(SpecialVisitor):
 
 class ReWriteVisitor(SpecialVisitor):
     def __init__(self):
-        pass
+        self.root = None
+        self.const_strings = []
+        
+    # def visit(self, node, parent):
+        # if self.root is None:
+            # self.root = parent
+        # super(ReWriteVisitor, self).visit(node, parent)
+
 
     def visit_StmtList(self, node, parent):
         helper = StmtsHelper()

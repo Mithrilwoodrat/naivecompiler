@@ -41,7 +41,8 @@ class SerializeHandler(object):
         type_map = {
             'int': 0,
             'float': 1,
-            'char': 2
+            'char': 2,
+            'string': 3
         }
         if _type in type_map:
             return type_map.get(_type)
@@ -172,9 +173,15 @@ class SerializeHandler(object):
         return symbol
         
     def serialize_Const(self, node):
+        print node._type , node.val
         const = S_Const()
-        const['val'] = int(node.val)
         const['_type'] = self.type_to_int(node._type)
+        if node._type == "int":
+            const['val'] = int(node.val)
+        elif node._type == "string":
+            const['val'] = self.env.add_string(node.val)
+        else:
+            logging.error("Const Type:{0} not supported".format(node._type))
         return const
 
     def serialize_FuncCall(self, node):

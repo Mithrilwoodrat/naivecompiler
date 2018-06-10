@@ -9,7 +9,7 @@ namespace naivescript{
 class ValueNode : public ASTNode {
 
 public:
-    ValueNode() : val(0) , valuetype(0) {}
+    ValueNode() : val(0) , valstring(""), valuetype(0) {}
 
     virtual bool Parse( struct serialize::Value * value, size_t size );
 
@@ -33,6 +33,7 @@ public:
     }
 private:
     uint32_t val;
+    std::string valstring;
     uint32_t valuetype;
     std::vector<ASTNode *> children;
 };
