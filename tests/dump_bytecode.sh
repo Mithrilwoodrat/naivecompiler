@@ -1,0 +1,1 @@
+clang  -S -emit-llvm $1
