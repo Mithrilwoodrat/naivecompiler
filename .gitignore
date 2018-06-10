@@ -8,3 +8,6 @@ build/
 *.so
 .idea
 *-build-*
+.settings
+.project
+.cproject
