@@ -59,11 +59,11 @@ class FuncDecl(ASTNode):
         return [self.function_name, self.param_list]
 
     
-class Function(ASTNode):
+class FuncDef(ASTNode):
     attr_names = ('return_type', 'storage')
     def __init__(self, return_type, function_name, param_list, body, storage='extern'):
         self.node_name = "FuncDef"
-        super(Function, self).__init__()
+        super(FuncDef, self).__init__()
         self.return_type = return_type
         self.function_name = function_name
         self.param_list = param_list

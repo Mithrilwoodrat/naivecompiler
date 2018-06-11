@@ -21,26 +21,27 @@ FileMD5Size = 16
 # & 1
 
 Type_AST = 0
-Type_Function = 1
-Type_ArrayDecl = 2
-Type_DeclarationList = 3
-Type_StatementList = 4
-Type_ArgumentList = 5
-Type_Declaration = 6
-Type_WhileStmt =  7
-Type_IfStmt =  8
-Type_FuncCall =  9
-Type_Assignment = 10
-Type_ReturnStmt = 11
-Type_BreakStmt = 12
-Type_ContinueStmt = 13
-Type_BinaryOp =  14
-Type_Symbol = 15
-Type_Const = 16
-Type_Label = 17
-Type_ABSJMP = 18
-Type_CMPJMP = 19
-Type_UnaryOp = 20
+Type_FuncDef = 1
+Type_FuncDecl = 2
+Type_ArrayDecl = 3
+Type_DeclarationList = 4
+Type_StatementList = 5
+Type_ArgumentList = 6
+Type_Declaration = 7
+Type_WhileStmt =  8
+Type_IfStmt =  9
+Type_FuncCall =  10
+Type_Assignment = 11
+Type_ReturnStmt = 12
+Type_BreakStmt = 13
+Type_ContinueStmt = 14
+Type_BinaryOp =  15
+Type_Symbol = 16
+Type_Const = 17
+Type_Label = 18
+Type_ABSJMP = 19
+Type_CMPJMP = 20
+Type_UnaryOp = 21
 
 ## File
   # -------
@@ -100,9 +101,9 @@ class S_StatementList(Structure):
         ( "data", ":"), # for stmt in StatementList: data+=str(stmt)
     )
 
-class S_Function(Structure):
+class S_FuncDef(Structure):
     structure = (
-        ("type", "<I=%d" % Type_Function),
+        ("type", "<I=%d" % Type_FuncDef),
         ("size", "<I=4*7 + len(param_list) + len(body)"),
         ("id", "<I"),
         ("return_type", "<I"),
@@ -111,6 +112,17 @@ class S_Function(Structure):
         ("bodySize", "<I=len(body)"),
         ("param_list", ":"),
         ("body", ":")
+    )
+
+class S_FuncDecl(Structure):
+    structure = (
+        ("type", "<I=%d" % Type_FuncDecl),
+        ("size", "<I=4*7 + len(param_list)"),
+        ("id", "<I"),
+        ("return_type", "<I"),
+        ("storage_type", "<I"),
+        ("paramsSize", "<I=len(param_list)"),
+        ("param_list", ":"),
     )
 
 class S_FuncCall(Structure):

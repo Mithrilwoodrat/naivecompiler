@@ -58,13 +58,21 @@ class SerializeHandler(object):
             return type_map.get(_type)
         logging.error('unsupported storage _type')
 
-    def serialize_Function(self, node):
-        func = S_Function()
+    def serialize_FuncDef(self, node):
+        func = S_FuncDef()
         func['id'] = self.env.add_string(node.function_name.name)
         func['return_type'] = self.type_to_int(node.return_type)
         func['storage_type'] = self.storage_type_to_int(node.storage)
         func['param_list'] = self.serialize(node.param_list)
         func['body'] = self.serialize(node.body)
+        return func
+        
+    def serialize_FuncDecl(self, node):
+        func = S_FuncDecl()
+        func['id'] = self.env.add_string(node.function_name.name)
+        func['return_type'] = self.type_to_int(node.return_type)
+        func['storage_type'] = self.storage_type_to_int(node.storage)
+        func['param_list'] = self.serialize(node.param_list)
         return func
 
     def serialize_DeclarationList(self, node):
@@ -82,16 +90,6 @@ class SerializeHandler(object):
         decl_expr['id'] = self.env.add_string(node._id.name)
         decl_expr['_type'] = 0
         return decl_expr
-
-    def serialize_FuncDecl(self, node):
-        func = S_Function()
-        func = S_Function()
-        func['id'] = self.env.add_string(node.function_name.name)
-        func['return_type'] = self.type_to_int(node.return_type)
-        func['storage_type'] = self.storage_type_to_int(node.storage)
-        func['param_list'] = self.serialize(node.param_list)
-        func['body'] = ''
-        return func
 
     def serialize_DeclStmt(self, node):
         return self.serialize(node.decl)

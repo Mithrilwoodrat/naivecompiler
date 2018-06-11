@@ -458,10 +458,10 @@ class Parser(object):
                     | type methodsymbol LPAREN RPAREN compound_statement
         '''
         if len(p) == 7:
-            p[0] = Function(p[1], p[2], p[4], p[6])
+            p[0] = FuncDef(p[1], p[2], p[4], p[6])
         elif len(p) == 6:
             param_list = DeclarationList()
-            p[0] = Function(p[1], p[2], param_list, p[5])
+            p[0] = FuncDef(p[1], p[2], param_list, p[5])
         else:
             logging.error("wrong funcdef")
             print len(p)

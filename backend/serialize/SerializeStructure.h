@@ -12,26 +12,27 @@ namespace serialize
 enum NodeType
 {
     TypeAST = 0,
-    TypeFunction = 1,
-    TypeArrayDecl = 2,
-    TypeDeclarationList = 3,
-    TypeStatementList = 4,
-    TypeArgumentList = 5,
-    TypeDeclaration = 6,
-    TypeWhileStmt =  7,
-    TypeIfStmt =  8,
-    TypeFuncCall =  9,
-    TypeAssignmentExpr = 10,
-    TypeReturnStmt = 11,
-    TypeBreakStmt = 12,
-    TypeContinueStmt = 13,
-    TypeBinaryOp =  14,
-    TypeSymbol = 15,
-    TypeValue = 16,
-    TypeLabel = 17,
-    TypeABSJMP = 18,
-    TypeCMPJMP = 19,
-    TypeUnaryOp = 20
+    TypeFuncDef = 1,
+	TypeFuncDecl = 2,
+    TypeArrayDecl = 3,
+    TypeDeclarationList = 4,
+    TypeStatementList = 5,
+    TypeArgumentList = 6,
+    TypeDeclaration = 7,
+    TypeWhileStmt =  8,
+    TypeIfStmt =  9,
+    TypeFuncCall =  10,
+    TypeAssignmentExpr = 11,
+    TypeReturnStmt = 12,
+    TypeBreakStmt = 13,
+    TypeContinueStmt = 14,
+    TypeBinaryOp =  15,
+    TypeSymbol = 16,
+    TypeValue = 17,
+    TypeLabel = 18,
+    TypeABSJMP = 19,
+    TypeCMPJMP = 20,
+    TypeUnaryOp = 21
 };
 
 enum ValueType
@@ -109,7 +110,7 @@ struct Declaration
     uint32_t id;
 }__attribute__((packed)) ;
 
-struct Function
+struct FuncDef
 {
     uint32_t type;
     uint32_t size;
@@ -120,6 +121,17 @@ struct Function
     uint32_t body_size;
     Expr param_list;
     Expr body;
+}__attribute__((packed)) ;
+
+struct FuncDecl
+{
+    uint32_t type;
+    uint32_t size;
+    uint32_t id;
+    uint32_t return_type;
+    uint32_t storage_type;
+    uint32_t params_size;
+    Expr param_list;
 }__attribute__((packed)) ;
 
 struct FuncCall
