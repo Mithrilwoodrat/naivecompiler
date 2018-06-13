@@ -21,9 +21,15 @@ docker build -t naivescript .
 
 使用 `python2 compiler.py <input> <output>` 生成 obj
 
-使用 `ld -e <symbol>` 将 obj 文件 链接为 ELF， 并指定 <symbol> 为 entry point。（由于未给 naivecompiler 实现 crt， entry point 的函数不能返回参数，只能设置为 void）
+使用 `ld -e <symbol>` 将 obj 文件 链接为 ELF， 并指定 <symbol> 为 entry point。（由于未给 naivecompiler 实现 crt， entry point 的函数不能返回参数，只能设置为 void)
+
+可以使用 ld 链接上 ld，然后就可以调用 glibc 的函数了。crt 问题可以链接上 glic 的 crt
+
+`ld -o test -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/x86_64-linux-gnu/crt1.o /usr/lib/x86_64-linux-gnu/crti.o -lc test.o /usr/lib/x86_64-linux-gnu/crtn.o`
+
+调用 `link.sh test.o test`
 
 ## TODO
- * support extern function decl
+ - [x] support extern function decl
  * support StringLiteral in backend
  * support array and pointer in backend

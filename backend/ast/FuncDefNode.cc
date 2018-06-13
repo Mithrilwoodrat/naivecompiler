@@ -1,11 +1,11 @@
-#include "FunctionNode.h"
+#include "FuncDefNode.h"
 #include "Compiler.h"
 #include "NodeFactory.h"
 
 namespace naivescript
 {
 
-bool FunctionNode::Parse( struct serialize::Function * func, size_t size )
+bool FuncDefNode::Parse( struct serialize::FuncDef * func, size_t size )
 {
     std::cout << "Parsing Function: ";
     func_name = Compiler::GetCompiler()->ResolveSymbol(func->id);
@@ -20,7 +20,7 @@ bool FunctionNode::Parse( struct serialize::Function * func, size_t size )
     return true;
 }
 
-llvm::Value* FunctionNode::accept(Visitor* v)
+llvm::Value* FuncDefNode::accept(Visitor* v)
 {
     return v->visit(this);
 }

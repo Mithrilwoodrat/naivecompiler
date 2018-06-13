@@ -1,7 +1,8 @@
-extern int puts(char * s);
+extern int putchar(int s);
 int main()
 {
-    char * s = "HelloWorld!";
-    puts(s);
+    int s;
+    s = 101;
+    putchar(s);
     return 0;
 }

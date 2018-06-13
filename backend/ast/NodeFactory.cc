@@ -5,7 +5,8 @@
 #include "ValueNode.h"
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
-#include "FunctionNode.h"
+#include "FuncDefNode.h"
+#include "FuncDeclNode.h"
 #include "FuncCallNode.h"
 #include "ArgumentList.h"
 #include "Declaration.h"
@@ -71,10 +72,17 @@ ASTNode* NodeFactory::CreateSymbol(uint8_t *data, uint32_t size) {
     return node;
 }
 
-FunctionNode * NodeFactory::CreateFunction(uint8_t *data, uint32_t size)
+ASTNode * NodeFactory::CreateFuncDecl(uint8_t *data, uint32_t size)
 {
-    auto *node = new FunctionNode();
-    node->Parse(reinterpret_cast<struct serialize::Function*>(data), size);
+    auto *node = new FuncDeclNode();
+    node->Parse(reinterpret_cast<struct serialize::FuncDecl*>(data), size);
+    return node;
+}
+
+ASTNode * NodeFactory::CreateFuncDef(uint8_t *data, uint32_t size)
+{
+    auto *node = new FuncDefNode();
+    node->Parse(reinterpret_cast<struct serialize::FuncDef*>(data), size);
     return node;
 }
 

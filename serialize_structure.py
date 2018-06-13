@@ -117,7 +117,7 @@ class S_FuncDef(Structure):
 class S_FuncDecl(Structure):
     structure = (
         ("type", "<I=%d" % Type_FuncDecl),
-        ("size", "<I=4*7 + len(param_list)"),
+        ("size", "<I=4*6 + len(param_list)"),
         ("id", "<I"),
         ("return_type", "<I"),
         ("storage_type", "<I"),

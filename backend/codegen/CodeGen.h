@@ -27,7 +27,8 @@ public:
     void run( AST *node );
     void GenObj(const std::string & Filename);
     virtual std::map<std::string, llvm::Value*> visit(AST *node);
-    virtual llvm::Value* visit(FunctionNode *node);
+    virtual llvm::Value* visit(FuncDefNode *node);
+    virtual llvm::Value* visit(FuncDeclNode *node);
     virtual llvm::Value* visit(Declaration *node);
     virtual llvm::Value* visit(DeclarationList *node);
     virtual llvm::Value* visit(StmtList *node);

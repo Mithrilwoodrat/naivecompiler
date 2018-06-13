@@ -39,7 +39,8 @@ Set( NSSrcFiles
     ${NSWorkingPath}/ast/ASTNode.cc
     ${NSWorkingPath}/ast/AST.cc
     ${NSWorkingPath}/ast/NodeFactory.cc
-    ${NSWorkingPath}/ast/FunctionNode.cc
+    ${NSWorkingPath}/ast/FuncDefNode.cc
+    ${NSWorkingPath}/ast/FuncDeclNode.cc
     ${NSWorkingPath}/ast/FuncCallNode.cc
     ${NSWorkingPath}/ast/ArgumentList.cc
     ${NSWorkingPath}/ast/Declaration.cc

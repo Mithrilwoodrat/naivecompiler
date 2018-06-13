@@ -2,7 +2,8 @@
 #include "ASTNode.h"
 #include "Statement.h"
 #include "AST.h"
-#include "FunctionNode.h"
+#include "FuncDefNode.h"
+#include "FuncDeclNode.h"
 #include "FuncCallNode.h"
 #include "Declaration.h"
 #include "DeclarationList.h"
@@ -137,14 +138,14 @@ std::map<std::string, llvm::Value*> CodeGenVisitor::visit(AST *node)
     for (ASTNode * f : node->GetChildren() ) {
         auto * func = f->accept(this);
         if (func) {
-            FunctionNode * fnode = static_cast<FunctionNode *>(f);
+            FuncDeclNode * fnode = static_cast<FuncDeclNode *>(f);
             funcs[fnode->GetFuncName()] = func;
         }
     }
     return funcs;
 }
 
-llvm::Value* CodeGenVisitor::visit(FunctionNode *func)
+llvm::Value* CodeGenVisitor::visit(FuncDeclNode *func)
 {
     auto decls = func->GetParams()->GetChildren();
     std::vector<std::string> params_names;
@@ -163,6 +164,46 @@ llvm::Value* CodeGenVisitor::visit(FunctionNode *func)
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
         TheModule);
         
+//    llvm::BasicBlock *Entry = llvm::BasicBlock::Create(TheContext, "entry", TheFunction);
+//    Builder.SetInsertPoint(Entry);
+//
+//    uint32_t Idx = 0;
+//    for (auto &Arg : TheFunction->args()) {
+//        Arg.setName(params_names[Idx++]);
+//        llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+//            TheFunction->getEntryBlock().begin());
+//        llvm::AllocaInst *Alloca =  TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr, Arg.getName());
+//        Builder.CreateStore(&Arg, Alloca);
+//        // Add arguments to variable symbol table.
+//        NamedValues[Arg.getName()] = Alloca;
+//    }
+//    func->GetBody()->accept(this);
+    //llvm::Value *retval = func->GetBody()->accept(this);
+    // llvm::BasicBlock *End = llvm::BasicBlock::Create(TheContext, "End", TheFunction);
+    // Builder.SetInsertPoint(End);
+    //Builder.CreateRet(retval);
+    return TheFunction;
+}
+
+llvm::Value* CodeGenVisitor::visit(FuncDefNode *func)
+{
+    auto decls = func->GetParams()->GetChildren();
+    std::vector<std::string> params_names;
+
+    for (ASTNode* decl : decls) {
+        params_names.push_back(static_cast<Declaration*>(decl)->GetID());
+    }
+
+    std::vector<llvm::Type *> Args(decls.size(),
+        llvm::Type::getInt32Ty(TheContext));
+
+    llvm::FunctionType *FT =
+      llvm::FunctionType::get(llvm::Type::getInt32Ty(TheContext), Args, false);
+
+    llvm::Function *TheFunction =
+      llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
+        TheModule);
+
     llvm::BasicBlock *Entry = llvm::BasicBlock::Create(TheContext, "entry", TheFunction);
     Builder.SetInsertPoint(Entry);
 
@@ -383,10 +424,12 @@ llvm::Value* CodeGenVisitor::visit(SymbolNode *node)
     return Builder.CreateLoad(Val, symbol);
 }
 
+//TODO: Support More Value Types
 llvm::Value* CodeGenVisitor::visit(ValueNode *node)
 {
     //llvm::Value* tmp = ConstantFP::get(TheContext, APFloat(static_cast<float>(node->GetVal())));
-    llvm::Value* tmp = llvm::ConstantInt::get(TheContext, llvm::APInt(32, node->GetVal(), false));
+	// TODO: Default signed int
+    llvm::Value* tmp = llvm::ConstantInt::get(TheContext, llvm::APInt(32, node->GetVal(), true));
     //tmp->dump();
     return tmp;
 }

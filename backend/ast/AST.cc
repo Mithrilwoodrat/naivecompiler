@@ -16,11 +16,14 @@ bool AST::Parse( struct serialize::AST * ast, size_t size )
         uint32_t type = util::getStructType(data);
         switch (type) {
             default:
-                std::cout << "Error Unknown stmt type" << std::endl;
+                std::cout << "Error Unknown stmt type: " << type << std::endl;
                 return false;
-            case serialize::TypeFunction:
-                children.push_back(NodeFactory::CreateFunction(data, node_size));
+            case serialize::TypeFuncDef:
+                children.push_back(NodeFactory::CreateFuncDef(data, node_size));
                 break;
+            case serialize::TypeFuncDecl:
+            	children.push_back(NodeFactory::CreateFuncDecl(data, node_size));
+            	break;
         }
         data += node_size;
     }

@@ -1,5 +1,5 @@
-#ifndef FUNCTIONNODE_H
-#define FUNCTIONNODE_H
+#ifndef FUNCDEFNODE_H
+#define FUNCDEFNODE_H
 
 
 #include "ASTNode.h"
@@ -8,10 +8,10 @@
 
 namespace naivescript{
 
-class FunctionNode : public ASTNode
+class FuncDefNode : public ASTNode
 {
 public:
-    bool Parse( struct serialize::Function * func, size_t size );
+    bool Parse( struct serialize::FuncDef * func, size_t size );
 
     const std::vector<ASTNode *> GetChildren( void )
     {
@@ -44,7 +44,7 @@ public:
 
     llvm::Value* accept(Visitor* v);
 
-    ~FunctionNode() {
+    ~FuncDefNode() {
         for (ASTNode * node : children) {
             free(node);
         }

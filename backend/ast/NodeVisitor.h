@@ -16,7 +16,8 @@ class Function;
 namespace naivescript{
 
 class AST;
-class FunctionNode;
+class FuncDefNode;
+class FuncDeclNode;
 class Declaration;
 class DeclarationList;
 class StmtList;
@@ -36,7 +37,8 @@ class Visitor
 {
   public:
     virtual std::map<std::string, llvm::Value*> visit(AST *node) = 0;
-    virtual llvm::Value* visit(FunctionNode *node) = 0;
+    virtual llvm::Value* visit(FuncDefNode *node) = 0;
+    virtual llvm::Value* visit(FuncDeclNode *node) = 0;
     virtual llvm::Value* visit(Declaration *node) = 0;
     virtual llvm::Value* visit(DeclarationList *node) = 0;
     virtual llvm::Value* visit(StmtList *node) = 0;

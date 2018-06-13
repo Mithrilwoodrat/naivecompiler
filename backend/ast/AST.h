@@ -1,8 +1,7 @@
-#ifndef FUNTIONLIST_H
-#define FUNTIONLIST_H
+#ifndef AST_H
+#define AST_H
 
 #include "ASTNode.h"
-#include "FunctionNode.h"
 #include "Util.h"
 #include <map>
 
