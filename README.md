@@ -31,5 +31,8 @@ docker build -t naivescript .
 
 ## TODO
  - [x] support extern function decl
- * support StringLiteral in backend
+ - [x] formatted AST show function
+ - [x] Implement Expr Class for Gen different Code in CodeGen 
+ * support StringLiteral in backend 
+   - NodeFactory CreateValueNode return different Node Class
  * support array and pointer in backend
