@@ -12,8 +12,10 @@ public:
     Declaration() : Statement(serialize::TypeDeclaration) {}
     virtual bool Parse( struct serialize::Declaration * decl, size_t size );
 
-    virtual void show(void) override
+    virtual void show(int offset = 0) override
     {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
         std::cout <<  "Declaration: ID: " << id << "\t" << "type: " << symboltype << std::endl;
     }
 

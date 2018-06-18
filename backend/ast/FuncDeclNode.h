@@ -28,12 +28,14 @@ public:
         return params_list;
     }
 
-    void show( void )
+    void show( int offset = 0 )
     {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
         std::cout <<  "Function\t";
         std::cout << func_name << std::endl;
         for (ASTNode * node : children) {
-            node->show();
+            node->show(offset+1);
         }
     }
 

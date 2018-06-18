@@ -18,12 +18,14 @@ public:
         return children;
     }
 
-    void show( void )
+    void show( int offset = 0 )
     {
-        std::cout <<  "AST\t";
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
+        std::cout <<  "AST  ";
         std::cout <<  "Node Count: " << count << std::endl;
         for (ASTNode * node : children) {
-            node->show();
+            node->show(offset+1);
         }
     }
 

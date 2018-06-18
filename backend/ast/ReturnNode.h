@@ -14,9 +14,11 @@ public:
     ReturnNode() : Statement(serialize::TypeReturnStmt) {}
     virtual bool Parse( struct serialize::ReturnStmt * return_stmt, size_t size ) ;
 
-    virtual void show( void ) {
+    virtual void show( int offset = 0 ) {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
         std::cout <<  "Return: ";
-        expr->show();
+        expr->show(offset + 1);
         std::cout << std::endl;
     }
 

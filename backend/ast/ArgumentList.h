@@ -18,12 +18,15 @@ public:
         return children;
     }
 
-    virtual void show( void ) override
+    virtual void show( int offset = 0 ) override
     {
-        std::cout <<  "ArgumentList\t";
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
+        std::cout <<  "ArgumentList  ";
         std::cout <<  "Node Count: " << count << std::endl;
+        std::cout << "\t";
         for (ASTNode * node : children) {
-            node->show();
+            node->show(offset + 1);
         }
     }
 

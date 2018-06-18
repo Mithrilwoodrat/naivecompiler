@@ -9,10 +9,10 @@ bool ValueNode::Parse( struct serialize::Value * value, size_t size )
     this->valuetype = value->valuetype;
     if (this->valuetype == serialize::CONSTSTRING) {
     	this->valstring = Compiler::GetCompiler()->ResolveSymbol(value->val);
-    	std::cout << "Type: " << valuetype << "Val: " << valstring << std::endl;
+    	std::cout << "Type: " << ShowType(valuetype) << "\tVal: " << valstring << std::endl;
     } else {
     	this->val = value->val;
-    	std::cout << "Type: " << valuetype << "Val: " << val << std::endl;
+    	std::cout << "Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
     }
     return true;
 }

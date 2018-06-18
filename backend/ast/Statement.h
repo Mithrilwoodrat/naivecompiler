@@ -28,7 +28,7 @@ public:
     LabelNode() : Statement(serialize::TypeLabel), id(0) {}
     virtual bool Parse( struct serialize::Label * label, size_t size ) ;
 
-    virtual void show( void ) {
+    virtual void show( int offset = 0 ) {
         std::cout <<  "Label: " << "id=" << id << std::endl;
     }
 
@@ -54,7 +54,7 @@ public:
     ABSJMPNode() : Statement(serialize::TypeABSJMP), id(0) {}
     virtual bool Parse( struct serialize::ABSJMP * jmp, size_t size ) ;
 
-    virtual void show( void ) {
+    virtual void show( int offset = 0 ) {
         std::cout <<  "ABSJMP: " << "id=" << id << std::endl;
     }
 
@@ -80,7 +80,7 @@ public:
     CMPJMPNode() : Statement(serialize::TypeCMPJMP), id1(0), id2(0), expr(nullptr) {}
     virtual bool Parse( struct serialize::CMPJMP * jmp, size_t size ) ;
 
-    virtual void show( void ) 
+    virtual void show( int offset = 0 )
     {
         std::cout <<  "CMP: " << "id1=" << id1 << "id2=" << id2 << std::endl;
         expr->show();

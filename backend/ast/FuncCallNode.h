@@ -1,7 +1,7 @@
 #ifndef FUNCCALLNODE_H
 #define FUNCCALLNODE_H
 
-#include "Statement.h"
+#include "Expr.h"
 #include "Util.h"
 
 
@@ -9,16 +9,18 @@ namespace naivescript{
 
 class Visitor;
 
-class FuncCallNode : public Statement 
+class FuncCallNode : public Expr
 {
 public:
-    FuncCallNode() : Statement(serialize::TypeFuncCall) {}
+    FuncCallNode() : Expr(serialize::TypeFuncCall) {}
     virtual bool Parse( struct serialize::FuncCall * func_call, size_t size ) ;
 
-    virtual void show( void ) {
-        std::cout <<  "FuncCall: " << func_name;
-        args->show();
-        std::cout << std::endl;
+    virtual void show( int offset = 0 ) {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
+        std::cout <<  "FuncCall: " << func_name << std::endl;
+        std::cout << "\t";
+        args->show(offset + 1);
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 

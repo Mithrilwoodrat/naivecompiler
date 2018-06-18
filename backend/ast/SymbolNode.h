@@ -1,19 +1,21 @@
 #ifndef SYMBOLNODE_H
 #define SYMBOLNODE_H
 
-#include "ASTNode.h"
+#include "Expr.h"
 #include "Util.h"
 
 namespace naivescript{
 
-class SymbolNode : public ASTNode
+class SymbolNode : public Expr
 {
 public:
-    SymbolNode() : symboltype(0) {}
+    SymbolNode() : Expr(serialize::NodeType::TypeSymbol), symboltype(0) {}
     virtual bool Parse( struct serialize::Symbol * symbol, size_t size );
 
-    virtual void show(void) 
+    virtual void show(int offset = 0)
     {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
         std::cout <<  "ID: " << id;
     }
 
@@ -26,6 +28,10 @@ public:
 
     inline const std::string& GetSymbol( void ) const {
         return id;
+    }
+
+    inline const uint32_t GetSymbolType( void ) const {
+        return symboltype;
     }
 
 private:

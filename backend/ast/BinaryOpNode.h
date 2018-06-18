@@ -13,7 +13,7 @@ public:
     BinaryOpNode() : lhs(NULL), rhs(NULL) {}
     virtual bool Parse( struct serialize::BinaryOp * binaryop, size_t size );
 
-    virtual void show( void ) 
+    virtual void show( int offset = 0 )
     {
         std::cout << "BinaryOp: ";
         lhs->show();
