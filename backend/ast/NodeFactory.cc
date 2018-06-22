@@ -55,9 +55,24 @@ ASTNode* NodeFactory::CreateReturnNode(uint8_t *data, uint32_t size)
 }
 
 ASTNode * NodeFactory::CreateValue(uint8_t *data, uint32_t size) {
-    ValueNode *node = new ValueNode();
-    node->Parse(reinterpret_cast<struct serialize::Value*>(data), size);
-    return node;
+	//ASTNode *node = nullptr;
+	struct serialize::Value* value = reinterpret_cast<struct serialize::Value*>(data);
+	uint32_t valuetype = value->valuetype;
+	switch (valuetype) {
+	case serialize::ValueType::CONSTINT: {
+		IntegerNode* node = (IntegerNode*) new IntegerNode();
+		node->Parse(value, size);
+		//node = static_cast<ValueNode *>(node);
+		return node;
+	}
+	case serialize::ValueType::CONSTSTRING: {
+		StringLiteralNode* node2 = (StringLiteralNode*) new StringLiteralNode();
+		node2->Parse(value, size);
+		//node = static_cast<ValueNode *>(node);
+		return node2;
+	}
+	}
+    return nullptr;
 }
 
 ASTNode * NodeFactory::CreateBinaryOp(uint8_t *data, uint32_t size) {

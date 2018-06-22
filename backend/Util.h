@@ -8,6 +8,7 @@ namespace naivescript
 namespace util
 {
 #ifdef __cplusplus
+uint32_t getValueType(uint8_t *data);
 extern "C"
 #endif
 {

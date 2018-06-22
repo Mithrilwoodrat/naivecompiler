@@ -164,24 +164,6 @@ llvm::Value* CodeGenVisitor::visit(FuncDeclNode *func)
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
         TheModule);
         
-//    llvm::BasicBlock *Entry = llvm::BasicBlock::Create(TheContext, "entry", TheFunction);
-//    Builder.SetInsertPoint(Entry);
-//
-//    uint32_t Idx = 0;
-//    for (auto &Arg : TheFunction->args()) {
-//        Arg.setName(params_names[Idx++]);
-//        llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
-//            TheFunction->getEntryBlock().begin());
-//        llvm::AllocaInst *Alloca =  TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr, Arg.getName());
-//        Builder.CreateStore(&Arg, Alloca);
-//        // Add arguments to variable symbol table.
-//        NamedValues[Arg.getName()] = Alloca;
-//    }
-//    func->GetBody()->accept(this);
-    //llvm::Value *retval = func->GetBody()->accept(this);
-    // llvm::BasicBlock *End = llvm::BasicBlock::Create(TheContext, "End", TheFunction);
-    // Builder.SetInsertPoint(End);
-    //Builder.CreateRet(retval);
     return TheFunction;
 }
 
@@ -429,9 +411,13 @@ llvm::Value* CodeGenVisitor::visit(ValueNode *node)
 {
     //llvm::Value* tmp = ConstantFP::get(TheContext, APFloat(static_cast<float>(node->GetVal())));
 	// TODO: Default signed int
-    llvm::Value* tmp = llvm::ConstantInt::get(TheContext, llvm::APInt(32, node->GetVal(), true));
+	if (node->GetValType() == serialize::ValueType::CONSTINT) {
+		node = static_cast<IntegerNode *>(node);
+		llvm::Value* tmp = llvm::ConstantInt::get(TheContext, llvm::APInt(32, node->GetVal(), false));
     //tmp->dump();
-    return tmp;
+		return tmp;
+	}
+	return nullptr;
 }
 
 }

@@ -6,17 +6,26 @@
 
 namespace naivescript{
 
+class IntegerNode;
+
 class ValueNode : public Expr {
 
 public:
-    ValueNode() : Expr(serialize::NodeType::TypeValue), val(0) , valstring(""), valuetype(0) {}
-
+	ValueNode() : Expr(serialize::NodeType::TypeValue), valuetype(0) {}
+    ValueNode(int valuetype) : Expr(serialize::NodeType::TypeValue), valuetype(valuetype) {}
     virtual bool Parse( struct serialize::Value * value, size_t size );
 
     virtual void show(int offset = 0) {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-    	std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
+		std::cout << index;
+		switch (valuetype) {
+			case serialize::ValueType::CONSTINT:
+				std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << std::endl;
+				return;
+			case serialize::ValueType::CONSTSTRING:
+				std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << std::endl;
+				return;
+			}
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 
@@ -26,9 +35,8 @@ public:
 
     virtual llvm::Value* accept(Visitor* v);
 
-    inline const uint32_t GetVal( void ) const {
-        return val;
-    }
+    virtual const uint32_t GetVal( void ) const {return 0;};
+    virtual const std::string GetValString( void ) const {return "";};
 
     inline const uint32_t GetValType( void ) const {
         return valuetype;
@@ -44,10 +52,59 @@ public:
     			return std::to_string(type);
     	}
     }
+    uint32_t valuetype;
+private:
+    std::vector<ASTNode *> children;
+};
+
+class IntegerNode : public ValueNode {
+public:
+	IntegerNode() : ValueNode(serialize::ValueType::CONSTINT),  val(0) {}
+
+	IntegerNode(std::string val) : ValueNode(serialize::ValueType::CONSTINT), val(0) {}
+
+    virtual bool Parse( struct serialize::Value * value, size_t size );
+
+    virtual void show(int offset = 0) {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
+    	std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
+    }
+
+    virtual llvm::Value* accept(Visitor* v);
+
+    virtual inline const uint32_t GetVal( void ) const {
+        return val;
+    }
+
 private:
     uint32_t val;
+    std::vector<ASTNode *> children;
+};
+
+
+class StringLiteralNode : public ValueNode {
+public:
+	StringLiteralNode() : ValueNode(serialize::ValueType::CONSTSTRING),  valstring("") {}
+
+	StringLiteralNode(std::string val) : ValueNode(serialize::ValueType::CONSTSTRING), valstring(val) {}
+
+    virtual bool Parse( struct serialize::Value * value, size_t size );
+
+    virtual void show(int offset = 0) {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
+    	std::cout << "StringLiteralNode Type: " << ShowType(valuetype) << "\tVal: " << valstring << std::endl;
+    }
+
+    virtual llvm::Value* accept(Visitor* v);
+
+    inline const std::string GetValString( void ) const {
+        return valstring;
+    }
+
+private:
     std::string valstring;
-    uint32_t valuetype;
     std::vector<ASTNode *> children;
 };
 

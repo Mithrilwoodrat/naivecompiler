@@ -22,6 +22,7 @@ public:
     virtual llvm::Value* accept(Visitor* v) = 0;
     virtual void show( int offset = 0 ) = 0;
     virtual const std::vector<ASTNode *> GetChildren( void ) = 0;
+    virtual ~ASTNode(){}
 };
 
 }
