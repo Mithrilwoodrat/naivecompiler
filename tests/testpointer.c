@@ -1,9 +1,8 @@
-int c = 0;
-
 int main()
 {
     int a=1;
-    int *p = &a;
+    int *p;
+    p = &a;
     *p = 2;
     return 0;
 }
