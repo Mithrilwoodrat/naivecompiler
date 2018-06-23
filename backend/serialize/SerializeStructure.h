@@ -37,10 +37,37 @@ enum NodeType
 
 enum ValueType
 {
-    CONSTINT = 0,
-    CONSTFLOAT = 1,
-    CONSTCHAR = 2,
-	CONSTSTRING = 3
+	VOID = 0,
+    CONSTINT = 1,
+    CONSTFLOAT = 2,
+    CONSTCHAR = 3,
+	CONSTSTRING = 4
+};
+
+//'+': 0,
+//'-': 1,
+//'*': 2,
+//'/': 3,
+//'>': 4,
+//'<': 5,
+//'>=': 6,
+//'<=': 7,
+//'&&':, 8,
+//'||', 9,
+//'==' 10
+enum BinaryOpType
+{
+	ADDOP = 0,
+	MINUSOP = 1,
+	TIMESOP = 2,
+	DIVIDEOP = 3,
+	GTOP = 4,
+	LTOP = 5,
+	GTEOP = 6,
+	LTEOP = 7,
+	ANDOP = 8,
+	OROP = 9,
+	EQUALOP = 10
 };
 
 const uint32_t FileMD5Size = 16 ;
@@ -212,7 +239,7 @@ struct BinaryOp
     uint32_t size;
     uint32_t lhsSize;
     uint32_t rhsSize;
-    uint8_t op;
+    uint32_t op;
     Expr lhs;
     Expr rhs;
 }__attribute__((packed)) ;

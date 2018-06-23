@@ -363,9 +363,14 @@ llvm::Value* CodeGenVisitor::visit(AssignmentNode *node)
 
 llvm::Value* CodeGenVisitor::visit(ReturnNode *node) 
 {
-    llvm::Value * retval = node->GetExpr()->accept(this);
-    Builder.CreateRet(retval);
-    return retval;
+	ASTNode * expr = node->GetExpr();
+	if (expr) {
+		llvm::Value * retval = expr->accept(this);
+		Builder.CreateRet(retval);
+		return retval;
+	}
+	Builder.CreateRetVoid();
+    return nullptr;
 }
 
 llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node) 

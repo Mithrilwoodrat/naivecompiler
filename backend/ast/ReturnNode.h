@@ -11,14 +11,15 @@ class Visitor;
 class ReturnNode : public Statement 
 {
 public:
-    ReturnNode() : Statement(serialize::TypeReturnStmt) {}
+    ReturnNode() : Statement(serialize::TypeReturnStmt), expr(nullptr) {}
     virtual bool Parse( struct serialize::ReturnStmt * return_stmt, size_t size ) ;
 
     virtual void show( int offset = 0 ) {
     	std::string index = std::string(offset, '\t');
     	std::cout << index;
         std::cout <<  "Return: ";
-        expr->show(offset + 1);
+        if (expr)
+        	expr->show(offset + 1);
         std::cout << std::endl;
     }
 
@@ -36,7 +37,9 @@ public:
 
     ~ReturnNode()
     { 
-        free(expr);
+    	if (expr){
+    		free(expr);
+    	}
     }
 private:
     ASTNode* expr;

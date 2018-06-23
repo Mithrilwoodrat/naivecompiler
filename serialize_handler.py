@@ -36,13 +36,32 @@ class SerializeHandler(object):
         if op in op_map:
             return op_map.get(op)
         logging.error('unsupported unary op')
+        
+    def binary_op_to_int(self, op):
+        op_map = {
+            '+': 0,
+            '-': 1,
+            '*': 2,
+            '/': 3,
+            '>': 4,
+            '<': 5,
+            '>=': 6,
+            '<=': 7,
+            '&&': 8,
+            '||': 9,
+            '==': 10
+        }
+        if op in op_map:
+            return op_map.get(op)
+        logging.error('unsupported unary op')
 
     def type_to_int(self, _type):
         type_map = {
-            'int': 0,
-            'float': 1,
-            'char': 2,
-            'string': 3
+            'void': 0,
+            'int': 1,
+            'float': 2,
+            'char': 3,
+            'string': 4
         }
         if _type in type_map:
             return type_map.get(_type)
@@ -148,7 +167,10 @@ class SerializeHandler(object):
 
     def serialize_ReturnStmt(self, node):
         return_statement = S_ReturnStmt()
-        return_statement['expr'] = self.serialize(node.expr)
+        if node.expr is None:
+            return_statement['expr'] = ''
+        else:
+            return_statement['expr'] = self.serialize(node.expr)
         return return_statement
 
     def serialize_BreakStmt(self, node):
@@ -159,7 +181,7 @@ class SerializeHandler(object):
 
     def serialize_BinaryOp(self, node):
         binary_op = S_BinaryOp()
-        binary_op['op'] = node.op
+        binary_op['op'] = self.binary_op_to_int(node.op)
         binary_op['exp1'] = self.serialize(node.lhs)
         binary_op['exp2'] = self.serialize(node.rhs)
         return binary_op

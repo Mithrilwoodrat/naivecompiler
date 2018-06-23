@@ -356,6 +356,10 @@ class Parser(object):
     def p_return_statement(self, p):
         ''' return_statement : RETURN expression SEMI '''
         p[0] = ReturnStmt(p[2])
+        
+    def p_return_statement2(self, p):
+        ''' return_statement : RETURN SEMI '''
+        p[0] = ReturnStmt()
     
     def p_assignment_statment(self, p):
         '''assignment_statement : assignment_expr SEMI'''
@@ -489,7 +493,8 @@ class Parser(object):
     def p_basetype(self, p):
         ''' basetype : INT 
                  | CHAR
-                 | FLOAT'''
+                 | FLOAT
+                 | VOID '''
         p[0] = p[1]
         
     def p_methodsymbol(self, p):

@@ -58,10 +58,14 @@ ASTNode * NodeFactory::CreateValue(uint8_t *data, uint32_t size) {
 	//ASTNode *node = nullptr;
 	struct serialize::Value* value = reinterpret_cast<struct serialize::Value*>(data);
 	uint32_t valuetype = value->valuetype;
+	bool parse_ret;
 	switch (valuetype) {
 	case serialize::ValueType::CONSTINT: {
 		IntegerNode* node = (IntegerNode*) new IntegerNode();
-		node->Parse(value, size);
+		parse_ret = node->Parse(value, size);
+		if (parse_ret == false) {
+			std::cerr << "Parsing Value Failed" << std::endl;
+		}
 		//node = static_cast<ValueNode *>(node);
 		return node;
 	}

@@ -77,6 +77,10 @@ class Compiler(object):
         '''
         assert ast.__class__.__name__ == 'AST'
         return ast.root
+        
+    def rewrite_ast(self):
+        rewriter = ReWriteVisitor()
+        rewriter.visit(self.ast, self.ast)
 
     def analysis(self):
         if self.ast is None:
@@ -107,8 +111,7 @@ class Compiler(object):
         obj = FileFormat()
         #self.ast = self.minify_ast(self.ast)
         self.ast.show()
-        rewriter = ReWriteVisitor()
-        rewriter.visit(self.ast, self.ast)
+        self.rewrite_ast()
         print 'After ReWrite'
         self.ast.show()
         body = self.dump_body()
@@ -134,4 +137,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 3:
         compiler.compile(sys.argv[2])
     elif len(sys.argv) == 2:
+        compiler.ast.show()
+        compiler.rewrite_ast()
+        print 'After ReWrite'
         compiler.ast.show()

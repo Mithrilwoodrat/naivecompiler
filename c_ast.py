@@ -221,10 +221,12 @@ class WhileStmt(Statement):
     
 
 class ReturnStmt(Statement):
-    def __init__(self, expr):
+    def __init__(self, expr=None):
         self.expr = expr
 
     def children(self):
+        if self.expr is None:
+            return []
         return [self.expr]
 
     

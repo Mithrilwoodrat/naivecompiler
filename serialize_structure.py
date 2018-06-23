@@ -207,10 +207,10 @@ class S_ContinueStmt(Structure):
 class S_BinaryOp(Structure):
     structure = (
         ("type", "<I=%d" % Type_BinaryOp),
-        ("size", "<I=4*4 + 1 + len(exp1) + len(exp2)"),
+        ("size", "<I=4*5 + len(exp1) + len(exp2)"),
         ("exp1_size", "<I=len(exp1)"),
         ("exp2_size", "<I=len(exp2)"),
-        ("op", "c"),
+        ("op", "<I"),
         ("exp1", ":"),
         ("exp2", ":")
     )

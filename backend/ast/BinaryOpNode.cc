@@ -8,7 +8,7 @@ namespace naivescript{
 bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
         std::cout << "Parsing BinaryOP: ";
         op = binaryop->op;
-        std::cout << "OP: " << op << std::endl;
+        std::cout << "OP: " << ShowBinaryOp(op) << std::endl;
         uint8_t *p_lhs = (uint8_t *)(binaryop->lhs.data);
         uint32_t type = util::getStructType(p_lhs);
         switch(type) {

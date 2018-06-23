@@ -82,8 +82,10 @@ public:
 
     virtual void show( int offset = 0 )
     {
+    	std::string index = std::string(offset, '\t');
+    	std::cout << index;
         std::cout <<  "CMP: " << "id1=" << id1 << "id2=" << id2 << std::endl;
-        expr->show();
+        expr->show(offset);
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 

@@ -8,6 +8,9 @@ namespace naivescript
 bool ReturnNode::Parse( struct serialize::ReturnStmt * return_stmt, size_t size ) 
 {
     std::cout << "Parsing ReturnStmt: ";
+    if (return_stmt->exprSize == 0) {
+    	std::cout << "Void" << std::endl;
+    }
     uint32_t type = util::getStructType(return_stmt->expr);
     switch(type) {
         case serialize::TypeValue:
