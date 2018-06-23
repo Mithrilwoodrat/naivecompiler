@@ -33,6 +33,10 @@ docker build -t naivescript .
  - [x] support extern function decl
  - [x] formatted AST show function
  - [x] Implement Expr Class for Gen different Code in CodeGen 
- * support StringLiteral in backend 
+ * [x] support StringLiteral in backend 
    - NodeFactory CreateValueNode return different Node Class
  * support array and pointer in backend
+ - [] support void type in funcdecl
+ - [] support empty return stmt
+ - [] support '||' '&&' binaryOp (frontend and backend)
+ - [] refact condition generate
