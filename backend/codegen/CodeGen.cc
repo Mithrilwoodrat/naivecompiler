@@ -179,8 +179,19 @@ llvm::Value* CodeGenVisitor::visit(FuncDefNode *func)
     std::vector<llvm::Type *> Args(decls.size(),
         llvm::Type::getInt32Ty(TheContext));
 
-    llvm::FunctionType *FT =
-      llvm::FunctionType::get(llvm::Type::getInt32Ty(TheContext), Args, false);
+    llvm::FunctionType *FT;
+    uint32_t return_type = func->GetReturnType();
+
+    switch(return_type) {
+    case serialize::ValueType::CONSTINT:
+    	FT=  llvm::FunctionType::get(llvm::Type::getInt32Ty(TheContext), Args, false);
+    	break;
+    case serialize::ValueType::VOID:
+    	FT = llvm::FunctionType::get(nullptr, Args, false);
+    	break;
+    default:
+    	FT = llvm::FunctionType::get(nullptr, Args, false);
+    }
 
     llvm::Function *TheFunction =
       llvm::Function::Create(FT, llvm::Function::ExternalLinkage, func->GetFuncName(),
@@ -381,17 +392,17 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node)
     return nullptr;
 
   switch (node->GetOp()) {
-  case '+':
+  case serialize::BinaryOpType::ADDOP:
     return Builder.CreateAdd(L, R, "addtmp");
-  case '-':
+  case serialize::BinaryOpType::MINUSOP:
     return Builder.CreateSub(L, R, "subtmp");
-  case '*':
+  case serialize::BinaryOpType::TIMESOP:
     return Builder.CreateMul(L, R, "multmp");
-  case '>':
+  case serialize::BinaryOpType::GTOP:
     L = Builder.CreateICmpUGT(L, R, "cmptmp");
     //L->dump();
     return L;
-  case '<':
+  case serialize::BinaryOpType::LTOP:
     L = Builder.CreateICmpULT(L, R, "cmptmp");
     //L->dump();
     return L;
