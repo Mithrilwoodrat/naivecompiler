@@ -40,3 +40,4 @@ docker build -t naivescript .
  - [] support empty return stmt
  - [] support '||' '&&' binaryOp (frontend and backend)
  - [] refact condition generate
+ - Read Clang CFG.cpp and refact ASTRewrite Class
