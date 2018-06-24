@@ -28,6 +28,11 @@ public:
         return params_list;
     }
 
+    uint32_t GetReturnType(void) const
+    {
+    	return return_type;
+    }
+
     ASTNode* GetBody(void)
     {
         return body;
