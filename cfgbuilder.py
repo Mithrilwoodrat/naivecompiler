@@ -3,7 +3,7 @@ import logging
 import sys
 
 from visitor import NodeVisitor
-from c_ast import Label, CMPJMP, ABSJMP, TypeDecl
+from c_ast import Statement, Label, CMPJMP, ABSJMP, TypeDecl
 
 logger = logging.getLogger(__file__)
 LabelId = 0
@@ -22,8 +22,7 @@ class SpecialVisitor(object):
         method = 'visit_' + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
         # deep first 
-        # visit in reverse order for gen Label in order
-        for c in node.children()[::-1]:
+        for c in node.children():
             self.visit(c, node)
         return visitor(node, parent)
 
@@ -39,24 +38,119 @@ class BasicBlock(object):
     """ Hold a BasicBlock, To Replace AST Label"""
     BlockKind = ["Reachable", "Unreachable", "Unknown"] # 该 BasicBlock 是否可达
     def __init__(self):
-        self.Label = None # Label id
-        self.Stmts = [] # StmtList
+        self.Label = None # Label
+        self.Label_id = -1 # Label id
+        self.stmts = [] # StmtList
         self.block_kind = "Reachable"
         self.successor = None
+        self.Terminator = None
+        self.LoopTarget = None
+        
+    def insert_stmt(self, node):
+        if node is not None:
+            self.stmts.insert(0, node)
+        
+#class CFGBuilder(SpecialVisitor):
+#    def visit_StmtList(self, node, parent):
+#        helper = CFGBuilderIMPL()
+#        helper.build_cfg(node, parent)
+
+#int main()
+#{
+#        int a = 0;
+#        if (a > 10)
+#                return 1;
+#        a = a + 10;
+#        return 0;
+#}
+
+#int main()
+# [B4 (ENTRY)]
+#   Succs (1): B3
+#
+# [B1]
+#   1: a
+#   2: [B1.1] (ImplicitCastExpr, LValueToRValue, int)
+#   3: 10
+#   4: [B1.2] + [B1.3]
+#   5: a
+#   6: [B1.5] = [B1.4]
+#   7: 0
+#   8: return [B1.7];
+#   Preds (1): B3
+#   Succs (1): B0
+#
+# [B2]
+#   1: 1
+#   2: return [B2.1];
+#   Preds (1): B3
+#   Succs (1): B0
+#
+# [B3]
+#   1: 0
+#   2: int a = 0;
+#   3: a
+#   4: [B3.3] (ImplicitCastExpr, LValueToRValue, int)
+#   5: 10
+#   6: [B3.4] > [B3.5]
+#   T: if [B3.6]
+#   Preds (1): B4
+#   Succs (2): B2 B1
+#
+# [B0 (EXIT)]
+#   Preds (2): B1 B2
             
-class CFGBuilder(object):
+class CFGBuilder(SpecialVisitor):
     """ 至低向上构建 CFG，向构建继承的 block 再构建 上一层的 block"""
+    Terminator_STMTS = ["BreakStmt", "ContinueStmt", "ReturnStmt"]
     def __init__(self):
+        self.blocks = []
         self.current_block = None
         self.current_successor = None
+    
     # CFG.cpp::1124
     # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html#_ZN12_GLOBAL__N_110CFGBuilder11createBlockEb
     def build_cfg(self, node, parent):
-        pass
+        """ 将 StmtList 转换为 CFG，从尾向头遍历子节点"""
+        assert node.__class__.__name__ == 'StmtList'
+        self.current_successor = self.createBlock() # exit Block
+        self.visitStmt(node, parent):
+    
+    def createBlock(self):
+        block = BasicBlock()
+        self.current_block = block
+        if (self.current_successor is None):
+            block.successor = block
+        else:
+            block.successor = self.current_successor
+        self.blocks.append(block)
+        return block
+    
+    def visitStmt(self, node, parent, add_to_block=True):
+        """ Visit a Stmt.
+        """
+        node_class =  node.__class__.__name__
+        if issubclass(node, Statement):
+            method = 'visit_' + node_class
+            visitor = getattr(self, method)
+        else:
+            logger.info("Unsupported Stmt: {0}".format(node_class))
+        # deep first 
+        # visit in reverse order for gen Label in order
+        # for c in node.children()[::-1]:
+        #    self.visit(c, node)
+        if self.add_to_block:
+            if self.current_block is None:
+                self.current_block = self.createBlock()
+            self.current_block.insert_stmt(node)
+        return visitor(node, parent)
     
     # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html#_ZN12_GLOBAL__N_110CFGBuilder5VisitEPN5clang4StmtENS_13AddStmtChoiceE
     def visit_StmtList(self, node, parent):
-        pass
+        self.build_cfg(node, parent)
+        
+    def visitStmt_IfStmt(self, node, parent):
+        TrueBlock = self.createBlock()
 
 
 class LoopHelper(SpecialVisitor):
