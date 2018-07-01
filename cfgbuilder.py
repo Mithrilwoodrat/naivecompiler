@@ -100,13 +100,18 @@ class BasicBlock(object):
 # [B0 (EXIT)]
 #   Preds (2): B1 B2
             
-class CFGBuilder(SpecialVisitor):
+class CFGBuilder(object):
     """ 至低向上构建 CFG，向构建继承的 block 再构建 上一层的 block"""
     Terminator_STMTS = ["BreakStmt", "ContinueStmt", "ReturnStmt"]
     def __init__(self):
         self.blocks = []
         self.current_block = None
         self.current_successor = None
+        self.break_jumptarget = [] # if nested control flow stmt, append and pop targets
+        self.continue_jumptarget = []
+        self.labels = []
+        self.entry_block = None
+        self.exit_block = None
     
     # CFG.cpp::1124
     # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html#_ZN12_GLOBAL__N_110CFGBuilder11createBlockEb
@@ -116,19 +121,31 @@ class CFGBuilder(SpecialVisitor):
         self.current_successor = self.createBlock() # exit Block
         for c in node.children()[::-1]:
             self.visitStmt(c, node)
-        print self.blocks
+        print 'Blocks', self.blocks
         for b in self.blocks:
             print b.stmts
     
-    def createBlock(self):
+    def createBlock(self, add_successor=True):
         block = BasicBlock()
-        self.current_block = block
-        if (self.current_successor is None):
-            block.successor = block
-        else:
-            block.successor = self.current_successor
         self.blocks.append(block)
+        # 将第一个 Block 设置为起始 block
+        if len(self.blocks) == 0 or self.blocks[0] == self.blocks[-1]:
+            self.entry_block = self.exit_block = block
+
+        # 添加到当前的继承链中
+        if add_successor and self.current_successor:
+            block.successor = self.current_successor
         return block
+
+    def visit(self, node, parent):
+        """ Visit a node.
+        """
+        parent = node
+        if node.__class__.__name__ == "StmtList":
+            self.build_cfg(node,parent)
+        else:
+            for c in node.children():
+                self.visit(c, parent)
     
     def visitStmt(self, node, parent, add_to_block=True):
         """ Visit a Stmt.
@@ -164,6 +181,15 @@ class CFGBuilder(SpecialVisitor):
     def visitStmt_ReturnStmt(self, node, parent):
         pass
 
+    def visitStmt_DeclStmt(self, node, parent):
+        pass
+
+    def visitStmt_Assignment(self, node, parent):
+        pass
+
+    # TODO Build CFG for WhileStmt
+    def visitStmt_WhileStmt(self, node, parent):
+        pass
 
 class LoopHelper(SpecialVisitor):
     def __init__(self):

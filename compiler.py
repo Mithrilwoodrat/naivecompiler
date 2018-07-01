@@ -12,6 +12,7 @@ from analysis_handler import AnalysisVisitor
 from serialize_handler import SerializeHandler
 from ast_rewrite import ReWriteVisitor
 from interface import LibNaiveScript
+from cfgbuilder import CFGBuilder
 
 
 logger = logging.getLogger(__file__)
@@ -138,6 +139,8 @@ if __name__ == "__main__":
         compiler.compile(sys.argv[2])
     elif len(sys.argv) == 2:
         compiler.ast.show()
-        compiler.rewrite_ast()
-        print 'After ReWrite'
-        compiler.ast.show()
+        builder = CFGBuilder()
+        builder.visit(compiler.ast, compiler.ast)
+        #compiler.rewrite_ast()
+        #print 'After ReWrite'
+        #compiler.ast.show()
