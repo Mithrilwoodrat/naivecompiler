@@ -114,7 +114,11 @@ class CFGBuilder(SpecialVisitor):
         """ 将 StmtList 转换为 CFG，从尾向头遍历子节点"""
         assert node.__class__.__name__ == 'StmtList'
         self.current_successor = self.createBlock() # exit Block
-        self.visitStmt(node, parent):
+        for c in node.children()[::-1]:
+            self.visitStmt(c, node)
+        print self.blocks
+        for b in self.blocks:
+            print b.stmts
     
     def createBlock(self):
         block = BasicBlock()
@@ -130,16 +134,18 @@ class CFGBuilder(SpecialVisitor):
         """ Visit a Stmt.
         """
         node_class =  node.__class__.__name__
-        if issubclass(node, Statement):
-            method = 'visit_' + node_class
+        # print node_class
+        if issubclass(node.__class__, Statement):
+            method = 'visitStmt_' + node_class
             visitor = getattr(self, method)
         else:
             logger.info("Unsupported Stmt: {0}".format(node_class))
+            sys.exit(0)
         # deep first 
         # visit in reverse order for gen Label in order
         # for c in node.children()[::-1]:
-        #    self.visit(c, node)
-        if self.add_to_block:
+        #    self.visit(c, Terminatornode)
+        if add_to_block:
             if self.current_block is None:
                 self.current_block = self.createBlock()
             self.current_block.insert_stmt(node)
@@ -149,8 +155,14 @@ class CFGBuilder(SpecialVisitor):
     def visit_StmtList(self, node, parent):
         self.build_cfg(node, parent)
         
+    def visitStmt_BreakStmt(self, node, parent):
+        self.current_block.Terminator = node
+        
     def visitStmt_IfStmt(self, node, parent):
         TrueBlock = self.createBlock()
+        
+    def visitStmt_ReturnStmt(self, node, parent):
+        pass
 
 
 class LoopHelper(SpecialVisitor):
@@ -239,4 +251,6 @@ class ReWriteVisitor(SpecialVisitor):
 
     def visit_StmtList(self, node, parent):
         helper = StmtsHelper()
-        helper.visit(node, parent)
+        bloacks = helper.visit(node, parent)
+        index = parent.l.index(node)
+        parent[index] = blocks
