@@ -3,7 +3,7 @@ import logging
 import sys
 
 from visitor import NodeVisitor
-from c_ast import Statement, Label, CMPJMP, ABSJMP, TypeDecl
+from c_ast import *
 
 logger = logging.getLogger(__file__)
 LabelId = 0
@@ -40,6 +40,7 @@ class BasicBlock(object):
     def __init__(self):
         self.Label = None # Label
         self.Label_id = -1 # Label id
+        self.block_id = -1 # block id
         self.stmts = [] # StmtList
         self.block_kind = "Reachable"
         self.successor = None
@@ -49,6 +50,12 @@ class BasicBlock(object):
     def insert_stmt(self, node):
         if node is not None:
             self.stmts.insert(0, node)
+
+    def set_loop_target(self, node):
+        self.LoopTarget = node
+
+    def set_terminator(self, node):
+        self.Terminator = node
         
 #class CFGBuilder(SpecialVisitor):
 #    def visit_StmtList(self, node, parent):
@@ -109,6 +116,7 @@ class CFGBuilder(object):
         self.current_successor = None
         self.break_jumptarget = [] # if nested control flow stmt, append and pop targets
         self.continue_jumptarget = []
+        self.block_stack = self.successor_stack = []
         self.labels = []
         self.entry_block = None
         self.exit_block = None
@@ -189,7 +197,39 @@ class CFGBuilder(object):
 
     # TODO Build CFG for WhileStmt
     def visitStmt_WhileStmt(self, node, parent):
-        pass
+        loop_exit = self.createBlock()
+        self.current_block.insert_stmt(node)
+        
+        loop_successor = None
+        if (self.current_block):
+            loop_successor = self.current_block
+        else:
+            loop_successor = self.current_successor
+
+        # process loop body stmtlist
+
+        self.block_stack.append(self.current_block)
+        self.succ_stack.append(self.current_successor)
+        self.continue_stack.append(self.continue_jumptarget)
+
+        transition_block = createBlock(false)
+        self.current_successor = transition_block
+        transition_block.set_loop_target(node)
+        self.continue_jumptarget = self.current_successor
+        self.break_jumptarget = loop_successor
+
+        body_block = visitStmt(node.body)
+
+        entry_cond_block = exit_cond_block = None
+        cond = node.cond_expr
+        print 'cond', cond.__class__.__name__
+        if cond.__class__ is BinaryOp:
+            visitStmt_LogicalOp(cond, node, body_block)
+            
+            
+        
+        
+        
 
 class LoopHelper(SpecialVisitor):
     def __init__(self):

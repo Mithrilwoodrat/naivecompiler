@@ -212,12 +212,12 @@ class IfStmt(Statement):
 
 class WhileStmt(Statement):
     def __init__(self, expr, body):
-        self.bool_expr = expr
+        self.cond_expr = expr
         self.body = body
         self.node_name = "ForStat"
 
     def children(self):
-        return [self.bool_expr, self.body]
+        return [self.cond_expr, self.body]
     
 
 class ReturnStmt(Statement):
