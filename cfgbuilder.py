@@ -14,6 +14,13 @@ def LabelIDGen():
     LabelId += 1
     return LabelId
 
+def get_id():
+    _id = 0
+    while(1):
+        yield _id
+        _id += 1
+
+id_generator = get_id()
 
 class SpecialVisitor(object):
     def visit(self, node, parent):
@@ -33,17 +40,33 @@ class SpecialVisitor(object):
         parent = node
         for c in node.children():
             self.visit(c, parent)
-            
-class BasicBlock(object):
+
+def build_cfg(ast):
+    def visit(node, parent):
+        """ Visit a node.
+        """
+        # deep first
+        for c in node.children():
+            if node.__class__ is FuncDef:
+                cfg = CFG.build_cfg(node.body, node)
+                return cfg
+            else:
+                visit(c, node)
+        return None
+    return visit(ast, ast)
+
+class CFGBlock(object):
     """ Hold a BasicBlock, To Replace AST Label"""
     BlockKind = ["Reachable", "Unreachable", "Unknown"] # 该 BasicBlock 是否可达
     def __init__(self):
         self.Label = None # Label
         self.Label_id = -1 # Label id
-        self.block_id = -1 # block id
+        self.block_id = id_generator.next() # block id
+        self.block_name = ''
         self.stmts = [] # StmtList
         self.block_kind = "Reachable"
-        self.successor = None
+        self.preds = []
+        self.successors = []
         self.Terminator = None
         self.LoopTarget = None
         
@@ -56,153 +79,157 @@ class BasicBlock(object):
 
     def set_terminator(self, node):
         self.Terminator = node
-        
-#class CFGBuilder(SpecialVisitor):
-#    def visit_StmtList(self, node, parent):
-#        helper = CFGBuilderIMPL()
-#        helper.build_cfg(node, parent)
 
-#int main()
-#{
-#        int a = 0;
-#        if (a > 10)
-#                return 1;
-#        a = a + 10;
-#        return 0;
-#}
+    def add_successor(self, block):
+        self.successors.append(block)
 
-#int main()
-# [B4 (ENTRY)]
-#   Succs (1): B3
-#
-# [B1]
-#   1: a
-#   2: [B1.1] (ImplicitCastExpr, LValueToRValue, int)
-#   3: 10
-#   4: [B1.2] + [B1.3]
-#   5: a
-#   6: [B1.5] = [B1.4]
-#   7: 0
-#   8: return [B1.7];
-#   Preds (1): B3
-#   Succs (1): B0
-#
-# [B2]
-#   1: 1
-#   2: return [B2.1];
-#   Preds (1): B3
-#   Succs (1): B0
-#
-# [B3]
-#   1: 0
-#   2: int a = 0;
-#   3: a
-#   4: [B3.3] (ImplicitCastExpr, LValueToRValue, int)
-#   5: 10
-#   6: [B3.4] > [B3.5]
-#   T: if [B3.6]
-#   Preds (1): B4
-#   Succs (2): B2 B1
-#
-# [B0 (EXIT)]
-#   Preds (2): B1 B2
+class CFG(object):
+    def __init__(self):
+        self.blocks = []
+        self.entry_block = None
+        self.exit_block = None
+
+    def insert_block(self, block):
+        if block:
+            self.blocks.insert(0, block)
+
+    def create_block(self):
+        block = CFGBlock()
+        self.insert_block(block)
+        # 将第一个 Block 设置为起始 block
+        if len(self.blocks) == 0 or self.blocks[0] == self.blocks[-1]:
+            self.entry_block = self.exit_block = block
+            block.block_name = 'Exit'
+        return block
+
+    def set_entry(self, block):
+        self.entry_block = block
+        self.entry_block.block_name = 'Entry'
+
+    @staticmethod
+    def build_cfg(stmtlist, funcdef):
+        cfgbuilder = CFGBuilder()
+        return cfgbuilder.build_cfg(stmtlist, funcdef)
+    
             
 class CFGBuilder(object):
     """ 至低向上构建 CFG，向构建继承的 block 再构建 上一层的 block"""
     Terminator_STMTS = ["BreakStmt", "ContinueStmt", "ReturnStmt"]
     def __init__(self):
-        self.blocks = []
+        self.cfg = CFG()
         self.current_block = None
         self.current_successor = None
-        self.break_jumptarget = [] # if nested control flow stmt, append and pop targets
-        self.continue_jumptarget = []
+        self.break_jumptarget = None
+        self.continue_jumptarget = None
+        # if nested control flow stmt, append and pop targets
         self.block_stack = self.successor_stack = []
+        self.break_jumptarget_stack = []
+        self.continue_jumptarget_stack = []
         self.labels = []
-        self.entry_block = None
-        self.exit_block = None
     
+    def create_block(self, add_successor=True):
+        block = self.cfg.create_block()
+        # 添加到当前的继承链中
+        # print self.current_block, add_successor
+        if add_successor and self.current_successor:
+            block.add_successor(self.current_successor)
+        return block
+
+    def auto_create_block(self):
+        if self.current_block is None:
+            self.current_block = self.create_block()
+    
+    def visit(self, node):
+        """ Visit a Stmt.
+        """
+        node_class =  node.__class__.__name__
+        # print node_class
+        if issubclass(node.__class__, Statement) or node.__class__ is StmtList:
+            method = 'visit_' + node_class
+            visitor = getattr(self, method)
+        else:
+            logger.warning("Unsupported Stmt: {0}".format(node_class))
+            sys.exit(1)
+        return visitor(node)
+
+    # add stmt to block , return current_block if stmt has no children
+    def visitStmt(self, stmt, add_to_block=True):
+        if add_to_block:
+            self.auto_create_block()
+            self.current_block.insert_stmt(stmt)
+        return self.visitStmt_children(stmt)
+
+    def visitStmt_children(self, stmt):
+        block = self.current_block
+        # visit in resverse order
+        for c in stmt.children()[::-1]:
+            if issubclass(c.__class__, Statement):
+                tmp = self.visit(c)
+                if tmp:
+                    block = tmp
+        return block
+
     # CFG.cpp::1124
     # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html#_ZN12_GLOBAL__N_110CFGBuilder11createBlockEb
     def build_cfg(self, node, parent):
         """ 将 StmtList 转换为 CFG，从尾向头遍历子节点"""
         assert node.__class__.__name__ == 'StmtList'
-        self.current_successor = self.createBlock() # exit Block
-        for c in node.children()[::-1]:
-            self.visitStmt(c, node)
-        print 'Blocks', self.blocks
-        for b in self.blocks:
+        self.current_successor = self.create_block() # exit Block
+        self.current_block = None
+        
+        block = self.visit(node)
+        
+        if block is not None:
+            self.current_successor = block
+
+        print self.current_successor
+        self.cfg.set_entry(self.create_block())
+        blocks = self.cfg.blocks
+        print 'Blocks', blocks
+        for b in blocks:
+            print b.block_id,b.block_name
             print b.stmts
+            print 'Succs:', [i.block_id for i in b.successors]
     
-    def createBlock(self, add_successor=True):
-        block = BasicBlock()
-        self.blocks.append(block)
-        # 将第一个 Block 设置为起始 block
-        if len(self.blocks) == 0 or self.blocks[0] == self.blocks[-1]:
-            self.entry_block = self.exit_block = block
-
-        # 添加到当前的继承链中
-        if add_successor and self.current_successor:
-            block.successor = self.current_successor
-        return block
-
-    def visit(self, node, parent):
-        """ Visit a node.
-        """
-        parent = node
-        if node.__class__.__name__ == "StmtList":
-            self.build_cfg(node,parent)
-        else:
-            for c in node.children():
-                self.visit(c, parent)
-    
-    def visitStmt(self, node, parent, add_to_block=True):
-        """ Visit a Stmt.
-        """
-        node_class =  node.__class__.__name__
-        # print node_class
-        if issubclass(node.__class__, Statement):
-            method = 'visitStmt_' + node_class
-            visitor = getattr(self, method)
-        else:
-            logger.info("Unsupported Stmt: {0}".format(node_class))
-            sys.exit(0)
-        # deep first 
-        # visit in reverse order for gen Label in order
-        # for c in node.children()[::-1]:
-        #    self.visit(c, Terminatornode)
-        if add_to_block:
-            if self.current_block is None:
-                self.current_block = self.createBlock()
-            self.current_block.insert_stmt(node)
-        return visitor(node, parent)
-    
-    # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html#_ZN12_GLOBAL__N_110CFGBuilder5VisitEPN5clang4StmtENS_13AddStmtChoiceE
-    def visit_StmtList(self, node, parent):
-        self.build_cfg(node, parent)
+    # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html VisitCompoundStmt
+    def visit_StmtList(self, node):
+        last_block = self.current_block
+        for c in node.children()[::-1]:
+            tmp = self.visit(c)
+            if tmp:
+                last_block = tmp
+        return last_block
         
     def visitStmt_BreakStmt(self, node, parent):
         self.current_block.Terminator = node
         
     def visitStmt_IfStmt(self, node, parent):
-        TrueBlock = self.createBlock()
+        TrueBlock = self.create_block()
         
-    def visitStmt_ReturnStmt(self, node, parent):
-        pass
+    def visit_ReturnStmt(self, stmt):
+        # create new block
+        self.current_block = self.create_block(False)
+        self.current_block.add_successor(self.cfg.blocks[-1]) # add exit block as successor
+        return self.visitStmt(stmt, add_to_block=True)
+        
+    def visit_DeclStmt(self, stmt):
+        self.visitStmt(stmt)
 
-    def visitStmt_DeclStmt(self, node, parent):
-        pass
-
-    def visitStmt_Assignment(self, node, parent):
-        pass
+    def visit_Assignment(self, stmt):
+        self.visitStmt(stmt)
 
     # TODO Build CFG for WhileStmt
-    def visitStmt_WhileStmt(self, node, parent):
-        loop_exit = self.createBlock()
-        self.current_block.insert_stmt(node)
-        
+    def visitStmt_WhileStmt(self, stmt):
         loop_successor = None
+
+        # add loop exit block, for analysis only
+        # self.auto_create_block()
+        # self.current_block.insert_stmt(stmt)
+        
+        # while is control-flow stmt, stop process current_block
         if (self.current_block):
             loop_successor = self.current_block
+            self.current_block = None
         else:
             loop_successor = self.current_successor
 
@@ -210,26 +237,39 @@ class CFGBuilder(object):
 
         self.block_stack.append(self.current_block)
         self.succ_stack.append(self.current_successor)
-        self.continue_stack.append(self.continue_jumptarget)
+        self.continue_jumptarget_stack.append(self.continue_jumptarget)
+        self.break_jumptarget_stack.append(self.continue_jumptarget)
 
-        transition_block = createBlock(false)
+        transition_block = self.create_block(add_successor=False)
         self.current_successor = transition_block
         transition_block.set_loop_target(node)
         self.continue_jumptarget = self.current_successor
         self.break_jumptarget = loop_successor
 
-        body_block = visitStmt(node.body)
+        body_block = self.visit(node.body)
+
+        if body_block is None:
+            body_block = self.continue_jumptarget
+        
 
         entry_cond_block = exit_cond_block = None
         cond = node.cond_expr
         print 'cond', cond.__class__.__name__
-        if cond.__class__ is BinaryOp:
-            visitStmt_LogicalOp(cond, node, body_block)
+        if cond.__class__ is BinaryOp and cond.op in ['&&', '||']:
+            entry_cond_block = exit_cond_block = visit_LogicalOp(cond, body_block, loop_successor)
+        else:
+            exit_cond_block = self.create_block(false)
+            self.current_block = exit_cond_block
+            self.current_block = entry_cond_block = self.visit(cond)
+
+            # True and False cond, set 2 successors
+            exit_cond_block.add_successor(body_block)
+            exit_cond_block.add_successor(loop_successor)
             
-            
-        
-        
-        
+        transition_block.add_successor(entry_cond_block)
+        self.current_block = None
+        self.current_successor = entry_cond_block
+        return entry_cond_block
 
 class LoopHelper(SpecialVisitor):
     def __init__(self):
