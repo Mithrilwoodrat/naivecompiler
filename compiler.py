@@ -62,7 +62,6 @@ class Compiler(object):
         self.source = source
         self.parser = Parser()
         self.env = Env()
-        self.lib = LibNaiveScript('./libNaiveScript.so')
 
     def ast_gen(self):
         self.ast = self.parser.parse(self.source)
@@ -109,6 +108,7 @@ class Compiler(object):
         return sh.serialize(self.ast)
     
     def compile(self, pout):
+        self.lib = LibNaiveScript('./libNaiveScript.so')
         obj = FileFormat()
         #self.ast = self.minify_ast(self.ast)
         self.ast.show()

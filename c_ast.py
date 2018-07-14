@@ -199,15 +199,15 @@ class FuncCall(Statement):
 
 
 class IfStmt(Statement):
-    def __init__(self, cond, iftrue, iffalse=None):
+    def __init__(self, cond, then, _else=None):
         self.cond = cond
-        self.iftrue = iftrue
-        self.iffalse = iffalse
+        self.then = then
+        self._else = _else
 
     def children(self):
-        if self.iffalse is None:
-            return [self.cond, self.iftrue]
-        return [self.cond, self.iftrue, self.iffalse]
+        if self._else is None:
+            return [self.cond, self.then]
+        return [self.cond, self.then, self._else]
     
 
 class WhileStmt(Statement):
@@ -246,6 +246,12 @@ class BinaryOp(ASTNode):
         self.lhs = lhs
         self.op = op
         self.rhs = rhs
+
+    def is_logicalOp(self):
+        return self.op == '&&' or self.op == "||"
+
+    def is_compareOp(self):
+        return self.op in [">", "<", ">=", "<=", "==", "!="]
 
     def children(self):
         return [self.lhs, self.rhs]
