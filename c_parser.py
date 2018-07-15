@@ -62,7 +62,7 @@ class Lexer(object):
         "PLUS", "MINUS", "TIMES", "DIVIDES", "EQUALS", "GT", "LT", "LAND", "LOR",
         "BAND",
         'INT','CHAR', 'FLOAT',
-        "GE", 'LE', 'NE',
+        "GE", 'LE', 'NE', 'EQ',
         "LBRACE", "RBRACE", "LBRACKET", "RBRACKET", "LPAREN","RPAREN","SEMI","COMMA","VOID",
         "COMMENTS",
         "EXTERN", "STATIC"
@@ -88,6 +88,7 @@ class Lexer(object):
     t_LT = r'<'
     t_GE = r'>='
     t_LE = r'<='
+    t_EQ = r'=='
     t_NE = r'!='
     t_LBRACE = r'\{'
     t_RBRACE = r'\}'
@@ -408,6 +409,7 @@ class Parser(object):
                   | binary_expr LT binary_expr
                   | binary_expr LE binary_expr
                   | binary_expr GE binary_expr
+                  | binary_expr EQ binary_expr
                   | binary_expr NE binary_expr
                   | binary_expr LAND binary_expr
                   | binary_expr LOR binary_expr

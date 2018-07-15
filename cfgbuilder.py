@@ -140,7 +140,19 @@ class CFGBuilder(object):
 
     def restore_current_block(self):
         self.current_block =  self.block_stack.pop()
-    
+
+    def save_break_jumptarget(self):
+        self.break_jumptarget_stack.append(self.break_jumptarget)
+
+    def restore_break_jumptarget(self):
+        self.break_jumptarget =  self.break_jumptarget_stack.pop()
+
+    def save_continue_jumptarget(self):
+        self.continue_jumptarget_stack.append(self.continue_jumptarget)
+
+    def restore_continue_jumptarget(self):
+        self.continue_jumptarget = self.continue_jumptarget_stack.pop()
+
     def create_block(self, add_successor=True):
         block = self.cfg.create_block()
         # 添加到当前的继承链中
@@ -196,19 +208,24 @@ class CFGBuilder(object):
         if block is not None:
             self.current_successor = block
 
-        print self.current_successor
         self.cfg.set_entry(self.create_block())
 
         self.show()
 
     def show(self):
         blocks = self.cfg.blocks
-        print 'Blocks', blocks
         for b in blocks:
             print b.block_id,b.block_name
-            print b.stmts
+            for stmt in b.stmts:
+                stmt.show()
             print 'Succs:', [i.block_id for i in b.successors], '\n'
-    
+
+    def try_eval_bool(self, cond):
+        if cond.__class__ is Const:
+            if cond._type == 'int':
+                return cond.val > 0
+        return None
+
     # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html VisitCompoundStmt
     def visit_StmtList(self, node):
         last_block = self.current_block
@@ -277,17 +294,57 @@ class CFGBuilder(object):
     def visit_Assignment(self, stmt):
         return self.visitStmt(stmt)
 
-    def visit_BinaryOp(self, node, body, loop_succ):
+    def visit_BinaryOp(self, node, true_block, false_block):
         if node.is_logicalOp():
             return self.visit_LogicalOp(node, None, None)
         else:
             # logger.warning('unsupported op: {}'.format(node.op))
             self.auto_create_block()
-            self.current_block.insert_stmt(CMPJMP(node, body.block_id, loop_succ.block_id))
+            self.current_block.insert_stmt(CMPJMP(node, true_block.block_id, false_block.block_id))
             return None
 
-    def visit_LogicalOp(self, cond, body_block, loop_successor):
-        pass
+    def visit_LogicalOp(self, cond, true_block, false_block):
+        rhs = cond.rhs
+        rhs_block = exit_block = None
+
+        if rhs.is_logicalOp():
+            rhs_block, exit_block = self.visit_LogicalOp(rhs, true_block, false_block)
+        else:
+            rhs_block = exit_block = self.create_block(False)
+
+            rhs_block.set_terminator(cond)
+
+            rhs_block.add_successor(true_block)
+            rhs_block.add_successor(false_block)
+            self.current_block = rhs_block
+            rhs_block.insert_stmt(CMPJMP(rhs, true_block.block_id, false_block.block_id))
+
+        lhs = cond.lhs
+
+        if lhs.is_logicalOp():
+            if lhs.op == '||':
+                return self.visit_LogicalOp(lhs, true_block, rhs_block)
+            elif lhs.op == '&&':
+                return self.visit_LogicalOp(lhs, rhs_block, false_block)
+
+        lhs_block = self.create_block(False)
+        lhs_block.set_terminator(lhs)
+
+        self.current_block = lhs_block
+        try_result = self.try_eval_bool(lhs)
+        if try_result:
+            pass
+        else:
+            if cond.op == "||":
+                lhs_block.add_successor(true_block)
+                lhs_block.add_successor(rhs_block)
+                lhs_block.insert_stmt(CMPJMP(lhs, true_block.block_id, rhs_block.block_id))
+            elif cond.op == '&&':
+                lhs_block.add_successor(rhs_block)
+                lhs_block.add_successor(false_block)
+                lhs_block.insert_stmt(CMPJMP(lhs, rhs_block.block_id, false_block.block_id))
+
+        return lhs_block, exit_block
 
     # TODO Build CFG for WhileStmt
     def visit_WhileStmt(self, stmt):
@@ -308,10 +365,10 @@ class CFGBuilder(object):
 
         # process loop body stmtlist
 
-        self.block_stack.append(self.current_block)
-        self.successor_stack.append(self.current_successor)
-        self.continue_jumptarget_stack.append(self.continue_jumptarget)
-        self.break_jumptarget_stack.append(self.continue_jumptarget)
+        self.save_current_block()
+        self.save_current_successor()
+        self.save_break_jumptarget()
+        self.save_continue_jumptarget()
 
         transition_block = self.create_block(add_successor=False)
         transition_block.block_name = 'transition_block'
@@ -326,24 +383,38 @@ class CFGBuilder(object):
 
         if body_block is None:
             body_block = self.continue_jumptarget
-        
+
+        self.restore_current_block()
+        self.restore_current_successor()
+        self.restore_break_jumptarget()
+        self.restore_continue_jumptarget()
 
         entry_cond_block = exit_cond_block = None
         cond = stmt.cond_expr
-        print 'cond', cond.__class__.__name__
+
         if cond.__class__ is BinaryOp and cond.op in ['&&', '||']:
-            entry_cond_block = exit_cond_block = self.visit_LogicalOp(cond, body_block, loop_successor)
+            entry_cond_block , exit_cond_block = self.visit_LogicalOp(cond, body_block, loop_successor)
         else:
             exit_cond_block = self.create_block(False)
             entry_cond_block = exit_cond_block
             self.current_block = exit_cond_block
-            cond_block = self.visit_BinaryOp(cond, body_block, loop_successor) # 如果 cond 中有赋值的操作，添加到 entry_cond_block
-            if cond_block:
-                self.current_block = entry_cond_block = cond_block
 
-            # True and False cond, set 2 successors
-            exit_cond_block.add_successor(body_block)
-            exit_cond_block.add_successor(loop_successor)
+            try_result = self.try_eval_bool(cond)
+            if try_result:
+                if try_result == True:
+                    exit_cond_block.add_successor(body_block)
+                    self.current_block.insert_stmt(ABSJMP(body_block.block_id))
+                elif try_result == False:
+                    exit_cond_block.add_successor(loop_successor)
+                    self.current_block.insert_stmt(ABSJMP(loop_successor.block_id))
+            else:
+                cond_block = self.visit_BinaryOp(cond, body_block, loop_successor) # 如果 cond 中有赋值的操作，添加到 entry_cond_block
+                if cond_block:
+                    self.current_block = entry_cond_block = cond_block
+
+                # True and False cond, set 2 successors
+                exit_cond_block.add_successor(body_block)
+                exit_cond_block.add_successor(loop_successor)
 
 
         transition_block.add_successor(entry_cond_block)
@@ -353,93 +424,3 @@ class CFGBuilder(object):
         self.current_block = None
         self.current_successor = entry_cond_block
         return entry_cond_block
-
-class LoopHelper(SpecialVisitor):
-    def __init__(self):
-        self.L1ID = LabelIDGen()
-        self.L1 = Label(self.L1ID)  # loopstart
-        self.L2ID = LabelIDGen()
-        self.L2 = Label(self.L2ID)  # loopend
-        
-    def visit_ContinueStmt(self, node, parent):
-        jmpstmt = ABSJMP(self.L1ID)
-        index = parent.l.index(node)
-        parent.l[index] = jmpstmt
-
-    def visit_BreakStmt(self, node, parent):
-        jmpstmt = ABSJMP(self.L2ID)
-        index = parent.l.index(node)
-        parent.l[index] = jmpstmt
-
-    
-class StmtsHelper(SpecialVisitor):
-    def __init__(self):
-        pass
-    
-    def visit_WhileStmt(self, node, parent):
-        helper = LoopHelper()
-        helper.visit(node, parent)
-        cmpstmt = CMPJMP(node.bool_expr, helper.L1ID, helper.L2ID)
-        index = parent.l.index(node)
-        beforestmts = parent.l[:index]
-        afterstmts = parent.l[index+1:]
-        newstmts = []
-        beforestmts.append(cmpstmt)
-        newstmts.append(helper.L1)
-        newstmts.extend(node.body.l)
-        newstmts.append(cmpstmt)
-        newstmts.append(helper.L2)
-        parent.l = beforestmts + newstmts + afterstmts
-        parent = node
-        
-    ENDSTMTS = ["BreakStmt", "ContinueStmt", "ReturnStmt"]
-    def visit_IfStmt(self, node, parent):
-        L1ID = LabelIDGen()
-        L1 = Label(L1ID)  # iftrue
-        L2ID = LabelIDGen()
-        L2 = Label(L2ID)  # iffalse
-        L3ID = LabelIDGen()
-        L3 = Label(L3ID)  # endif
-        index = parent.l.index(node)
-        beforestmts = parent.l[:index]
-        afterstmts = parent.l[index+1:]
-        newstmts = []
-        cmpstmt = CMPJMP(node.cond, L1ID, L2ID)
-        beforestmts.append(cmpstmt)
-        newstmts.append(L1)
-        newstmts.extend(node.iftrue.l)
-        jmp = ABSJMP(L3ID)
-        if not filter(lambda x: x.__class__.__name__ in self.ENDSTMTS,
-                  node.iftrue.l
-        ):
-            newstmts.append(jmp)
-        newstmts.append(L2)
-        if node.iffalse:
-            newstmts.extend(node.iffalse.l)
-            if not filter(lambda x: x.__class__.__name__ in self.ENDSTMTS,
-                          node.iffalse.l
-            ):
-                newstmts.append(jmp)
-        else:
-            newstmts.append(jmp)
-        newstmts.append(L3)
-        parent.l = beforestmts + newstmts + afterstmts
-        parent = node
-            
-
-class ReWriteVisitor(SpecialVisitor):
-    def __init__(self):
-        self.root = None
-        self.const_strings = []
-        
-    # def visit(self, node, parent):
-        # if self.root is None:
-            # self.root = parent
-        # super(ReWriteVisitor, self).visit(node, parent)
-
-
-    def visit_StmtList(self, node, parent):
-        helper = StmtsHelper()
-        bloacks = helper.visit(node, parent)
-        index = parent.l.index(node)
-        parent[index] = blocks
