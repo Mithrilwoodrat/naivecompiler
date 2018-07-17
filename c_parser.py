@@ -415,6 +415,7 @@ class Parser(object):
                   | binary_expr LOR binary_expr
                   | LPAREN binary_expr RPAREN
                   | cast_expr
+                  | funccall_expr
         '''
         if len(p) == 2:
             p[0] = p[1]
