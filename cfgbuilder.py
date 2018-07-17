@@ -41,18 +41,12 @@ class SpecialVisitor(object):
             self.visit(c, parent)
 
 def build_cfg(ast):
-    def visit(node, parent):
-        """ Visit a node.
-        """
-        # deep first
-        for c in node.children():
-            if node.__class__ is FuncDef:
-                cfg = CFG.build_cfg(node.body, node)
-                return cfg
-            else:
-                visit(c, node)
-        return None
-    return visit(ast, ast)
+    cfgs = {}
+    for c in ast.children():
+        if c.__class__ is FuncDef:
+            cfg = CFG.build_cfg(c.body, c)
+            cfgs[c] = cfg
+    return cfgs
 
 
 class CFGBlock(object):
@@ -109,7 +103,19 @@ class CFG(object):
     @staticmethod
     def build_cfg(stmtlist, funcdef):
         cfgbuilder = CFGBuilder()
-        return cfgbuilder.build_cfg(stmtlist, funcdef)
+        cfgs = cfgbuilder.build_cfg(stmtlist, funcdef)
+        return cfgs
+
+    def show(self):
+        blocks = self.blocks
+        for b in blocks:
+            print b.block_id, b.block_name
+            for stmt in b.stmts:
+                stmt.show()
+            print 'Succs:', [i.block_id for i in b.successors], '\n'
+
+    def trans_cfg(self):
+        """ trans cfg to baiscblocks """
     
             
 class CFGBuilder(object):
@@ -210,15 +216,7 @@ class CFGBuilder(object):
 
         self.cfg.set_entry(self.create_block())
 
-        self.show()
-
-    def show(self):
-        blocks = self.cfg.blocks
-        for b in blocks:
-            print b.block_id,b.block_name
-            for stmt in b.stmts:
-                stmt.show()
-            print 'Succs:', [i.block_id for i in b.successors], '\n'
+        return self.cfg
 
     def try_eval_bool(self, cond):
         if cond.__class__ is Const:
