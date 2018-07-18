@@ -114,9 +114,8 @@ class CFG(object):
                 stmt.show()
             print 'Succs:', [i.block_id for i in b.successors], '\n'
 
-    def trans_cfg(self):
-        """ trans cfg to baiscblocks """
-    
+    def get_entry(self):
+        return self.entry_block
             
 class CFGBuilder(object):
     """ 至低向上构建 CFG，向构建继承的 block 再构建 上一层的 block"""
