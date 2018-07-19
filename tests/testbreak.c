@@ -1,4 +1,4 @@
-int fuck(int a, int b)
+int main(int a, int b)
 {
     int i;
     i = 1;

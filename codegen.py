@@ -40,16 +40,16 @@ class SpecialVisitor(object):
         for c in node.children():
             self.visit(c, parent)
 
-def build_cfg(ast):
-    cfgs = {}
+def build_basic_blocks(ast):
+    basic_blocks = {}
     for c in ast.children():
         if c.__class__ is FuncDef:
-            cfg = CFG.build_cfg(c.body, c)
-            cfgs[c] = cfg
-    return cfgs
+            bb = CodeGenModule.build_basic_blocks(c.body, c)
+            basic_blocks[c] = bb
+    return basic_blocks
 
 
-class CFGBlock(object):
+class BasicBlock(object):
     """ Hold a BasicBlock, To Replace AST Label"""
     BlockKind = ["Reachable", "Unreachable", "Unknown"] # 该 BasicBlock 是否可达
     def __init__(self):
@@ -58,7 +58,6 @@ class CFGBlock(object):
         self.block_id = id_generator.next() # block id
         self.block_name = ''
         self.stmts = [] # StmtList
-        self.block_kind = "Reachable"
         self.preds = []
         self.successors = []
         self.Terminator = None
@@ -77,18 +76,16 @@ class CFGBlock(object):
     def add_successor(self, block):
         self.successors.append(block)
 
-class CFG(object):
+class CodeGenModule(object):
     def __init__(self):
         self.blocks = []
-        self.entry_block = None
-        self.exit_block = None
 
     def insert_block(self, block):
         if block:
             self.blocks.insert(0, block)
 
     def create_block(self):
-        block = CFGBlock()
+        block = BasicBlock()
         self.insert_block(block)
         # 将第一个 Block 设置为起始 block
         if len(self.blocks) == 0 or self.blocks[0] == self.blocks[-1]:
@@ -101,9 +98,9 @@ class CFG(object):
         self.entry_block.block_name = 'Entry'
 
     @staticmethod
-    def build_cfg(stmtlist, funcdef):
-        cfgbuilder = CFGBuilder()
-        cfgs = cfgbuilder.build_cfg(stmtlist, funcdef)
+    def build_basic_blocks(stmtlist, funcdef):
+        cfgbuilder = CodeGenerator()
+        cfgs = cfgbuilder.build_basic_blocks(stmtlist, funcdef)
         return cfgs
 
     def show(self):
@@ -117,11 +114,11 @@ class CFG(object):
     def get_entry(self):
         return self.entry_block
             
-class CFGBuilder(object):
+class CodeGenerator(object):
     """ 至低向上构建 CFG，向构建继承的 block 再构建 上一层的 block"""
     Terminator_STMTS = ["BreakStmt", "ContinueStmt", "ReturnStmt"]
     def __init__(self):
-        self.cfg = CFG()
+        self.cgm = CodeGenModule()
         self.current_block = None
         self.current_successor = None
         self.break_jumptarget = None
@@ -159,7 +156,7 @@ class CFGBuilder(object):
         self.continue_jumptarget = self.continue_jumptarget_stack.pop()
 
     def create_block(self, add_successor=True):
-        block = self.cfg.create_block()
+        block = self.cgm.create_block()
         # 添加到当前的继承链中
         # print self.current_block, add_successor
         if add_successor and self.current_successor:
@@ -202,7 +199,7 @@ class CFGBuilder(object):
 
     # CFG.cpp::1124
     # https://code.woboq.org/llvm/clang/lib/Analysis/CFG.cpp.html#_ZN12_GLOBAL__N_110CFGBuilder11createBlockEb
-    def build_cfg(self, node, parent):
+    def build_basic_blocks(self, node, parent):
         """ 将 StmtList 转换为 CFG，从尾向头遍历子节点"""
         assert node.__class__.__name__ == 'StmtList'
         self.current_successor = self.create_block() # exit Block
@@ -213,9 +210,7 @@ class CFGBuilder(object):
         if block is not None:
             self.current_successor = block
 
-        self.cfg.set_entry(self.create_block())
-
-        return self.cfg
+        return self.cgm
 
     def try_eval_bool(self, cond):
         if cond.__class__ is Const:
@@ -278,14 +273,14 @@ class CFGBuilder(object):
             self.current_block.add_successor(else_block)
             last_block = self.visit_BinaryOp(cond, then_block, else_block)
 
-        # self.create_block(False)
+
         # TrueBlock = self.create_block()
         return last_block
         
     def visit_ReturnStmt(self, stmt):
         # create new block
         self.current_block = self.create_block(False)
-        self.current_block.add_successor(self.cfg.blocks[-1]) # add exit block as successor
+        self.current_block.add_successor(self.cgm.blocks[-1]) # add exit block as successor
         return self.visitStmt(stmt, add_to_block=True)
         
     def visit_DeclStmt(self, stmt):

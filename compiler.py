@@ -13,6 +13,7 @@ from serialize_handler import SerializeHandler
 from ast_rewrite import ReWriteVisitor
 from interface import LibNaiveScript
 from cfgbuilder import build_cfg
+from codegen import build_basic_blocks
 import optparse
 
 logger = logging.getLogger(__file__)
@@ -123,7 +124,7 @@ class Compiler(object):
             print 'Func ', func.function_name    .name
             self.cfgs[func].show()
 
-    def build_basic_blocks(self):
+    def build_basic_blocks_old(self):
         nodes = self.ast.l
         for i in range(len(nodes)):
             node = nodes[i]
@@ -134,7 +135,28 @@ class Compiler(object):
                 stmt_list.l = stmts
                 nodes[i].body = stmt_list
 
-    Terminator_STMTS = ["ABSJMP", "CMPJMP"]
+    def build_basic_blocks(self):
+        nodes = self.ast.l
+        cgms = build_basic_blocks(self.ast)
+        for i in range(len(nodes)):
+            node = nodes[i]
+            if node.__class__ is FuncDef:
+                stmts = []
+                cgm = cgms[node]
+                blocks = cgm.blocks[:-1]
+                for bb in blocks:
+                    if len(bb.stmts) > 0:
+                        if blocks.index(bb) > 0:
+                            stmts.append(Label(bb.block_id))
+                        stmts.extend(bb.stmts)
+                        last_stmt = bb.stmts[-1]
+                        if not self.is_terminator_stmt(last_stmt):
+                            stmts.append(ABSJMP(bb.successors[0].block_id))
+                stmt_list = StmtList()
+                stmt_list.l = stmts
+                nodes[i].body = stmt_list
+
+    Terminator_STMTS = ["ReturnStmt", "ABSJMP", "CMPJMP"]
 
     def is_terminator_stmt(self, stmt):
         return stmt.__class__.__name__ in self.Terminator_STMTS
