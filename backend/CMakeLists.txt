@@ -13,6 +13,7 @@ else()
 Add_Definitions( -O3 ) 
 endif()
 
+
 Add_Definitions( -Wall -Werror -fPIC -std=c++11 -pthread  -g
 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS)
 
@@ -28,6 +29,15 @@ Set( NSIncludeDir ${NSWorkingPath}
     /usr/local/include
 	#/usr/lib/llvm-3.8/include
 )
+
+if(APPLE)
+    # for MacOS X or iOS, watchOS, tvOS (since 3.10.3)
+    # list(APPEND ${NSIncludeDir}
+    # Add_Definitions( -L/usr/local/opt/llvm@6/lib )
+    # Add_Definitions( -I/usr/local/opt/llvm@6/include )
+    include_directories(/usr/local/opt/llvm@6/include)
+    link_directories(/usr/local/opt/llvm@6/lib)
+endif()
 
 Set( NSSrcFiles
     ${NSWorkingPath}/Compiler.cc
@@ -58,8 +68,17 @@ Set( NSSrcFiles
 )
 
 link_directories(/usr/local/lib/)
+if(APPLE)
+    add_library(NaiveScript MODULE ${NSSrcFiles})
+else()
+    add_library(NaiveScript  SHARED ${NSSrcFiles})
+endif()
 
-add_library(NaiveScript  SHARED ${NSSrcFiles})
 Target_Include_Directories( NaiveScript PUBLIC ${NSIncludeDir} )
 
-target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVM-6.0)
+if(APPLE)
+  target_link_libraries(NaiveScript PUBLIC -ldl -lcurses -lpthread -lz -lm -lLLVM)
+else()
+    target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVM-6.0)
+
+endif()
