@@ -283,6 +283,9 @@ class CodeGenerator(object):
         self.current_block.add_successor(self.cgm.blocks[-1]) # add exit block as successor
         return self.visitStmt(stmt, add_to_block=True)
         
+    def visit_FuncCall(self, stmt):
+        return self.visitStmt(stmt)
+
     def visit_DeclStmt(self, stmt):
         return self.visitStmt(stmt)
 

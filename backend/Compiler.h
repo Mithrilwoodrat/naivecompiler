@@ -14,7 +14,7 @@ namespace naivescript
 class Compiler 
 {
 public:
-    Compiler() {}
+    Compiler() : symbol_table(nullptr) {}
     
     static Compiler * GetCompiler() {
         if (!instance) {
