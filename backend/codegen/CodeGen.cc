@@ -269,7 +269,8 @@ llvm::Value* CodeGenVisitor::visit(StmtList * stmtlist) {
         serialize::NodeType type = stmt->GetNodeType();
         switch(type) {
             case serialize::TypeReturnStmt:
-                return stmt->accept(this);
+                //return stmt->accept(this);
+            	stmt->accept(this);
                 break;
             case serialize::TypeABSJMP:
                 stmt->accept(this);
