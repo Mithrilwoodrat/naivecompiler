@@ -2,7 +2,7 @@
 #include "Compiler.h"
 #include "NodeFactory.h"
 
-namespace naivescript{
+namespace naivecompiler{
 bool ArgumentList::Parse( struct serialize::ArgumentList * args, size_t size )
 {
     std::cout << "Parsing ArgumentList ";;

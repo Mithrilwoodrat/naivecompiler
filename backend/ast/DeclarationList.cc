@@ -1,7 +1,7 @@
 #include "DeclarationList.h"
 #include "Compiler.h"
 
-namespace naivescript{
+namespace naivecompiler{
 
 llvm::Value* DeclarationList::accept(Visitor* v)
 {

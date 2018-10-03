@@ -2,7 +2,7 @@
 #define UTIL_H
 
 #include <stdint.h>
-namespace naivescript
+namespace naivecompiler
 {
 
 namespace util

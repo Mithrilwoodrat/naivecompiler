@@ -3,6 +3,6 @@
 #include "NodeVisitor.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 }

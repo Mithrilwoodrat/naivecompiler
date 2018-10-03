@@ -3,7 +3,7 @@
 #include "NodeFactory.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
         std::cout << "Parsing BinaryOP: ";

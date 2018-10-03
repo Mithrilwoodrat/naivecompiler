@@ -11,7 +11,7 @@
 #include "SymbolTable.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 namespace serialize {
 
 class SerializeFile 

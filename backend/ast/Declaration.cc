@@ -1,7 +1,7 @@
 #include "Declaration.h"
 #include "Compiler.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool Declaration::Parse( struct serialize::Declaration * decl, size_t size ) {

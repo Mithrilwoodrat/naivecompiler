@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-namespace naivescript
+namespace naivecompiler
 {
 
 namespace serialize

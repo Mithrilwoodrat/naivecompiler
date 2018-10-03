@@ -6,7 +6,7 @@
 #include <map>
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 class AST
 {

@@ -1,12 +1,12 @@
 #ifndef ARGUMENTLIST_H
 #define ARGUMENTLIST_H
 
-#include "NaiveScript.h"
+#include "../NaiveCompiler.h"
 #include "ASTNode.h"
 #include "Util.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 class ArgumentList : public ASTNode
 {

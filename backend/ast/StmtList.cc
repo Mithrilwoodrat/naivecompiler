@@ -3,7 +3,7 @@
 #include "AssignmentNode.h"
 #include "Compiler.h"
 
-namespace naivescript{
+namespace naivecompiler{
 bool StmtList::Parse( struct serialize::StmtList * stmt_list, size_t size )
 {
     std::cout << "Parsing StmtList ";

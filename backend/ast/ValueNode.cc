@@ -1,7 +1,7 @@
 #include "ValueNode.h"
 #include "Compiler.h"
 
-namespace naivescript{
+namespace naivecompiler{
 
 bool ValueNode::Parse( struct serialize::Value * value, size_t size ) 
 {

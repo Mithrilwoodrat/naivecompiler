@@ -8,7 +8,7 @@
 #include "NodeVisitor.h"
 #include "CodeGen.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 class Compiler 

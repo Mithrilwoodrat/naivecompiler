@@ -1,6 +1,6 @@
 #include "SymbolTable.h"
 
-namespace naivescript{
+namespace naivecompiler{
 namespace serialize {
 
 bool SymbolTable::Parse( uint8_t * data, size_t size ) {

@@ -2,7 +2,7 @@
 #include "Compiler.h"
 #include "NodeFactory.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool FuncDeclNode::Parse( struct serialize::FuncDecl * func, size_t size )

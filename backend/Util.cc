@@ -1,7 +1,7 @@
 #include <Util.h>
 #include "SerializeStructure.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 namespace util

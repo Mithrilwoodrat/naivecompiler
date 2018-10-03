@@ -1,5 +1,5 @@
-#include "NaiveScript.h"
 #include <string>
+#include "../NaiveCompiler.h"
 
 
 int main() {

@@ -2,7 +2,7 @@
 #include "NodeFactory.h"
 #include "Compiler.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool ReturnNode::Parse( struct serialize::ReturnStmt * return_stmt, size_t size ) 

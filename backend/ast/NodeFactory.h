@@ -4,7 +4,7 @@
 #include "ASTNode.h"
 #include "stdint.h"
 
-namespace naivescript{
+namespace naivecompiler{
 
 class FunctionNode;
 

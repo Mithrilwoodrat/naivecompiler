@@ -6,7 +6,7 @@
 #include <map>
 #include <iostream>
 
-namespace naivescript{
+namespace naivecompiler{
 namespace serialize {
 
 class SymbolTable{

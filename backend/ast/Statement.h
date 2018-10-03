@@ -6,7 +6,7 @@
 #include "NodeFactory.h"
 #include "Util.h"
 
-namespace naivescript{
+namespace naivecompiler{
 
 class Visitor;
 	 

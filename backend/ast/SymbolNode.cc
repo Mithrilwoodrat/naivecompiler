@@ -1,7 +1,7 @@
 #include "SymbolNode.h"
 #include "Compiler.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool SymbolNode::Parse( struct serialize::Symbol * symbol, size_t size ) {

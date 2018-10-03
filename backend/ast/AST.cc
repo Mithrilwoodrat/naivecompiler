@@ -2,7 +2,7 @@
 #include "Compiler.h"
 #include "NodeFactory.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 bool AST::Parse( struct serialize::AST * ast, size_t size )
 {

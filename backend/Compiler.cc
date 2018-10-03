@@ -1,6 +1,6 @@
 #include "Compiler.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 Compiler* Compiler::instance = 0;
 
@@ -22,17 +22,17 @@ extern "C" {
 
 void InitCompiler( void ) 
 {
-    naivescript::Compiler::GetCompiler();
+    naivecompiler::Compiler::GetCompiler();
 }
 
 void LoadData(char * path)
 {
-    naivescript::Compiler::GetCompiler()->LoadData(path);
+    naivecompiler::Compiler::GetCompiler()->LoadData(path);
 }
 
 void Compile(  char * filename )
 {
-    naivescript::Compiler::GetCompiler()->Compile(filename);
+    naivecompiler::Compiler::GetCompiler()->Compile(filename);
 }
 
 #ifdef __cplusplus

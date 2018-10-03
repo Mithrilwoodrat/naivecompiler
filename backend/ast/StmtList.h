@@ -5,7 +5,7 @@
 #include "Util.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 class StmtList : public ASTNode
 {

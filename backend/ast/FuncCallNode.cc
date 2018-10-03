@@ -2,7 +2,7 @@
 #include "NodeFactory.h"
 #include "Compiler.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool FuncCallNode::Parse( struct serialize::FuncCall * func_call, size_t size )  

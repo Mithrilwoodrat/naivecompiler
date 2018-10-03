@@ -4,7 +4,7 @@
 #include "Expr.h"
 #include "Util.h"
 
-namespace naivescript{
+namespace naivecompiler{
 
 class SymbolNode : public Expr
 {

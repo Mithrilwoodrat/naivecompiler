@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-namespace naivescript{
+namespace naivecompiler{
 namespace serialize {
 
 

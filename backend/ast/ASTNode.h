@@ -11,7 +11,7 @@ class Value;
 class Function;
 }
 
-namespace naivescript{
+namespace naivecompiler{
 
 class Visitor;
 	 

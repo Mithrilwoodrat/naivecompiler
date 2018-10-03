@@ -15,7 +15,7 @@
 #include "StmtList.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 ASTNode * NodeFactory::CreateStmtList(uint8_t *data, uint32_t size) {
     StmtList *node = new StmtList();

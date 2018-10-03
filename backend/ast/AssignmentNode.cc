@@ -5,7 +5,7 @@
 #include "BinaryOpNode.h"
 #include "NodeFactory.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t size ) 

@@ -6,7 +6,7 @@
 #include "Util.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 class FuncDefNode : public ASTNode
 {

@@ -2,7 +2,7 @@
 #include "NodeFactory.h"
 #include "Compiler.h"
 
-namespace naivescript
+namespace naivecompiler
 {
 
 bool LabelNode::Parse( struct serialize::Label * label, size_t size )

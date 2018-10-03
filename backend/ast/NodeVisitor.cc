@@ -6,7 +6,7 @@
 #include "BinaryOpNode.h"
 #include "SymbolNode.h"
 
-namespace naivescript{
+namespace naivecompiler{
 
 llvm::Value* ASTShowVisitor::visit(StmtList * node) {
     node->show();

@@ -17,7 +17,7 @@ namespace llvm {
     class BasicBlock;
 }
 
-namespace naivescript{
+namespace naivecompiler{
 //static    llvm::Module TheModule("naivescript", TheContext);
 
 class CodeGenVisitor : public Visitor

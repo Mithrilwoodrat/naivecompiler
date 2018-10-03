@@ -39,7 +39,7 @@
 #include "llvm/IR/LegacyPassManager.h"
 
 
-namespace naivescript{
+namespace naivecompiler{
 
 static  llvm::LLVMContext TheContext;
 static  llvm::IRBuilder<> Builder(TheContext);
