@@ -7,7 +7,7 @@ namespace naivecompiler
 
 bool FuncCallNode::Parse( struct serialize::FuncCall * func_call, size_t size )  
 {
-    std::cout << "Parsing FuncCall: ";
+    DLOG(LOG_DEBUG) << "Parsing FuncCall: ";
     func_name = Compiler::GetCompiler()->ResolveSymbol(func_call->id);
     uint8_t *p_args = (uint8_t *)(func_call->args.data);
     args = NodeFactory::CreateArgumentList(p_args, func_call->argsSize);

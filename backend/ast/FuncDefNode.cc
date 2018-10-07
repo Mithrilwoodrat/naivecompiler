@@ -7,9 +7,9 @@ namespace naivecompiler
 
 bool FuncDefNode::Parse( struct serialize::FuncDef * func, size_t size )
 {
-    std::cout << "Parsing Function: ";
+    DLOG(LOG_DEBUG) << "Parsing Function: ";
     func_name = Compiler::GetCompiler()->ResolveSymbol(func->id);
-    std::cout << "Name:" << func_name << "\t";
+    DLOG(LOG_DEBUG) << "Name:" << func_name << "\t";
     return_type = func->return_type;
     uint8_t *p_params_list = (uint8_t *)(func->param_list.data);
     uint8_t *p_body = p_params_list + func->params_size;

@@ -10,7 +10,7 @@ namespace naivecompiler
 
 bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t size ) 
 {
-    std::cout << "Parsing Assignment: ";
+    DLOG(LOG_DEBUG) << "Parsing Assignment: ";
     uint32_t type = util::getStructType(assignment->castexpr.data);
     uint8_t *p_castexpr = (uint8_t *)assignment->castexpr.data;
     ASTNode* castexpr;
@@ -22,11 +22,11 @@ bool AssignmentNode::Parse( struct serialize::Assignment * assignment, size_t si
             id = symbol->GetSymbol();
             break;
         default:
-            std::cout << "Error Unknown castexpr type" << std::endl;
+            DLOG(LOG_DEBUG) << "Error Unknown castexpr type" << std::endl;
             return false;
     }
 
-    std::cout << "ID: " << id << std::endl;
+    DLOG(LOG_DEBUG) << "ID: " << id << std::endl;
     uint8_t * data = p_castexpr + assignment->castexprSize;
     type = util::getStructType(data);
     switch(type) {

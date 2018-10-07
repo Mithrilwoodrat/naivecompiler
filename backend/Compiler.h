@@ -7,6 +7,7 @@
 #include "AST.h"
 #include "NodeVisitor.h"
 #include "CodeGen.h"
+#include "Logging.h"
 
 namespace naivecompiler
 {

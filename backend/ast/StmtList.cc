@@ -6,10 +6,10 @@
 namespace naivecompiler{
 bool StmtList::Parse( struct serialize::StmtList * stmt_list, size_t size )
 {
-    std::cout << "Parsing StmtList ";
-    //std::cout << "TypeId: " << stmt_list->type << std::endl;
+    DLOG(LOG_DEBUG) << "Parsing StmtList ";
+    //DLOG(LOG_DEBUG) << "TypeId: " << stmt_list->type << std::endl;
     count =  stmt_list->count;
-    std::cout << "Count: " << count << std::endl;
+    DLOG(LOG_DEBUG) << "Count: " << count << std::endl;
     uint8_t * data = stmt_list->data;
     size_t total_size = 0;
     size_t node_size;
@@ -17,10 +17,10 @@ bool StmtList::Parse( struct serialize::StmtList * stmt_list, size_t size )
         if (total_size > size)
              break;
         uint32_t type = util::getStructType(data);
-        //std::cout <<  "TypeId: " << type << std::endl;
+        //DLOG(LOG_DEBUG) <<  "TypeId: " << type << std::endl;
         switch (type) {
             default:
-                std::cout << "Error Unknown stmt type" << std::endl;
+                DLOG(LOG_DEBUG) << "Error Unknown stmt type" << std::endl;
                 return false;
             case serialize::TypeDeclaration:
                 node_size = util::getVarStructSize(data);

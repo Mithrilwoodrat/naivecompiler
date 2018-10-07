@@ -17,7 +17,7 @@ bool IntegerNode::Parse( struct serialize::Value * value, size_t size ) {
 	this->valuetype = value->valuetype;
 	if (this->valuetype == serialize::CONSTINT) {
 		this->val = value->val;
-		std::cout << "Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
+		DLOG(LOG_DEBUG) << "Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
 		return true;
 	}
 	return false;
@@ -33,7 +33,7 @@ bool StringLiteralNode::Parse( struct serialize::Value * value, size_t size ) {
 	this->valuetype = value->valuetype;
 	if (this->valuetype == serialize::CONSTSTRING) {
 		this->valstring = Compiler::GetCompiler()->ResolveSymbol(value->val);
-		std::cout << "Type: " << ShowType(valuetype) << "\tVal: " << valstring << std::endl;
+		DLOG(LOG_DEBUG) << "Type: " << ShowType(valuetype) << "\tVal: " << valstring << std::endl;
 		return true;
 	}
 	return false;

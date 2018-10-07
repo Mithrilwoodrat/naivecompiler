@@ -41,13 +41,13 @@ bool SerializeFile::Load( const std::string& path )
     file = reinterpret_cast<FileFormat*>( filebody ); 
     body_size = file->bodySize;
     string_table_size = file->stringtableSize;
-     std::cout << "StringTableEntry: " << 
+     DLOG(LOG_DEBUG) << "StringTableEntry: " << 
         file->stringTableEntry << std::endl;
-    std::cout << "Bodyentry: " << 
+    DLOG(LOG_DEBUG) << "Bodyentry: " << 
         file->bodyEntry << std::endl;
-    std::cout << "bodySize: " << 
+    DLOG(LOG_DEBUG) << "bodySize: " << 
         file->bodySize << std::endl;
-    std::cout << "StringTableSize: " << 
+    DLOG(LOG_DEBUG) << "StringTableSize: " << 
         file->stringtableSize << std::endl;
 
     symbol_table.Parse(filebody + file->stringTableEntry, string_table_size);

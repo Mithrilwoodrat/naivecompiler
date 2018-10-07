@@ -7,9 +7,9 @@ namespace naivecompiler
 
 bool ReturnNode::Parse( struct serialize::ReturnStmt * return_stmt, size_t size ) 
 {
-    std::cout << "Parsing ReturnStmt: ";
+    DLOG(LOG_DEBUG) << "Parsing ReturnStmt: ";
     if (return_stmt->exprSize == 0) {
-    	std::cout << "Void" << std::endl;
+    	DLOG(LOG_DEBUG) << "Void" << std::endl;
     }
     uint32_t type = util::getStructType(return_stmt->expr);
     switch(type) {

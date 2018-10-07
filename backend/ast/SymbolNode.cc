@@ -5,10 +5,10 @@ namespace naivecompiler
 {
 
 bool SymbolNode::Parse( struct serialize::Symbol * symbol, size_t size ) {
-    std::cout << "Parsing Symbol: ";
+    DLOG(LOG_DEBUG) << "Parsing Symbol: ";
     id = Compiler::GetCompiler()->ResolveSymbol(symbol->id);
     symboltype = symbol->symboltype;
-    std::cout << "ID: " << id << std::endl;
+    DLOG(LOG_DEBUG) << "ID: " << id << std::endl;
     return true;
 }
 

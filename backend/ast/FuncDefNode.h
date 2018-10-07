@@ -41,9 +41,9 @@ public:
     void show( int offset = 0 )
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "Function\t";
-        std::cout << func_name << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "Function\t";
+        DLOG(LOG_DEBUG) << func_name << std::endl;
         for (ASTNode * node : children) {
             node->show(offset+1);
         }

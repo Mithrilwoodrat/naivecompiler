@@ -6,9 +6,9 @@
 namespace naivecompiler{
 
 bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
-        std::cout << "Parsing BinaryOP: ";
+        DLOG(LOG_DEBUG) << "Parsing BinaryOP: ";
         op = binaryop->op;
-        std::cout << "OP: " << ShowBinaryOp(op) << std::endl;
+        DLOG(LOG_DEBUG) << "OP: " << ShowBinaryOp(op) << std::endl;
         uint8_t *p_lhs = (uint8_t *)(binaryop->lhs.data);
         uint32_t type = util::getStructType(p_lhs);
         switch(type) {
@@ -44,7 +44,7 @@ bool BinaryOpNode::Parse( struct serialize::BinaryOp * binaryop, size_t size ) {
                 rhs = NodeFactory::CreateFuncCallNode(p_rhs, binaryop->rhsSize);
                 break;
             default:
-                std::cout << "Unknown Type" << std::endl;
+                DLOG(LOG_DEBUG) << "Unknown Type" << std::endl;
                 return false;
         }
 

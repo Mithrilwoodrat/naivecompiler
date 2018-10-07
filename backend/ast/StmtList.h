@@ -20,9 +20,9 @@ public:
     virtual void show( int offset = 0 ) override
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "StmtList\t";
-        std::cout <<  "Node Count: " << count << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "StmtList\t";
+        DLOG(LOG_DEBUG) <<  "Node Count: " << count << std::endl;
         for (ASTNode * node : children) {
             node->show(offset + 1);
         }

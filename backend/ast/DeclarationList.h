@@ -14,9 +14,9 @@ class DeclarationList : public ASTNode
 public:
     virtual bool Parse( struct serialize::DeclarationList * decl_list, size_t size )
     {
-        std::cout << "Parsing DeclarationList ";
+        DLOG(LOG_DEBUG) << "Parsing DeclarationList ";
         count =  decl_list->count;
-        std::cout << "Count: " << count << std::endl;
+        DLOG(LOG_DEBUG) << "Count: " << count << std::endl;
         uint8_t * data = decl_list->data;
         size_t node_size = getStructSize(serialize::Declaration);
         size_t total_size = 0;
@@ -38,9 +38,9 @@ public:
     virtual void show( int offset = 0 ) override
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "DeclarationList\t";
-        std::cout <<  "Node Count: " << count << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "DeclarationList\t";
+        DLOG(LOG_DEBUG) <<  "Node Count: " << count << std::endl;
         for (ASTNode * node : children) {
             node->show(offset + 1);
         }

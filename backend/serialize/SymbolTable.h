@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <Logging.h>
 
 namespace naivecompiler{
 namespace serialize {

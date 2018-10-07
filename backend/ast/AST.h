@@ -21,9 +21,9 @@ public:
     void show( int offset = 0 )
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "AST  ";
-        std::cout <<  "Node Count: " << count << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "AST  ";
+        DLOG(LOG_DEBUG) <<  "Node Count: " << count << std::endl;
         for (ASTNode * node : children) {
             node->show(offset+1);
         }

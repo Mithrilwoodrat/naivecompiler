@@ -15,8 +15,8 @@ public:
     virtual void show(int offset = 0)
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "ID: " << id;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "ID: " << id;
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 

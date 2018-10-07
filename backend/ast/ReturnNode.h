@@ -16,11 +16,11 @@ public:
 
     virtual void show( int offset = 0 ) {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "Return: ";
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "Return: ";
         if (expr)
         	expr->show(offset + 1);
-        std::cout << std::endl;
+        DLOG(LOG_DEBUG) << std::endl;
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 

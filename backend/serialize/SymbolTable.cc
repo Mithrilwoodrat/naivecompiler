@@ -16,11 +16,11 @@ bool SymbolTable::Parse( uint8_t * data, size_t size ) {
             }
         }
     }
-    std::cout << "Symbols : "; 
+    DLOG(LOG_DEBUG) << "Symbols : "; 
     for (auto &s : symbols) {
-        std::cout << s << " ";
+        DLOG(LOG_DEBUG) << s << " ";
     }
-    std::cout << std::endl;
+    DLOG(LOG_DEBUG) << std::endl;
     return true;
 }
 

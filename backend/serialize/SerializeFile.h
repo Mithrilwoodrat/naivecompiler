@@ -9,6 +9,7 @@
 #include <fstream>
 #include "SerializeStructure.h"
 #include "SymbolTable.h"
+#include "Logging.h"
 
 
 namespace naivecompiler{

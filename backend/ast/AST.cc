@@ -6,9 +6,9 @@ namespace naivecompiler
 {
 bool AST::Parse( struct serialize::AST * ast, size_t size )
 {
-    std::cout << "Parsing AST ";
+    DLOG(LOG_DEBUG) << "Parsing AST ";
     count =  ast->count;
-    std::cout << "Count: " << count << std::endl;
+    DLOG(LOG_DEBUG) << "Count: " << count << std::endl;
     uint8_t * data = ast->data;
     size_t node_size;
     for (size_t i=0; i<count; i++) {
@@ -16,7 +16,7 @@ bool AST::Parse( struct serialize::AST * ast, size_t size )
         uint32_t type = util::getStructType(data);
         switch (type) {
             default:
-                std::cout << "Error Unknown stmt type: " << type << std::endl;
+                DLOG(LOG_DEBUG) << "Error Unknown stmt type: " << type << std::endl;
                 return false;
             case serialize::TypeFuncDef:
                 children.push_back(NodeFactory::CreateFuncDef(data, node_size));

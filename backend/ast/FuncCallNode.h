@@ -17,9 +17,9 @@ public:
 
     virtual void show( int offset = 0 ) {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "FuncCall: " << func_name << std::endl;
-        std::cout << "\t";
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "FuncCall: " << func_name << std::endl;
+        DLOG(LOG_DEBUG) << "\t";
         args->show(offset + 1);
     }
 

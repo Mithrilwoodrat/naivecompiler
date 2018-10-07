@@ -29,7 +29,7 @@ public:
     virtual bool Parse( struct serialize::Label * label, size_t size ) ;
 
     virtual void show( int offset = 0 ) {
-        std::cout <<  "Label: " << "id=" << id << std::endl;
+        DLOG(LOG_DEBUG) <<  "Label: " << "id=" << id << std::endl;
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 
@@ -55,7 +55,7 @@ public:
     virtual bool Parse( struct serialize::ABSJMP * jmp, size_t size ) ;
 
     virtual void show( int offset = 0 ) {
-        std::cout <<  "ABSJMP: " << "id=" << id << std::endl;
+        DLOG(LOG_DEBUG) <<  "ABSJMP: " << "id=" << id << std::endl;
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) 
@@ -83,8 +83,8 @@ public:
     virtual void show( int offset = 0 )
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "CMP: " << "id1=" << id1 << "id2=" << id2 << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "CMP: " << "id1=" << id1 << "id2=" << id2 << std::endl;
         expr->show(offset);
     }
 

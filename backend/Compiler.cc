@@ -4,7 +4,7 @@ namespace naivecompiler
 {
 Compiler* Compiler::instance = 0;
 
-void Compiler::Compile( char * filename ) 
+void Compiler::Compile( char * filename , bool dumpIR = true)
 {
     u_int8_t *body = const_cast<u_int8_t *>(file.GetBody());
     ast.Parse(reinterpret_cast<struct serialize::AST*>(body),

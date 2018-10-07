@@ -25,6 +25,7 @@ Set( NSIncludeDir ${NSWorkingPath}
     ${NSWorkingPath}/serialize
     ${NSWorkingPath}/ast
     ${NSWorkingPath}/codegen 
+    ${NSWorkingPath}/log
     /usr/include 
     /usr/local/include
 	#/usr/lib/llvm-3.8/include
@@ -42,6 +43,7 @@ endif()
 Set( NSSrcFiles
     ${NSWorkingPath}/Compiler.cc
     ${NSWorkingPath}/Util.cc
+    ${NSWorkingPath}/log/Logging.cc
 
     ${NSWorkingPath}/serialize/SerializeFile.cc
     ${NSWorkingPath}/serialize/SymbolTable.cc

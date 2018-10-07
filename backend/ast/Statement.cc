@@ -7,24 +7,24 @@ namespace naivecompiler
 
 bool LabelNode::Parse( struct serialize::Label * label, size_t size )
 {
-    std::cout << "Parsing Label" << std::endl;
+    DLOG(LOG_DEBUG) << "Parsing Label" << std::endl;
     id = label->id;
     return true;
 }
 
 bool ABSJMPNode::Parse( struct serialize::ABSJMP * jmp, size_t size ) 
 {
-    std::cout << "Parsing ABSJMP" << std::endl;
+    DLOG(LOG_DEBUG) << "Parsing ABSJMP" << std::endl;
     id = jmp->id;
     return true;
 }
 
 bool CMPJMPNode::Parse( struct serialize::CMPJMP * jmp, size_t size )
 {
-    std::cout << "Parsing CMPJMPNode: ";
+    DLOG(LOG_DEBUG) << "Parsing CMPJMPNode: ";
     id1 = jmp->id1;
     id2 = jmp->id2;
-    std::cout << id1 << "\t" << id2 << std::endl;
+    DLOG(LOG_DEBUG) << id1 << "\t" << id2 << std::endl;
     uint32_t type = util::getStructType(jmp->expr);
     switch(type) {
         case serialize::TypeValue:

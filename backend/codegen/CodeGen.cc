@@ -74,7 +74,7 @@ void CodeGenVisitor::GenObj(const std::string &Filename) {
     auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
 
     if (!Target) {
-        std::cout << Error << std::endl;
+        DLOG(LOG_DEBUG) << Error << std::endl;
         return;
     }
 
@@ -93,7 +93,7 @@ void CodeGenVisitor::GenObj(const std::string &Filename) {
   llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::F_None);
 
   if (EC) {
-    std::cout << "Could not open file: " << EC.message() << std::endl;;
+    DLOG(LOG_DEBUG) << "Could not open file: " << EC.message() << std::endl;;
     return;
   }
 
@@ -101,14 +101,14 @@ void CodeGenVisitor::GenObj(const std::string &Filename) {
   auto FileType = llvm::TargetMachine::CGFT_ObjectFile;
 
   if (TheTargetMachine->addPassesToEmitFile(pass, dest, FileType)) {
-    std::cout << "TheTargetMachine can't emit a file of this type" << std::endl;
+    DLOG(LOG_DEBUG) << "TheTargetMachine can't emit a file of this type" << std::endl;
     return;
   }
 
   pass.run(*TheModule);
   dest.flush();
 
-  std::cout << "Wrote " << Filename << "\n";
+  DLOG(LOG_DEBUG) << "Wrote " << Filename << "\n";
 }
 
 void CodeGenVisitor::run(AST *node)
@@ -243,7 +243,7 @@ llvm::Value* CodeGenVisitor::visit(Declaration *node)
     llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
                    TheFunction->getEntryBlock().begin());
     llvm::AllocaInst *Alloca =  TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr, node->GetID());
-    std::cout << "Alloca " << node->GetID() << std::endl;
+    DLOG(LOG_DEBUG) << "Alloca " << node->GetID() << std::endl;
     NamedValues[node->GetID()] = Alloca;
     return nullptr;
 }
@@ -366,7 +366,7 @@ llvm::Value* CodeGenVisitor::visit(ABSJMPNode *node)
 
 llvm::Value* CodeGenVisitor::visit(AssignmentNode *node) 
 {
-    std::cout << "Assignment Var: " << node->GetID() <<  std::endl;
+    DLOG(LOG_DEBUG) << "Assignment Var: " << node->GetID() <<  std::endl;
     llvm::Value * tmpval = node->GetExpr()->accept(this);
     auto Variable = NamedValues.at(node->GetID());
     Builder.CreateStore(tmpval, Variable);
@@ -415,7 +415,7 @@ llvm::Value* CodeGenVisitor::visit(BinaryOpNode *node)
 llvm::Value* CodeGenVisitor::visit(SymbolNode *node) 
 {
     std::string symbol = node->GetSymbol();
-    std::cout << "Use Of Var: " << symbol <<  std::endl;
+    DLOG(LOG_DEBUG) << "Use Of Var: " << symbol <<  std::endl;
     if (!NamedValues.count(symbol)) {
         return LogErrorV("Using Uninitialize Variable");
     }

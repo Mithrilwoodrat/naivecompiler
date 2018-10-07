@@ -5,9 +5,9 @@
 namespace naivecompiler{
 bool ArgumentList::Parse( struct serialize::ArgumentList * args, size_t size )
 {
-    std::cout << "Parsing ArgumentList ";;
+    DLOG(LOG_DEBUG) << "Parsing ArgumentList ";;
     count =  args->count;
-    std::cout << "Count: " << count << std::endl;
+    DLOG(LOG_DEBUG) << "Count: " << count << std::endl;
     uint8_t * data = args->data;
     size_t total_size = 0;
     size_t node_size;
@@ -27,7 +27,7 @@ bool ArgumentList::Parse( struct serialize::ArgumentList * args, size_t size )
                 children.push_back(NodeFactory::CreateSymbol(data, node_size));
                 break;
             default:
-                std::cout << "Error when parsing ArgumentList, wrong arg type" << std::endl;
+                DLOG(LOG_DEBUG) << "Error when parsing ArgumentList, wrong arg type" << std::endl;
                 return false;
         }
         total_size += node_size;

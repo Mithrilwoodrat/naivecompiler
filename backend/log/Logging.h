@@ -110,7 +110,7 @@ public:
 		return *stream_;
 	}
 
-	LogMessage(LogSeverity severity) : funcname_(funcname_),
+	LogMessage(LogSeverity severity) : funcname_(""),
 			severity_(severity), stream_(&std::cout) {
 		if ( Log::GetLevel() > severity_) {
 //			NullBuffer null_buffer;
@@ -119,7 +119,7 @@ public:
 		}
 	}
 
-	LogMessage(const char* funcname, int line, LogSeverity severity) : funcname_(funcname_),
+	LogMessage(const char* funcname, int line, LogSeverity severity) : funcname_(funcname),
 			severity_(severity), stream_(&std::cout) {
 		if ( Log::GetLevel() <= severity_) {
 //		    std::streambuf * buf;
@@ -137,8 +137,8 @@ public:
 	~LogMessage() {
 	}
 private:
-	LogSeverity severity_;
 	const char * funcname_;
+	LogSeverity severity_;
 	std::ostream* stream_;
 };
 

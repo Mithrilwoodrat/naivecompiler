@@ -2,6 +2,8 @@
 #define UTIL_H
 
 #include <stdint.h>
+#include <Logging.h>
+
 namespace naivecompiler
 {
 

@@ -17,13 +17,13 @@ public:
 
     virtual void show(int offset = 0) {
     	std::string index = std::string(offset, '\t');
-		std::cout << index;
+		DLOG(LOG_DEBUG) << index;
 		switch (valuetype) {
 			case serialize::ValueType::CONSTINT:
-				std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << std::endl;
+				DLOG(LOG_DEBUG) << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << std::endl;
 				return;
 			case serialize::ValueType::CONSTSTRING:
-				std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << std::endl;
+				DLOG(LOG_DEBUG) << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << std::endl;
 				return;
 			}
     }
@@ -67,8 +67,8 @@ public:
 
     virtual void show(int offset = 0) {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-    	std::cout << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+    	DLOG(LOG_DEBUG) << "ConstValue Type: " << ShowType(valuetype) << "\tVal: " << val << std::endl;
     }
 
     virtual llvm::Value* accept(Visitor* v);
@@ -93,8 +93,8 @@ public:
 
     virtual void show(int offset = 0) {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-    	std::cout << "StringLiteralNode Type: " << ShowType(valuetype) << "\tVal: " << valstring << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+    	DLOG(LOG_DEBUG) << "StringLiteralNode Type: " << ShowType(valuetype) << "\tVal: " << valstring << std::endl;
     }
 
     virtual llvm::Value* accept(Visitor* v);

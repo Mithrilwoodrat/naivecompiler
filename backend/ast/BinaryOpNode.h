@@ -16,10 +16,10 @@ public:
     virtual void show( int offset = 0 )
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout << "BinaryOp: ";
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) << "BinaryOp: ";
         lhs->show(offset + 1);
-        std::cout << "\t OP: " << op << "\t";
+        DLOG(LOG_DEBUG) << "\t OP: " << op << "\t";
         rhs->show(offset + 1);
     }
 

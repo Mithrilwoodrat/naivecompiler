@@ -15,8 +15,8 @@ public:
     virtual void show(int offset = 0) override
     {
     	std::string index = std::string(offset, '\t');
-    	std::cout << index;
-        std::cout <<  "Declaration: ID: " << id << "\t" << "type: " << symboltype << std::endl;
+    	DLOG(LOG_DEBUG) << index;
+        DLOG(LOG_DEBUG) <<  "Declaration: ID: " << id << "\t" << "type: " << symboltype << std::endl;
     }
 
     virtual const std::vector<ASTNode *> GetChildren( void ) override
