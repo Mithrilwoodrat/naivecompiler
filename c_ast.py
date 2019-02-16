@@ -114,7 +114,7 @@ class StmtList(ASTNode):
 
     def __add__(self, rhs):
         if issubclass(rhs.__class__, Statement):
-            self.add_stat(rhs)
+            self.add_stmt(rhs)
         elif type(rhs) is StmtList:
             self.l += rhs.l
         return self
