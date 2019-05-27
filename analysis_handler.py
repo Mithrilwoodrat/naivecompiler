@@ -3,6 +3,7 @@ import logging
 import sys
 
 from visitor import NodeVisitor
+from c_ast import *
 
 
 logger = logging.getLogger(__file__)
@@ -40,10 +41,12 @@ class FuncCallHelper(NodeVisitor):
             
     
 class LoopHelper(NodeVisitor):
-    def __init__(self):
-        self.scope = Scope()
+    def __init__(self, parent_scope=None):
+        self.scope = parent_scope
+        if parent_scope is None:
+            self.scope = Scope()
         
-    def has_error(self):
+    def _has_error(self):
         return self.scope.has_error
 
     def visit_ContinueStmt(self, node):
@@ -51,30 +54,38 @@ class LoopHelper(NodeVisitor):
 
     def visit_BreakStmt(self, node):
         logging.info("break inside loop!")
+
+    def visit_Assignment(self, node):
+        if type(node.cast_expr) is VariableSymbol:
+            self.scope.resolve_symbol(node.cast_expr.name)
+        #print node.cast_expr.__class__.__name__
+        #self.scope.resolve_symbol(node._id.name)
         
 class FuncHelper(NodeVisitor):
     def __init__(self):
         self.scope = Scope()
         
-    def has_error(self):
+    def _has_error(self):
         return self.scope.has_error
     
     def visit_TypeDecl(self, node):
+        # print 'TypeDecl', node.__class__.__name__
         self.scope.define_symbol(node._id.name, node._type)
 
     def visit_DeclStmt(self, node):
-        self.generic_visit(node.decls)
+        # self.generic_visit(node.decl)
+        self.visit_TypeDecl(node.decl)
 
     def visit_ArrayDecl(self, node):
         self.scope.define_symbol(node._id.name, node._type)
         
-    def visit_VariableSymbol(self, node):
-        self.scope.resolve_symbol(node.name)
+    #def visit_VariableSymbol(self, node):
+    #    self.scope.resolve_symbol(node.name)
 
     def visit_WhileStmt(self, node):
-        helper = LoopHelper()
+        helper = LoopHelper(parent_scope=self.scope)
         helper.visit(node)
-        self.has_error = helper.has_error
+        self.has_error = helper._has_error()
         
     def visit_ContinueStmt(self, node):
         logging.error("continue outside loop!")
@@ -84,19 +95,20 @@ class FuncHelper(NodeVisitor):
         logging.error("break outside loop!")
         self.scope.has_error = True
         
-    # def visit_AssignmentExpr(self, node):
-    #     self.scope.resolve_symbol(node._id.name)
-    #     helper = AssignmentExprHelper(self.scope)
-    #     helper.visit(node)
+    def visit_Assignment(self, node):
+        if type(node.cast_expr) is VariableSymbol:
+            self.scope.resolve_symbol(node.cast_expr.name)
+        #helper = AssignmentExprHelper(self.scope)
+        #helper.visit(node)
 
 class AnalysisVisitor(NodeVisitor):
     def __init__(self):
-        self._has_error = False
+        self.has_error = False
 
-    def has_error(self):
-        return self._has_error
+    def _has_error(self):
+        return self.has_error
 
-    def visit_Function(self, node):
+    def visit_FuncDef(self, node):
         helper = FuncHelper()
         helper.visit(node)
         self.has_error = helper.has_error
