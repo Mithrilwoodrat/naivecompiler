@@ -34,7 +34,7 @@ public:
         return GetCompiler()->symbol_table->ResolveSymbol(id);
     }
 
-    void Compile( char * filename );
+    void Compile( char * filename, bool dumpIR);
     
     static Compiler* instance;
 private:

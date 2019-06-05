@@ -74,6 +74,7 @@ if(APPLE)
     add_library(NaiveScript MODULE ${NSSrcFiles})
 else()
     add_library(NaiveScript  SHARED ${NSSrcFiles})
+    set(CURSES_NEED_NCURSES TRUE) # Make CMake find NCURSES instead of curses in ubuntu
 endif()
 
 Target_Include_Directories( NaiveScript PUBLIC ${NSIncludeDir} )
@@ -81,6 +82,5 @@ Target_Include_Directories( NaiveScript PUBLIC ${NSIncludeDir} )
 if(APPLE)
   target_link_libraries(NaiveScript PUBLIC -ldl -lcurses -lpthread -lz -lm -lLLVM)
 else()
-    target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lcurses -lpthread -lz -lm -lLLVM-6.0)
-
+  target_link_libraries(NaiveScript PUBLIC -lrt -ldl -lpthread -lz -lm -lLLVM-6.0)
 endif()
