@@ -6,6 +6,7 @@ build/
 .vscode/
 *.o
 *.so
+*.ll
 .idea
 *-build-*
 .settings
