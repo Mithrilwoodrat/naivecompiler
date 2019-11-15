@@ -29,6 +29,8 @@ Set( NSIncludeDir ${NSWorkingPath}
     /usr/include 
     /usr/local/include
 	#/usr/lib/llvm-3.8/include
+    /usr/include/llvm-6.0/
+    /usr/include/llvm-c-6.0/
 )
 
 if(APPLE)
