@@ -2,6 +2,8 @@
 
 ### A hobby C compiler created in Python and LLVM
 
+blogs about steps reading gcc and clang and then build your own compiler <https://mithrilwoodrat.github.io/categories/#compiler>
+
 ## Docker
 
 ### Build
